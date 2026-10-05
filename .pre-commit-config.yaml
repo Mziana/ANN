@@ -43,3 +43,9 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: check-foreign-chars
+        name: Cek karakter asing (CJK, Cyrillic, Arab, dll)
+        entry: python scripts/check_foreign_chars.py
+        language: system
+        pass_filenames: true
+        files: \.(py|ya?ml|md|ps1|toml|csv|txt)$

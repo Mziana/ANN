@@ -13,8 +13,9 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Yang Sedang Dikerjakan
 
-- Menunggu review user untuk commit Phase A (belum di-commit atas permintaan user).
-- Berikutnya setelah itu: Phase B — `src/data/fetch_data.py`.
+- **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
+- **KESIMPULAN DST: broker TIDAK ikut DST. Offset tetap `Etc/GMT-3` untuk 2023-2026.**
+- Menunggu konfirmasi user sebelum commit.
 
 ## Yang Sudah Selesai
 
@@ -37,9 +38,10 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Yang Belum
 
-- [ ] Phase B: `src/data/fetch_data.py` -> `data/raw/M1/usdjpy_m1_<year>.csv`
-- [ ] Tambah `__init__.py` untuk subpackage `src/`
-- [ ] `tests/test_fetch_data.py` (folder `tests/` masih kosong)
+- [x] Phase B: `src/data/fetch_data.py` + `src/utils/config.py` + `__init__.py` + 22 test
+- [x] Test 1 bulan (2026-10-01 s/d 10-06) → 3.134 bar, **7/7 verifikasi LOLOS**
+- [ ] **Fetch full 2023-01-01 s/d 2026-10-05** (menunggu approval user)
+- [ ] `src/data/validate_data.py` (cek gap, baris, offset historis)
 - [ ] Modul `src/data/`: clean_data.py, validate_data.py, resample.py
 - [ ] Modul `src/features/`: build_features.py, build_labels.py
 - [ ] Modul `src/models/`, `src/backtest/`
@@ -60,11 +62,12 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 |---|---|---|
 | Simbol MT5 | `USDJPY` (bukan `USDJPYm`) | `symbols_get()` 82 simbol, `USDJPYm` absen |
 | Timezone broker | **UTC+3** (`Etc/GMT-3`) | tick 05:58:13 vs UTC 02:58:06 -> +3.0019 jam; bar 05:58:00 -> +2.9983 jam |
-| Offset historis broker | **BELUM TERVERIFIKASI** | 2023-01 tanpa daily break; 2026-03 gap jam 0 DAN 1. Fetch wajib simpan timestamp mentah |
+| Offset historis broker | **TERVERIFIKASI: tetap +3, tanpa DST** | 40 dari 47 bulan break jam dinding 4; 2 anomali terisolasi (Okt-Nov 2024, Mar 2026), tidak berulang tahunan |
 | 1 pip USDJPY | 0.01 | `digits=3`, `point=0.001` |
 | Spread live | 0,8 pip | tick 157.851 / 157.859 |
 | Pipeline order | M1 dulu, 1 TF, verifikasi, baru expand | diputuskan user 2026-10-05 |
 | Format simpan | CSV per tahun: `usdjpy_m1_<year>.csv` | diputuskan user 2026-10-05 |
+| Total data | **1.347.847 bar M1** (2023-2026) | jumlah file = jumlah `copy_rates_range` awal |
 
 ## Langkah Berikutnya
 

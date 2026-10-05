@@ -13,6 +13,12 @@
 - [x] **PHASE A SELESAI** — lanjut Phase B
 - [x] Gate pre-commit dibetulkan: hapus hook `mixed-line-ending`, tambah `scripts/run_tests.py` (2026-10-05)
 - [ ] **Commit Phase A** (menunggu review user)
+- [x] Phase B: `fetch_data.py`, `config.py`, 2 `__init__.py`, 22 test — 7/7 verifikasi lolos (2026-10-05)
+- [x] Fetch full 2023-2026: **1.347.847 bar M1** (2026-10-05)
+- [x] Investigasi DST 2023-2026: **broker tidak ikut DST, offset tetap +3**
+- [ ] `validate_data.py`: tandai 2 jendela anomali break (Okt-Nov 2024, Mar 2026) sebagai peringatan, bukan error
+- [ ] `src/data/validate_data.py`
+- [ ] File asing `scripts/check_foreign_chars.py` (isi YAML, ekstensi .py) — bukan milik AI, perlu keputusan user
 - [x] `.gitattributes` dibuat (text=auto eol=lf, ps1/bat crlf, biner) (2026-10-05)
 - [x] Line ending dinormalisasi: 38 file LF, 3 `.ps1` CRLF (2026-10-05)
 - [x] Black dihapus dari `.pre-commit-config.yaml` + `pyproject.toml` (2026-10-05)
