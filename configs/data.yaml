@@ -1,0 +1,56 @@
+﻿# Konfigurasi data & koneksi MT5
+mt5:
+  symbol: "USDJPY"
+  broker_timezone: "Etc/GMT-2"
+  timeframes:
+    - M1
+    - M5
+    - M15
+    - M30
+    - H1
+    - H4
+    - D1
+  start_date: "2023-01-01"
+  end_date: "2026-10-05"
+  login: ""
+  password: ""
+  server: ""
+
+data:
+  raw_format: "csv"
+  processed_format: "parquet"
+  filename_pattern: "{symbol}_{tf}_{year}.{format}"
+  internal_timezone: "UTC"
+
+# SPREAD CONFIG (WAJIB - section 18.16 RULES.md)
+# Data OHLC MT5 = BID.
+# BUY: entry ask = bid + spread, exit bid.
+# SELL: entry bid, exit ask = bid + spread.
+# Spread dalam PIP (bukan point).
+spread:
+  default: 1.5
+  by_session:
+    tokyo_early: 3.0
+    tokyo_normal: 1.5
+    london: 1.2
+    newyork: 1.5
+    friday_late: 3.0
+    sunday_open: 5.0
+  by_news:
+    fomc: 5.0
+    cpi: 3.0
+    nfp: 4.0
+    boj: 4.0
+  stress_multiplier: 2.0
+  pip_size:
+    USDJPY: 0.01
+    default: 0.0001
+
+validation:
+  max_gap_minutes:
+    M1: 5
+    M5: 15
+    M15: 30
+    H1: 120
+  max_return_std: 10
+  min_rows_per_year: 100000

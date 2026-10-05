@@ -1,0 +1,47 @@
+﻿# Pre-commit hooks untuk proyek USDJPY Bot
+# Install: pre-commit install
+# Jalankan manual: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: check-state-updated
+        name: Cek STATE.md diupdate hari ini
+        entry: python scripts/check_state.py
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: pytest-quick
+        name: Pytest (quick)
+        entry: python -m pytest tests/ -q --no-header
+        language: system
+        pass_filenames: false
+        always_run: true

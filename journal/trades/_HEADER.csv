@@ -1,0 +1,1 @@
+﻿trade_id,open_time,close_time,pair,direction,timeframe,entry_price,exit_price,sl,tp,lot,bid_entry,ask_entry,bid_exit,ask_exit,spread_at_entry,spread_at_exit,pips_result,pnl_usd,fingerprint_entry,fingerprint_exit,condition_entry,condition_exit,signal_source,confidence,strategy,mode,emotion,lesson

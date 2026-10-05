@@ -1,0 +1,13 @@
+﻿# Konfigurasi path proyek
+project_root: "."
+
+data:
+  raw: "data/raw"
+  processed: "data/processed"
+  features: "data/features"
+  labels: "data/labels"
+
+models: "models"
+logs: "logs"
+reports: "reports"
+journal: "journal"

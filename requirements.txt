@@ -1,0 +1,36 @@
+﻿# Proyek: USDJPY Trading Bot
+# Python: 3.11+
+# Update: 2026-10-05
+
+# === Data ===
+pandas==2.2.3
+numpy==1.26.4
+pyarrow==17.0.0
+
+# === ML ===
+torch==2.4.0
+scikit-learn==1.5.2
+
+# === Broker ===
+MetaTrader5
+
+# === Config ===
+pyyaml==6.0.2
+python-dotenv==1.0.1
+
+# === Utilitas ===
+tqdm==4.66.5
+tabulate==0.9.0
+
+# === Testing ===
+pytest==8.3.3
+pytest-cov==5.0.0
+
+# === Format & Lint ===
+black==24.10.0
+ruff==0.6.9
+pre-commit==3.8.0
+
+# === Notebook ===
+jupyter==1.1.0
+ipykernel==6.29.5
