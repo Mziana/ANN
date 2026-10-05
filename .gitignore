@@ -51,3 +51,6 @@ Thumbs.db
 
 # Checkpoint scripts (arsip)
 checkpoints/
+
+# Freebuff (state internal editor, bukan bagian dari proyek)
+.freebuff/
