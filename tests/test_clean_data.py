@@ -1,7 +1,8 @@
 """Unit tests for src.data.clean_data.
 
 The single most important behaviour here is what the module refuses to do:
-the daily break and the weekend gap must survive cleaning untouched.
+invent nothing. Every gap the broker produces, small or large, must survive
+cleaning untouched.
 """
 
 from __future__ import annotations
@@ -10,15 +11,12 @@ import pandas as pd
 import pytest
 
 from src.data.clean_data import (
-    FILLED_COLUMN,
-    MAX_FILL_GAP_MINUTES,
     TIME_COLUMN,
     CleanResult,
     clean_frame,
     clean_year,
     deduplicate,
     discover_raw,
-    fill_small_gaps,
     load_raw,
     normalize_ohlc,
     sort_by_time,
@@ -134,77 +132,53 @@ class TestNormalizeOhlc:
         assert frame.loc[0, "high"] == 0.5
 
 
-class TestFillSmallGaps:
-    def test_short_gap_is_filled(self):
+class TestNoInterpolation:
+    """D1: cleaning must never invent a bar.
+
+    Interpolating a missing price is the one thing this pipeline must not do,
+    because nothing downstream can tell an invented bar from a real one. These
+    tests pin that behaviour at every gap size the broker actually produces.
+    """
+
+    def test_short_gap_is_left_alone(self):
         frame = make_raw([BASE, BASE + 60 * 4])
-        filled, count = fill_small_gaps(frame, max_minutes=20)
-        assert count == 3
-        assert len(filled) == 5
+        cleaned, result = clean_frame(frame, 3)
+        assert result.gaps_filled == 0
+        assert len(cleaned) == 2
 
-    def test_daily_break_is_not_filled(self):
-        """The 61 minute break must never be filled with synthetic bars."""
+    def test_daily_break_is_left_alone(self):
+        """The 61 minute break must not become synthetic bars."""
         frame = make_raw([BASE, BASE + 61 * 60])
-        filled, count = fill_small_gaps(frame, max_minutes=MAX_FILL_GAP_MINUTES)
-        assert count == 0
-        assert len(filled) == 2
+        cleaned, result = clean_frame(frame, 3)
+        assert result.gaps_filled == 0
+        assert len(cleaned) == 2
 
-    def test_weekend_gap_is_not_filled(self):
+    def test_weekend_gap_is_left_alone(self):
         frame = make_raw([BASE, BASE + 2880 * 60])
-        filled, count = fill_small_gaps(frame, max_minutes=MAX_FILL_GAP_MINUTES)
-        assert count == 0
-        assert len(filled) == 2
+        cleaned, result = clean_frame(frame, 3)
+        assert result.gaps_filled == 0
+        assert len(cleaned) == 2
 
-    def test_contiguous_data_unchanged(self):
-        frame = make_raw(consecutive(20))
-        filled, count = fill_small_gaps(frame)
-        assert count == 0
-        assert len(filled) == 20
+    def test_no_is_filled_column_survives(self):
+        """The flag existed only to mark invented rows; it is gone now."""
+        cleaned, _ = clean_frame(make_raw(consecutive(5)), 3)
+        assert "is_filled" not in cleaned.columns
 
-    def test_filled_rows_carry_forwarded_prices(self):
-        frame = make_raw([BASE, BASE + 60 * 4])
-        frame.loc[0, "close"] = 9.99
-        filled, _ = fill_small_gaps(frame, max_minutes=20)
-        assert filled.loc[filled[TIME_COLUMN] == BASE + 120, "close"].iloc[0] == 9.99
+    def test_row_count_never_increases(self):
+        for gap in (1, 4, 20, 61, 2880):
+            cleaned, _ = clean_frame(make_raw([BASE, BASE + gap * 60]), 3)
+            assert len(cleaned) == 2, f"gap {gap} menit menambah bar"
 
-    def test_epoch_values_are_real_seconds(self):
-        """Guard for datetime resolution: asi8 counts ns only after as_unit('ns').
+    def test_timestamps_are_untouched(self):
+        """Cleaning must preserve the exact epochs the broker produced."""
+        epochs = [BASE, BASE + 60 * 4, BASE + 61 * 60]
+        cleaned, _ = clean_frame(make_raw(epochs), 3)
+        assert cleaned[TIME_COLUMN].tolist() == epochs
 
-        pandas 3.x builds a datetime64[s] index from unit='s', so a bare .asi8
-        would collapse every epoch to 1 and still pass a flag-only assertion.
-        """
-        frame = make_raw([BASE, BASE + 60 * 4])
-        filled, _ = fill_small_gaps(frame, max_minutes=20)
-        assert filled[TIME_COLUMN].tolist() == consecutive(5)
-
-    def test_filled_rows_are_flagged(self):
-        frame = make_raw([BASE, BASE + 60 * 4])
-        filled, _ = fill_small_gaps(frame, max_minutes=20)
-        assert filled[FILLED_COLUMN].sum() == 3
-
-    def test_real_rows_are_not_flagged(self):
-        frame = make_raw(consecutive(20))
-        filled, _ = fill_small_gaps(frame)
-        assert not filled[FILLED_COLUMN].any()
-
-    def test_dropped_break_rows_are_not_flagged_as_filled(self):
-        """A break row is deleted, never emitted as a synthetic bar."""
-        frame = make_raw([BASE, BASE + 61 * 60])
-        filled, _ = fill_small_gaps(frame, max_minutes=MAX_FILL_GAP_MINUTES)
-        assert not filled[FILLED_COLUMN].any()
-
-    def test_time_column_matches_epoch(self):
-        """The rebuilt time string must agree with the broker epoch."""
-        frame = make_raw([BASE, BASE + 60 * 4])
-        filled, _ = fill_small_gaps(frame, max_minutes=20)
-        rebuilt = pd.to_datetime(filled["time"], format="%Y-%m-%dT%H:%M:%S%z", utc=True)
-        expected = pd.to_datetime(filled[TIME_COLUMN], unit="s", utc=True)
-        assert rebuilt.tolist() == expected.tolist()
-
-    def test_does_not_mutate_input(self):
-        frame = make_raw([BASE, BASE + 60 * 4])
-        before = frame.copy()
-        fill_small_gaps(frame, max_minutes=20)
-        pd.testing.assert_frame_equal(frame, before)
+    def test_changed_is_false_when_only_gaps_differ(self):
+        cleaned, result = clean_frame(make_raw([BASE, BASE + 60 * 4]), 3)
+        assert result.gaps_filled == 0
+        assert not result.changed
 
 
 class TestCleanFrame:
@@ -267,5 +241,9 @@ class TestCleanResult:
     def test_changed_false_when_nothing_happened(self):
         assert not CleanResult("2026", 10, 10, 0, 0, 0).changed
 
-    def test_changed_true_with_gap_filled(self):
-        assert CleanResult("2026", 10, 11, 0, 0, 1).changed
+    def test_changed_true_with_ohlc_repaired(self):
+        assert CleanResult("2026", 10, 10, 0, 1, 0).changed
+
+    def test_changed_false_when_only_gap_counted(self):
+        """D1 removed filling, so a nonzero gaps_filled alone is not a change."""
+        assert not CleanResult("2026", 10, 10, 0, 0, 5).changed

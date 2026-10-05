@@ -95,20 +95,18 @@
 - [x] `scripts/check_foreign_chars.py` + test + hook (2026-10-05)
 - [x] `src/data/validate_data.py` + test + laporan validasi (2026-10-05)
 - [x] `src/data/clean_data.py` + test (2026-10-05) — 103 test hijau
-- [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — berikutnya
+- [x] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — 2026-10-05, 147 test hijau
 - [ ] `src/features/build_features.py`
 - [ ] `src/features/build_labels.py`
 
 ### Catatan clean_data
 
-- Output `data/processed/M1/*.parquet` sudah dibuat: 1.349.857 bar.
-  Folder ini di-gitignore, jadi reproducible dari raw.
-- Kolom `is_filled` WAJIB dipakai `resample.py` dan `build_features.py`.
-  Bar sintetis tidak boleh diperlakukan sebagai bar dagangan.
-- **BUTUH KEPUTUSAN USER**: 90 dari 946 lubang (9,5%) adalah lubang 8-9 menit
-  di broker 02:58-03:07, tepat sebelum pembukaan pasar. Modul mengisinya
-  karena < 20 menit, tapi itu bar pra-pembukaan yang sebenarnya tidak pernah ada.
-  Pertimbangkan sebelum resample.
+- Output `data/processed/M1/*.parquet`: 1.347.847 bar, folder di-gitignore.
+- **D1 (2026-10-05): interpolasi dihapus.** Tidak ada lagi kolom `is_filled`
+  karena tidak ada bar sintetis. Jumlah bar keluar == masuk di keempat tahun.
+- diputuskan: 90 lubang 8-9 menit di broker 02:58-03:07 dulu diisi, kini tidak
+  karena tidak ada interpolasi sama sekali. Jumlah bar asli per bucket terekspos
+  lewat kolom `m1_bars` di hasil `resample.py`.
 
 ### Hasil audit Phase B (2026-10-05)
 
@@ -125,6 +123,28 @@ atas bukti dari data. 8 diperbaiki, LOW-04 ditunda.
 - [x] Marker `# EXCEPTION:` di `validate_data.py`
 - [ ] (ditunda s/d akhir Milestone 1) Pecah `validate_data.py` jadi check vs
       render — 543 baris, batas keras: >600 baris / fungsi publik baru / akhir M1
+
+### Hasil audit R1 — kolom `time` (2026-10-05)
+
+Auditor (Klenz) mencatat kolom `time` 3 jam maju dari UTC; Coder semula
+menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
+
+- [x] Verifikasi ulang non-sirkular: tick + bar M5 MT5 vs jam internet
+      independen (timeapi.io + HTTP `Date:`). Selisih +10.799 dtk, 5/5 sampel.
+- [x] Klaim "drift 7 detik" gugur — `.ai/SESSION_LOG.md` sendiri mencatat
+      10.807 dtk (= 3j 0m 7s), artinya jam pembanding lama sudah di frame broker.
+- [x] `broker_epoch_to_utc` diperbaiki jadi konversi sejati
+- [x] `split_by_year` memakai kolom `time`, bukan `broker_time_raw`
+- [x] 5 assertion lama di `tests/test_fetch_data.py` diperbaiki + 2 test baru
+      (regresi ke bukti terukur 1791205620 -> 10:07:00, dan bar dekat tahun baru)
+- [x] Fetch ulang 4 file M1: 1.347.847 bar, 0 salah konversi, tahun cocok nama file
+- [x] Bersihkan + resample ulang; native M5 vs resample 2.760 bucket, beda 0
+- [x] Validasi data exit 0 di 4 tahun; ruff bersih; 147 test hijau
+- [ ] **DST belum diverifikasi.** `Etc/GMT-3` dipakai statis. Perlu cek
+      broker apakah GMT+2 di musim dingin sebelum fitur sesi dibangun.
+- [x] Hapus `data/raw/M1/usdjpy_m1_2026-10_test.csv` (2026-10-05, atas izin
+      user) — sisa uji sesi lalu, format lama salah label. `data/raw/M1/` kini
+      hanya 4 file tahun 2023-2026.
 
 ### Verifikasi keputusan Architect (2026-10-05) — selesai
 

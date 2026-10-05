@@ -12,12 +12,14 @@ What counts as safe to repair:
     small gaps        - reindex only gaps shorter than a threshold
 
 What is deliberately NOT repaired:
-    the daily break (~61 min) and the weekend gap (~49 h). Filling those
-    would fabricate bars that never traded, which would poison any
-    volatility or session feature built on top.
+    any gap at all. The daily break (~61 min), the weekend gap (~49 h) and
+    small holes between bars are all left untouched. Interpolating a missing
+    bar invents a price that never traded, and a strategy cannot tell an
+    invented price from a real one. Downstream stages see only bars the broker
+    actually produced; ``m1_bars`` in resample.py reports how many real bars a
+    bucket holds instead of papering over the hole.
 
-Every bar this module invents is flagged in the ``is_filled`` column. Raw data
-under data/raw/ stays byte-identical; nothing is ever written back to it.
+Raw data under data/raw/ stays byte-identical; nothing is ever written back to it.
 """
 
 from __future__ import annotations
@@ -31,23 +33,13 @@ from typing import Any
 
 import pandas as pd
 
-from src.data.fetch_data import OUTPUT_COLUMNS, RAW_DIR, TIME_FORMAT, build_filename
+from src.data.fetch_data import OUTPUT_COLUMNS, RAW_DIR, build_filename
 from src.utils.config import load_config
-
-# Gaps longer than this are left alone. The daily break is about 61 minutes,
-# so anything under 20 minutes is a genuinely missing bar, not a session
-# boundary.
-MAX_FILL_GAP_MINUTES = 20
 
 # Price columns rounded to the symbol tick size.
 PRICE_COLUMNS = ["open", "high", "low", "close"]
 
 TIME_COLUMN = "broker_time_raw"
-
-# Marks rows this module invented rather than read. Downstream stages must be
-# able to tell a real bar from a carried-forward one, otherwise an interpolated
-# bar silently becomes a trade.
-FILLED_COLUMN = "is_filled"
 
 
 @dataclass
@@ -63,7 +55,13 @@ class CleanResult:
 
     @property
     def changed(self) -> bool:
-        return bool(self.duplicates_removed or self.ohlc_repaired or self.gaps_filled)
+        """Whether cleaning altered the data at all.
+
+        Returns:
+            True when any row was removed or repaired. Gap filling no longer
+            exists, so it is not part of this verdict.
+        """
+        return bool(self.duplicates_removed or self.ohlc_repaired)
 
 
 def load_raw(path: Path) -> pd.DataFrame:
@@ -131,69 +129,11 @@ def normalize_ohlc(frame: pd.DataFrame, digits: int) -> tuple[pd.DataFrame, int]
     return frame, changed
 
 
-def fill_small_gaps(
-    frame: pd.DataFrame, max_minutes: int = MAX_FILL_GAP_MINUTES
-) -> tuple[pd.DataFrame, int]:
-    """Reindex the timeline only where the hole is genuinely a missing bar.
-
-    A hole is filled only when it is strictly longer than one minute and no
-    longer than ``max_minutes``. Longer holes collapse back to their two
-    endpoints, so the daily break and the weekend gap survive exactly as the
-    broker produced them.
-
-    Filled rows carry the previous bar's values forward, which means their high,
-    low, open and close are all equal. They are flagged in
-    :data:`FILLED_COLUMN` so nothing downstream mistakes them for real ticks.
-
-    Args:
-        frame: Frame carrying an integer broker timestamp column.
-        max_minutes: Longest hole that may be filled.
-
-    Returns:
-        Tuple of the resulting frame in canonical column order plus the filled
-        flag, and the number of rows inserted.
-    """
-    step = pd.Timedelta(minutes=1)
-    limit = pd.Timedelta(minutes=max_minutes)
-
-    # Both timestamp columns are rebuilt from the index below, so drop them
-    # first. Keeping either would collide on insert, and forward-filling a stale
-    # time string would be worse than forward-filling a stale price.
-    working = frame.drop(columns=[TIME_COLUMN, "time"])
-    working.index = pd.to_datetime(frame[TIME_COLUMN], unit="s", utc=True)
-    working = working.sort_index()
-
-    original = working.index
-    holes = original.to_series().diff()
-    fillable_ends = original[(holes > step) & (holes <= limit)]
-
-    timeline = pd.date_range(original.min(), original.max(), freq=step)
-    absent = ~timeline.isin(original)
-
-    fillable = pd.Series(False, index=timeline)
-    for end in fillable_ends:
-        hole = pd.date_range(end - holes[end] + step, end - step, freq=step)
-        fillable.loc[hole] = True
-
-    dropped = absent & ~fillable
-    keep = ~dropped
-    kept = working.reindex(timeline)[keep].ffill()
-
-    # as_unit("ns") is not optional: pandas 3.x lets to_datetime(..., unit="s")
-    # build a datetime64[s] index, whose .asi8 counts seconds rather than
-    # nanoseconds. Without this the epoch column collapses to 1 on every row.
-    epoch = kept.index.as_unit("ns").asi8 // 10**9
-    result = kept.reset_index(drop=True)
-    result.insert(0, TIME_COLUMN, epoch)
-    result.insert(0, "time", pd.to_datetime(epoch, unit="s", utc=True).strftime(TIME_FORMAT))
-    # A kept row was flagged filled exactly when raw data had no bar for it.
-    result[FILLED_COLUMN] = absent[keep]
-
-    return result[OUTPUT_COLUMNS + [FILLED_COLUMN]], int((absent & fillable).sum())
-
-
 def clean_frame(frame: pd.DataFrame, digits: int) -> tuple[pd.DataFrame, CleanResult]:
     """Run the full cleaning chain over one year of raw data.
+
+    No bar is ever invented. Gaps of any size are left exactly as the broker
+    produced them, so every row downstream is a bar that really traded.
 
     Args:
         frame: Raw frame from load_raw.
@@ -206,7 +146,6 @@ def clean_frame(frame: pd.DataFrame, digits: int) -> tuple[pd.DataFrame, CleanRe
     frame, duplicates = deduplicate(frame)
     frame = sort_by_time(frame)
     frame, repaired = normalize_ohlc(frame, digits)
-    frame, filled = fill_small_gaps(frame)
 
     result = CleanResult(
         year="",
@@ -214,7 +153,7 @@ def clean_frame(frame: pd.DataFrame, digits: int) -> tuple[pd.DataFrame, CleanRe
         rows_out=len(frame),
         duplicates_removed=duplicates,
         ohlc_repaired=repaired,
-        gaps_filled=filled,
+        gaps_filled=0,
     )
     return frame, result
 

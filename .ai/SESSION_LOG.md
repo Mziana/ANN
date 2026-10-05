@@ -571,3 +571,135 @@ berjalan beberapa hari. `check_bar_count` butuh satuan kalender karena hanya
 satuan itu yang punya batas tetap 1.440 bar.
 
 Status Q1/Q2/Q3: ketiganya selesai. Menunggu re-audit Klenz.
+
+---
+
+## 2026-10-05 — D1 (hapus interpolasi) + resample.py (D2-D4)
+
+### R1: kolom `time` — BUKAN BUG (terbantah empiris)
+
+Uji dengan bar M5 terakhir dari MT5 sungguhan (`epoch 1791190440`,
+UTC now `2026-10-05T08:54:06`):
+
+| Kandidat | Hasil | Drift vs UTC now |
+|---|---|---|
+| A `fromtimestamp(epoch, tz=UTC)` | `08:54:00+00:00` | **+7 detik** |
+| C **kode sekarang** `fromtimestamp(epoch, tz=BROKER_TZ).astimezone(UTC)` | `08:54:00+00:00` | **+7 detik** |
+| D `fromtimestamp(epoch, tz=UTC) - 3 jam` | `05:54:00+00:00` | **+10.807 detik** |
+
+`A == C` (selisih 0s). Alasannya matematis: `astimezone` hanya mengubah tampilan
+tzinfo, bukan underlying instant, jadi `fromtimestamp(E, tz=X).astimezone(UTC)`
+selalu identik dengan `fromtimestamp(E, tz=UTC)`. Argumen `broker_tz` di
+`broker_epoch_to_utc` selama ini tidak berpengaruh ke hasil.
+
+Konfirmasi end-to-end ke raw: kolom `time` `2026-10-02T23:57:00+0000` == epoch
+`1790985420` yang di-render UTC. **Cocok.**
+
+Jadi:
+- Fix Ann (A) = **no-op**, tidak mengubah apa pun.
+- Saran "kurangi offset" (D) = **BAHAYA**, menambah bug 3 jam.
+- Tidak ada fetch ulang karena tidak ada fix yang perlu diuji.
+
+**Yang salah adalah DOKUMEN, bukan kode.** `fetch_data.py:5` dan `STATE.md:128`
+mengclaiming "MT5 returns timestamps on the broker server clock, not UTC".
+Yang benar: epoch MT5 adalah Unix epoch sejati; yang broker-local adalah
+*tampilan* dan *batas sesi* (break 03:00, reopen Senin 04:00).
+
+### D1 — interpolasi dihapus
+
+`fill_small_gaps`, `FILLED_COLUMN`, `MAX_FILL_GAP_MINUTES` dihapus dari
+`clean_data.py` (349 -> 258 baris). Data nyata: rows in == rows out persis di 4
+tahun, 1.347.847 bar, 0 gap diisi. Tidak ada bar yang pernah dikarang lagi.
+
+### D2-D4 — resample.py (baru, 347 baris)
+
+- **D2** bucket pakai jam dinding broker, label = awal interval.
+- **D3** spread diagregasi jadi `spread_pips_mean` + `spread_pips_max`.
+- **D4** bucket kosong tidak pernah muncul; `m1_bars` menyimpan jumlah bar M1
+  asli per bucket, jadi bucket 3-bar tidak samarkan dirinya sebagai 5-bar.
+
+Pipeline penuh 4 tahun: M5/M15/M30/H1/H4/D1 -> `data/processed/<TF>/`, 63 detik.
+Bucket D1 = 311/314/313/236, persis sama dengan jumlah tanggal broker.
+
+### Verifikasi kunci: native MT5 vs resample kita
+
+`scripts/verify_native_m5.py`, M5 native MT5 vs resample dari M1 bersih,
+window 2026-09-01 s/d 2026-09-14:
+
+```
+timestamp sama      : 2,760
+hanya di native     : 0
+hanya di kita       : 0
+open/high/low/close/tick_volume: beda 0 bar, selisih maks 0.0
+```
+
+**Cocok persis 2.760 bucket.** Ini bukti terkuat bahwa bucketing jam dinding
+broker (D2) benar: ia mereproduksi agregasi M5 milik broker sendiri.
+
+### Status
+
+145 test hijau (dari 120). ruff bersih. Validasi data tetap exit 0.
+Tidak ada commit. Menunggu re-audit Klenz.
+
+---
+
+## 2026-10-05 — FIX R1: kolom `time` 3 jam maju dari UTC
+
+### Konflik coder vs auditor, dan bagaimana selesai
+
+Coder menyimpulkan R1 "bukan bug" dengan mengukur "drift 7 detik". Auditor
+menyebutnya sirkular. User meminta verifikasi ulang non-sirkular.
+
+**Metode lama memang sirkular, dan buktinya ada di log sendiri.**
+[SESSION_LOG.md] mencatat drift kandidat D = **10.807 detik**, yang
+sebenarnya **3 jam 0 menit 7 detik**. Artinya "UTC now" yang dipakai saat itu
+sendiri berada di frame broker, jadi perbandingannya broker-vs-broker.
+
+**Verifikasi non-sirkular.** Empat sumber UTC independen (timeapi.io JSON,
+HTTP `Date:` timeapi.io, HTTP `Date:` google.com, jam mesin) sepakat
+`10:25:11`–`10:30:22 UTC`. Tick dan bar M1 MT5, di-bracket jam server
+sebelum dan sesudah tiap panggilan, meleset **+10.799,4 detik = 2,99983 jam**,
+5/5 sampel. Klenz benar; Coder salah.
+
+### Perubahan kode
+
+`broker_epoch_to_utc` lama `fromtimestamp(epoch, tz=broker_tz).astimezone(UTC)`
+adalah **no-op matematis** — `astimezone` hanya mengubah label, bukan
+instant. Baris sekarang membaca digit jam dinding dulu
+(`fromtimestamp(epoch, tz=UTC)`), menandai offset broker, lalu mengonversi.
+
+`split_by_year` ikut diperbaiki: tadinya memisahkan file berdasarkan
+`broker_time_raw`, sehingga beberapa jam pertama 1 Januari masuk file tahun
+baru sambil membawa stempel waktu Desember. Sekarang memakai kolom `time`.Lima assertion lama di `tests/test_fetch_data.py` mengunci perilaku yang
+salah (`test_epoch_is_preserved` justru menyatakan epoch harus dipertahankan,
+padahal justru itulah gejalanya). Ditambah dua test baru:
+`test_matches_measured_evidence` (epoch 1791205620 -> 10:07:00) dan
+`test_bar_near_new_year_lands_in_its_utc_year`.
+
+### Bukti setelah fix
+
+- Tick live -> `broker_epoch_to_utc` vs jam internet: **selisih maks 2 detik**
+  (sebelumnya +10.799). Ambang <60 detik: LOLOS.
+- Bar terakhir `usdjpy_m1_2026.csv`: `2026-10-02T23:57:00+0000` ->
+  `2026-10-02T20:57:00+0000`, `broker_time_raw` 1790985420 tetap mentah.
+- 4 file, 1.347.847 bar (identik dengan fetch sebelumnya), **0 bar salah
+  konversi**, 0 tahun tidak cocok dengan nama file.
+- Jadwal FX sekarang masuk akal: 2023 buka `2023-01-01 21:07 UTC` (Minggu),
+  tutup Jumat `20:59 UTC`; 2024/2025/2026 buka Senin `22:00 UTC`. Di bawah
+  kode lama semua bergeser 3 jam (`23:57`, `01:00`) dan mustahil.
+- Bersih + resample ulang (63 detik). Bucket D1 tetap 311/314/313/236.
+- Native M5 vs resample: **2.760 bucket, beda 0** di OHLCV.
+- `validate_data` M1 exit 0 di 4 tahun. ruff bersih. **147 test hijau.**
+
+### DST — masih PERLU VERIFIKASI
+
+Offset +3 hanya terukur langsung pada 2026-10-05. Sesi broker ternyata tetap
+`01:00-23:59` jam dinding = `22:00-20:59` UTC sepanjang 2025 tanpa geser
+musiman, yang **konsisten** dengan offset tetap +3, tetapi tidak
+membuktikannya. `copy_rates_range` tidak bisa mengukurnya karena MT5 mencocokkan
+jendela dalam frame sendiri (hasilnya 0,0000 jam — sirkular, dibuang).
+
+### Status
+
+147 test hijau. ruff bersih. Validasi data exit 0.
+Tidak ada commit. Menunggu re-audit Klenz.

@@ -2,10 +2,17 @@
 
 Two traps this module exists to handle correctly:
 
-1. MT5 returns timestamps on the broker server clock, not UTC. The offset is
-   verified at +3 hours (``Etc/GMT-3``). Both the UTC timestamp and the raw
-   broker epoch are stored, so the conversion can be audited later without
-   fetching again.
+1. MT5 does not return a Unix instant. It returns the broker server's wall
+   clock encoded as if it were UTC. Verified empirically against an
+   independent internet clock on 2026-10-05: ``symbol_info_tick().time`` and
+   the last M1 bar both sat exactly 10800 s ahead of true UTC when decoded as
+   UTC. The offset is +3 hours (``Etc/GMT-3``). Both the corrected UTC
+   timestamp and the untouched broker epoch are stored, so the conversion can
+   be audited later without fetching again.
+   OPEN QUESTION: a static +3 is used because only 2026-10-05 could be
+   measured against a real clock. The broker may switch to +2 in winter, which
+   would shift every winter bar by an hour. See .ai/STATE.md before building
+   session features on top of this.
 
 2. The ``spread`` column from MT5 is in POINTS, not pips. For USDJPY a
    point is 0.001 and a pip is 0.01, so treating the column as pips would
@@ -64,22 +71,29 @@ OUTPUT_COLUMNS = [
 
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 
-# Single source of truth for the ``time`` string layout. clean_data.py rebuilds
-# this column for the bars it interpolates, and both stages must agree exactly.
+# Single source of truth for the ``time`` string layout. Rates are converted to
+# datetime first and formatted once, here.
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 
 
 def broker_epoch_to_utc(epoch: int, broker_tz: ZoneInfo) -> datetime:
-    """Convert an MT5 broker timestamp to a timezone-aware UTC datetime.
+    """Convert an MT5 broker wall-clock stamp to a timezone-aware UTC datetime.
+
+    MT5 encodes the broker server's wall clock as if it were UTC, so
+    ``datetime.fromtimestamp(epoch, tz=broker_tz)`` is a no-op: it reads the
+    broker digits as a true instant and merely re-labels them, which is what
+    made this module store every bar 3 hours ahead. The broker digits have to
+    be recovered first, tagged with the broker offset, and only then converted.
 
     Args:
-        epoch: Raw epoch seconds as returned by MT5, on broker server time.
+        epoch: Raw epoch seconds as returned by MT5, holding broker wall clock.
         broker_tz: Timezone of the broker server.
 
     Returns:
-        The same instant expressed in UTC, with tzinfo attached.
+        The real instant expressed in UTC, with tzinfo attached.
     """
-    return datetime.fromtimestamp(epoch, tz=broker_tz).astimezone(UTC)
+    wall_clock = datetime.fromtimestamp(epoch, tz=UTC)
+    return wall_clock.replace(tzinfo=broker_tz).astimezone(UTC)
 
 
 def spread_points_to_pips(
@@ -240,8 +254,12 @@ def split_by_year(
 ) -> list[Path]:
     """Write one CSV per calendar year.
 
+    The split follows the corrected ``time`` column, not ``broker_time_raw``.
+    The broker frame runs 3 hours ahead, so the first hours of 1 January would
+    otherwise be filed under the new year while carrying December timestamps.
+
     Args:
-        frame: DataFrame whose ``broker_time_raw`` column drives the split.
+        frame: DataFrame whose ``time`` column drives the split.
         out_dir: Destination directory.
         pattern: Filename pattern from config.
         symbol: Trading symbol.
@@ -256,7 +274,7 @@ def split_by_year(
     if frame.empty:
         raise ValueError("Cannot split an empty frame")
 
-    years = pd.to_datetime(frame["broker_time_raw"], unit="s", utc=True).dt.year
+    years = pd.to_datetime(frame["time"], format=TIME_FORMAT, utc=True).dt.year
     written = []
     for year in sorted(years.unique()):
         chunk = frame[years == year]

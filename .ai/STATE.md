@@ -9,16 +9,23 @@
 Semua checkpoint (01, 05-09d) **SUDAH SELESAI**. State file lama menandai
 sebagian besar sebagai belum — itu sudah usang dan sudah dikoreksi di sini.
 Environment siap, MT5 terhubung, data historis terbukti tersedia.
-**`src/` sudah berisi logika: 1.276 baris** (`fetch_data.py` 349,
-`validate_data.py` 543, `clean_data.py` 319, `utils/config.py` 65).
+**`src/` berisi 1.582 baris** (`validate_data.py` 543, `fetch_data.py` 367,
+`resample.py` 347, `clean_data.py` 258, `utils/config.py` 65, ditambah dua
+`__init__.py` satu baris).
 
 ## Yang Sedang Dikerjakan
 
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
-- **KESIMPULAN DST: broker TIDAK ikut DST. Offset tetap `Etc/GMT-3` untuk 2023-2026.**
-- **Validasi data LOLOS**: 0 error, 5 peringatan di 4 tahun.
-- **Pembersihan data SELESAI**: `data/processed/M1/*.parquet`, 1.349.857 bar.
-- Berikutnya: `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1).
+- **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
+  mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi
+  `broker_epoch_to_utc` yang lama adalah no-op, jadi seluruh `data/raw`
+  tersimpan 3 jam **maju**. Sudah diperbaiki dan data di-fetch ulang.
+- **DST: `Etc/GMT-3` dipakai statis untuk sekarang — PERLU VERIFIKASI.**
+- **Validasi data LOLOS**: 0 error, 6 peringatan di 4 tahun.
+- **Pembersihan data SELESAI**: `data/processed/M1/*.parquet`, 1.347.847 bar
+  (tanpa interpolasi — D1 2026-10-05).
+- **Resample SELESAI**: M5/M15/M30/H1/H4/D1 di `data/processed/<TF>/`.
+- Berikutnya: `src/features/build_features.py`.
 
 ## Yang Sudah Selesai
 
@@ -38,11 +45,10 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
       `.gitattributes`, ruff-only, docstring Google Style, `docs/PROJECT_MAP.md`
 - [x] Gate pre-commit dibetulkan: hook `mixed-line-ending` dihapus (tabrak `.gitattributes`),
       `pytest-quick` -> `scripts/run_tests.py` (toleran exit 5). `pre-commit run --all-files` 11/11 hijau
-- [x] **Phase B (task 6): `src/data/clean_data.py`** — raw CSV -> Parquet,
-      1.347.847 -> 1.349.857 bar (2.010 gap kecil terisi = 0,1489%).
-      Duplikat 0, OHLC diperbaiki 0, break & akhir week's TIDAK pernah diisi.
-      Kolom baru `is_filled` menandai setiap bar sintetis. Audit independen
-      14 check x 4 tahun = semua lolos. 103 test hijau.
+- [x] **Phase B (task 6): `src/data/clean_data.py`** — raw CSV -> Parquet.
+      Awalnya mengisi 2.010 gap kecil dengan kolom penanda `is_filled`; sejak
+      D1 (2026-10-05) interpolasi **dihapus**: 1.347.847 bar masuk == keluar,
+      0 gap diisi, tidak ada bar sintetis sama sekali.
 - [x] **Bug `.asi8` pandas 3.x ditemukan & diperbaiki** — `datetime64[s].asi8`
       menghitung detik, bukan nanosekon, sehingga kolom epoch jadi `1` semua.
       Fix `as_unit("ns")` + tes regresi `test_epoch_values_are_real_seconds`.
@@ -71,7 +77,8 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 - [x] Test 1 bulan (2026-10-01 s/d 10-06) → 3.134 bar, **7/7 verifikasi LOLOS**
 - [x] Fetch full 2023-01-01 s/d 2026-10-05 -> 1.347.847 bar M1
 - [x] `src/data/validate_data.py` (cek gap, baris, offset historis)
-- [x] `src/data/clean_data.py` (raw -> Parquet + flag `is_filled`)
+- [x] `src/data/clean_data.py` (raw -> Parquet, tanpa interpolasi)
+- [x] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1, bucket jam broker)
 - [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — berikutnya
 - [ ] **Akhir Milestone 1**: pecah `validate_data.py` (543 baris) jadi check vs
       render — batas keras dari user, bukan opsional lagi
@@ -93,8 +100,8 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 | Keputusan | Nilai | Bukti |
 |---|---|---|
 | Simbol MT5 | `USDJPY` (bukan `USDJPYm`) | `symbols_get()` 82 simbol, `USDJPYm` absen |
-| Timezone broker | **UTC+3** (`Etc/GMT-3`) | tick 05:58:13 vs UTC 02:58:06 -> +3.0019 jam; bar 05:58:00 -> +2.9983 jam |
-| Offset historis broker | **TERVERIFIKASI: tetap +3, tanpa DST** | 40 dari 47 bulan break jam dinding 4; 2 anomali terisolasi (Okt-Nov 2024, Mar 2026), tidak berulang tahunan |
+| Timezone broker | **UTC+3** (`Etc/GMT-3`) | diukur 2026-10-05 vs jam internet independen (timeapi.io + HTTP `Date:`): tick dan bar M1 tepat +10800 dtk, 5/5 sampel; setelah fix selisih <=2 dtk |
+| Offset historis broker | **PERLU VERIFIKASI** | hanya 2026-10-05 bisa diukur terhadap jam nyata. Bukti pendukung: sesi broker tetap 01:00-23:59 jam dinding = 22:00-20:59 UTC sepanjang 2025 tanpa geser musiman, **konsisten** dengan offset tetap +3 tapi **belum membuktikan** |
 | 1 pip USDJPY | 0.01 | `digits=3`, `point=0.001` |
 | Spread live | 0,8 pip | tick 157.851 / 157.859 |
 | Pipeline order | M1 dulu, 1 TF, verifikasi, baru expand | diputuskan user 2026-10-05 |
@@ -125,6 +132,22 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Peringatan Waktu Broker (WAJIB)
 
-Timestamp dari `mt5.copy_rates*` = **waktu broker UTC+3**, BUKAN UTC.
-Wajib dikonversi saat fetch. Jika tidak, session Tokyo/London/NY salah
-dan berpotensi look-ahead di boundary bar.
+Timestamp dari `mt5.copy_rates*` = **jam dinding broker UTC+3** yang
+dikodekan seolah-olah epoch UTC, BUKAN instants Unix.
+
+Aturan: `UTC = broker_epoch_raw - offset` (`Etc/GMT-3` = 10800 detik).
+`datetime.fromtimestamp(epoch, tz=broker_tz).astimezone(UTC)` **bukan**
+konversi, melainkan no-op, dan itulah bug R1 yang bertahan sampai
+2026-10-05. Peringatan di bagian ini sejak awal **benar**; kodenya yang
+melanggarnya.
+
+Status: **sudah diperbaiki** di `fetch_data.py`, data di-fetch ulang
+(1.347.847 bar, `time` = `broker_time_raw - 10800`, 0 bar salah konversi).
+
+### DST — PERLU VERIFIKASI
+
+Offset +3 hanya bisa diukur langsung terhadap jam nyata pada 2026-10-05.
+Bila broker beralih ke GMT+2 pada musim dingin, tiap bar musim dingin
+geser 1 jam. Sesi broker yang tetap 22:00-20:59 UTC sepanjang 2025
+**konsisten** dengan offset tetap +3, tetapi tidak membuktikannya.
+**Verifikasi sebelum membangun fitur sesi Tokyo/London/NY.**

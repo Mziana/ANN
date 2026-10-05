@@ -9,6 +9,20 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 ### Fixed
 
+- **Kolom `time` di `data/raw` tersimpan 3 jam Maju dari UTC (bug R1).** MT5
+  tidak mengembalikan instants Unix; ia mengembalikan jam dinding broker
+  yang dikodekan seolah-olah epoch UTC. Fungsi `broker_epoch_to_utc` lama
+  (`fromtimestamp(epoch, tz=broker_tz).astimezone(UTC)`) adalah no-op
+  matematis, sehingga argumen `broker_tz` tidak pernah berpengaruh dan tiap
+  bar disimpan 3 jam lebih depan dari UTC sejati. Diperbaiki dengan membaca
+  digit jam dinding lebih dulu, menandai offset broker, lalu mengonversi.
+  Bukti: sebelum fix `symbol_info_tick().time` meleset +10.799 detik vs jam
+  internet independen; sesudah fix selisihnya <=2 detik, 5/5 sampel.
+  Seluruh `data/raw` M1 (2023-2026) di-fetch ulang: 1.347.847 bar, 0 bar
+  salah konversi. `broker_time_raw` tetap mentah untuk audit.
+- `fetch_data.split_by_year` memakai kolom `broker_time_raw` untuk menentukan
+  tahun, sehingga beberapa jam pertama 1 Januari masuk ke file tahun baru
+  sambil membawa stempel waktu Desember. Sekarang memakai kolom `time` (UTC).
 - `validate_data.check_spread` selalu mengembalikan `passed=True` walau tidak
   pernah membandingkan apa pun. Sekarang membandingkan p99 terhadap
   `spread.by_year[year]` dengan `warn_multiplier` (2x) dan `error_multiplier`
@@ -29,13 +43,16 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 ### Added
 
-- Kolom `is_filled` pada output `clean_data`, menandai setiap bar sintetis agar
-  `resample.py` dan `build_features.py` tidak memperlakukannya sebagai bar
-  dagangan.
 - `validate_data.check_break_hour` kini mendokumentasikan bahwa angka yang
   dilaporkan adalah jam buka kembali (04:00), bukan jam break (03:00).
-- `src/data/clean_data.py`: raw CSV ke Parquet, dengan gap < 20 menit diisi dan
-  break harian serta jeda akhir pekan tidak pernah diisi.
+- `src/data/clean_data.py`: raw CSV ke Parquet. Tidak pernah mengarang bar; hanya
+  membuang duplikat, mengurutkan, dan membulatkan harga ke presisi tick.
+- `src/data/resample.py`: M1 ke M5/M15/M30/H1/H4/D1. Bucket mengikuti jam
+  dinding broker dan diberi label awal interval. Agregasi spread menghasilkan
+  `spread_pips_mean` dan `spread_pips_max`, dan setiap bucket membawa `m1_bars`
+  berisi jumlah bar M1 asli di dalamnya. Bucket kosong tidak pernah ditulis.
+- `scripts/verify_native_m5.py`: membandingkan hasil resample M5 dengan bar M5
+  native MT5. Hasil 2026-09-01 s/d 09-14: 2.760 bucket, nol selisih OHLCV.
 
 ### Changed
 
@@ -51,6 +68,11 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 - `black==24.10.0` dari `requirements.txt`. Black sudah dihapus 2026-10-05 demi
   satu formatter saja (`ruff-format`); pin tersebut sudah basi.
+- **Interpolasi gap dari `clean_data.py`.** `fill_small_gaps` dan kolom
+  `is_filled` dihapus. Mengarang harga untuk bar yang hilang berarti membuat
+  harga yang tidak pernah terjadi, dan tidak ada tahap berikutnya yang bisa
+  membedakannya dari harga asli. Tidak ada bar lagi yang dikarang: jumlah bar M1
+  keluar sama dengan jumlah bar M1 masuk di keempat tahun.
 
 ### Known issues
 
@@ -59,5 +81,7 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
   melewati 600 baris, ada fungsi publik baru, atau akhir Milestone 1. Karena itu
   pemecahan check vs render yang diminta STATE.md ditunda ke akhir Milestone 1.
 - 90 dari 946 lubang gap kecil berada di broker 02:58-03:07, tepat sebelum
-  pembukaan pasar. Modul mengisinya karena di bawah ambang 20 menit, padahal itu
-  bar pra-pembukaan. Semua ditandai `is_filled`, tapi belum diputuskan.
+  pembukaan pasar. Dulu modul mengisinya karena di bawah ambang 20 menit, padahal
+  itu bar pra-pembukaan yang tidak pernah ada. Sekarang tidak ada bar yang
+  diinterpolasi sama sekali, sehingga masalah ini hilang. Jumlah bar M1 per bucket
+  tetap terekspos lewat kolom `m1_bars` di hasil resample.

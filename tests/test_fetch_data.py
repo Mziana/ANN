@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import importlib
 import sys
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -68,26 +68,42 @@ class TestBrokerEpochToUtc:
         assert utc.utcoffset().total_seconds() == 0
 
     def test_offset_is_exactly_three_hours(self):
-        """Broker wall clock reads 3h ahead of UTC.
+        """MT5 encodes the broker wall clock, so the UTC instant is 3h earlier.
 
-        Note: the epoch itself is preserved by design, so the offset only
-        shows up when comparing the broker wall clock with the UTC one.
+        The broker digits are recovered by reading the epoch as if it were UTC,
+        which is exactly what MT5 meant when it wrote them.
         """
         epoch = 1788224460
-        broker_wall = datetime.fromtimestamp(epoch, tz=BROKER_TZ)
-        utc_wall = broker_epoch_to_utc(epoch, BROKER_TZ)
-        assert (broker_wall.replace(tzinfo=None) - utc_wall.replace(tzinfo=None)) == timedelta(
-            hours=3
-        )
+        broker_wall = datetime.fromtimestamp(epoch, tz=UTC).replace(tzinfo=None)
+        utc_wall = broker_epoch_to_utc(epoch, BROKER_TZ).replace(tzinfo=None)
+        assert broker_wall - utc_wall == timedelta(hours=3)
 
-    def test_epoch_is_preserved(self):
-        """Converting must not shift the instant, only its representation."""
+    def test_epoch_shifts_back_by_the_broker_offset(self):
+        """Converting must move the instant back by the offset, not preserve it.
+
+        The previous implementation was a no-op, which stored every bar three
+        hours ahead of real UTC. This test pins the corrected direction.
+        """
         epoch = 1788224460
-        assert broker_epoch_to_utc(epoch, BROKER_TZ).timestamp() == epoch
+        assert broker_epoch_to_utc(epoch, BROKER_TZ).timestamp() == epoch - 10800
+
+    def test_matches_measured_evidence(self):
+        """The exact bar audited on 2026-10-05 must land on real UTC.
+
+        ``symbol_info_tick().time`` was measured at 1791205620 while an
+        independent internet clock read 10:07 UTC, so the corrected conversion
+        has to reproduce 10:07:00. If this ever flips back to 13:07 the stored
+        data is three hours ahead again.
+        """
+        assert broker_epoch_to_utc(1791205620, BROKER_TZ).isoformat() == "2026-10-05T10:07:00+00:00"
 
     def test_epoch_zero_maps_to_known_instant(self):
-        """Epoch 0 is a stable reference point for regression tests."""
-        assert broker_epoch_to_utc(0, BROKER_TZ).isoformat() == "1970-01-01T00:00:00+00:00"
+        """Epoch 0 is a stable reference point for regression tests.
+
+        Zero on the broker clock is 21:00 UTC on 1969-12-31, because the epoch
+        carries a wall clock rather than an instant.
+        """
+        assert broker_epoch_to_utc(0, BROKER_TZ).isoformat() == "1969-12-31T21:00:00+00:00"
 
 
 class TestSpreadPointsToPips:
@@ -109,11 +125,11 @@ class TestSpreadPointsToPips:
 
 class TestRatesToFrame:
     def test_keeps_broker_epoch_and_adds_utc(self):
-        """Both the raw broker epoch and the UTC timestamp must survive."""
+        """Both the raw broker epoch and the corrected UTC timestamp must survive."""
         rates = make_rates([1788224460])
         frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
         assert frame.loc[0, "broker_time_raw"] == 1788224460
-        assert frame.loc[0, "time"] == "2026-09-01T01:01:00+0000"
+        assert frame.loc[0, "time"] == "2026-08-31T22:01:00+0000"
 
     def test_column_order_is_stable(self):
         rates = make_rates([1788224460, 1788224520])
@@ -165,11 +181,24 @@ class TestBuildFilename:
 
 class TestSplitByYear:
     def test_writes_one_file_per_year(self, tmp_path):
+        """The file year follows the UTC timestamp, not the broker wall clock.
+
+        Midnight on the broker clock is 21:00 UTC the previous day, so these two
+        broker midnights belong to the previous calendar year in real UTC.
+        """
         rates = make_rates([1704067200, 1735689600])
         frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
         pattern = "{symbol}_{tf}_{year}.{format}"
         written = split_by_year(frame, tmp_path, pattern, "USDJPY", "M1")
-        assert [p.name for p in written] == ["usdjpy_m1_2024.csv", "usdjpy_m1_2025.csv"]
+        assert [p.name for p in written] == ["usdjpy_m1_2023.csv", "usdjpy_m1_2024.csv"]
+
+    def test_bar_near_new_year_lands_in_its_utc_year(self, tmp_path):
+        """A 02:00 broker bar on 1 January is still December in UTC."""
+        rates = make_rates([1735696800])  # 2025-01-01 02:00:00 on the broker clock
+        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        assert frame.loc[0, "time"] == "2024-12-31T23:00:00+0000"
+        written = split_by_year(frame, tmp_path, "{symbol}_{tf}_{year}.{format}", "USDJPY", "M1")
+        assert [p.name for p in written] == ["usdjpy_m1_2024.csv"]
 
     def test_raises_on_empty_frame(self, tmp_path):
         empty = pd.DataFrame(columns=["time", "broker_time_raw"])
