@@ -29,23 +29,32 @@ repos:
       # `*.ps1 text eol=crlf` di .gitattributes. Satu sumber kebenaran saja.
 
   - repo: local
+    # Hook lokal lewat scripts/run_hook.bat supaya jalan dengan interpreter venv.
+    # `python` dari PATH = Python 3.14 sistem (pandas 3.0.3) tanpa pyarrow,
+    # sehingga 2 tes parquet selalu gagal meskipun kodenya benar.
+    #
+    # Bentuk entry `cmd /c "..." "..."` itu wajib, bukan hiasan:
+    # pre-commit memecah entry dengan shlex.split() mode POSIX, yang memakan
+    # garis miring terbalik. Path harus DIKUTIP agar backslash bertahan,
+    # karena cmd.exe (bukan CreateProcess) yang me-resolve path relatif.
+    # Penjelasan lengkap ada di komentar scripts/run_hook.bat.
     hooks:
       - id: check-state-updated
         name: Cek STATE.md diupdate hari ini
-        entry: python scripts/check_state.py
+        entry: cmd /c "scripts\run_hook.bat" "scripts\check_state.py"
         language: system
         pass_filenames: false
         always_run: true
 
       - id: pytest-quick
         name: Pytest (quick)
-        entry: python scripts/run_tests.py
+        entry: cmd /c "scripts\run_hook.bat" "scripts\run_tests.py"
         language: system
         pass_filenames: false
         always_run: true
       - id: check-foreign-chars
         name: Cek karakter asing (CJK, Cyrillic, Arab, dll)
-        entry: python scripts/check_foreign_chars.py
+        entry: cmd /c "scripts\run_hook.bat" "scripts\check_foreign_chars.py"
         language: system
         pass_filenames: true
         files: \.(py|ya?ml|md|ps1|toml|csv|txt)$

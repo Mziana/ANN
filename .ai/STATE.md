@@ -1,22 +1,24 @@
 # STATE.md — Status Saat Ini
 
 **Update terakhir:** 2026-10-05
-**Fase:** Setup Fondasi (Fase 0) — transisi ke Fase 1 (Data)
-**Progress keseluruhan:** ~55%
+**Fase:** Fase B (Data) — pipeline data berjalan
+**Progress keseluruhan:** ~60%
 
 ## Ringkasan Eksekutif
 
 Semua checkpoint (01, 05-09d) **SUDAH SELESAI**. State file lama menandai
 sebagian besar sebagai belum — itu sudah usang dan sudah dikoreksi di sini.
 Environment siap, MT5 terhubung, data historis terbukti tersedia.
-**Hambatan utama sekarang: `src/` masih kosong — nol baris logika.**
+**`src/` sudah berisi logika: 1.276 baris** (`fetch_data.py` 349,
+`validate_data.py` 543, `clean_data.py` 319, `utils/config.py` 65).
 
 ## Yang Sedang Dikerjakan
 
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **KESIMPULAN DST: broker TIDAK ikut DST. Offset tetap `Etc/GMT-3` untuk 2023-2026.**
 - **Validasi data LOLOS**: 0 error, 5 peringatan di 4 tahun.
-- Berikutnya: `src/data/clean_data.py` (raw -> `data/processed/M1/`).
+- **Pembersihan data SELESAI**: `data/processed/M1/*.parquet`, 1.349.857 bar.
+- Berikutnya: `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1).
 
 ## Yang Sudah Selesai
 
@@ -36,14 +38,43 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
       `.gitattributes`, ruff-only, docstring Google Style, `docs/PROJECT_MAP.md`
 - [x] Gate pre-commit dibetulkan: hook `mixed-line-ending` dihapus (tabrak `.gitattributes`),
       `pytest-quick` -> `scripts/run_tests.py` (toleran exit 5). `pre-commit run --all-files` 11/11 hijau
+- [x] **Phase B (task 6): `src/data/clean_data.py`** — raw CSV -> Parquet,
+      1.347.847 -> 1.349.857 bar (2.010 gap kecil terisi = 0,1489%).
+      Duplikat 0, OHLC diperbaiki 0, break & akhir week's TIDAK pernah diisi.
+      Kolom baru `is_filled` menandai setiap bar sintetis. Audit independen
+      14 check x 4 tahun = semua lolos. 103 test hijau.
+- [x] **Bug `.asi8` pandas 3.x ditemukan & diperbaiki** — `datetime64[s].asi8`
+      menghitung detik, bukan nanosekon, sehingga kolom epoch jadi `1` semua.
+      Fix `as_unit("ns")` + tes regresi `test_epoch_values_are_real_seconds`.
+- [x] Hook pre-commit lokal sekarang jalan dengan interpreter venv lewat
+      `cmd /c "scripts\run_hook.bat" ...`. Sebelumnya pakai Python 3.14 sistem
+      (tanpa pyarrow) sehingga 2 tes parquet selalu gagal.
+- [x] **Perbaikan 8 temuan audit Phase B** (fetch_data + validate_data):
+      import MT5 jadi lazy (`import_mt5()`, `timeframe_constant()`) — kedua modul
+      kini import-able tanpa MetaTrader5 terpasang; `check_spread` benar-benar
+      membandingkan p99 vs `spread.by_year` (2023 jadi WARN, sebelumnya selalu
+      LOLOS); `KNOWN_ANOMALY_WINDOWS` pindah ke config; `print` + stderr +
+      `logger`; `trading_days` pakai logika sesi. 120 test hijau.
+- [x] **5 temuan audit DIBATALKAN** atas bukti data: C-02, H-02, H-03, H-04,
+      L-02. Detail pembatalan ada di `SESSION_LOG.md`.
+- [x] **Keputusan user atas Q1/Q2/Q3 diimplementasikan** (2026-10-05):
+      `validate_data.py` tetap 543 baris dengan `# EXCEPTION` yang diperbaiki
+      (jujur soal komposisi baris) + 3 batas keras (>600 baris / fungsi publik
+      baru / akhir Milestone 1); `check_bar_count` tetap `dt.date` dengan
+      docstring yang menjelaskan kenapa berbeda dari `trading_days`; `black==24.10.0`
+      dihapus dari `requirements.txt`; pyproject TIDAK disentuh; `CHANGELOG.md`
+      diisi; catatan usang `check_foreign_chars.py` di TASKS.md dibersihkan.
 
 ## Yang Belum
 
 - [x] Phase B: `src/data/fetch_data.py` + `src/utils/config.py` + `__init__.py` + 22 test
 - [x] Test 1 bulan (2026-10-01 s/d 10-06) → 3.134 bar, **7/7 verifikasi LOLOS**
-- [ ] **Fetch full 2023-01-01 s/d 2026-10-05** (menunggu approval user)
-- [ ] `src/data/validate_data.py` (cek gap, baris, offset historis)
-- [ ] Modul `src/data/`: clean_data.py, validate_data.py, resample.py
+- [x] Fetch full 2023-01-01 s/d 2026-10-05 -> 1.347.847 bar M1
+- [x] `src/data/validate_data.py` (cek gap, baris, offset historis)
+- [x] `src/data/clean_data.py` (raw -> Parquet + flag `is_filled`)
+- [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — berikutnya
+- [ ] **Akhir Milestone 1**: pecah `validate_data.py` (543 baris) jadi check vs
+      render — batas keras dari user, bukan opsional lagi
 - [ ] Modul `src/features/`: build_features.py, build_labels.py
 - [ ] Modul `src/models/`, `src/backtest/`
 - [ ] EDA (distribusi return, volatilitas per sesi, regime)

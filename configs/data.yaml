@@ -15,6 +15,9 @@ mt5:
   # yang dikenal sebelum fitur session dipakai. Jangan percaya nilai ini
   # untuk data sebelum 2023-06 tanpa validasi.
   broker_timezone: "Etc/GMT-3"
+  # Digit harga dari symbol_info().digits. Dipakai clean_data.py untuk
+  # membulatkan OHLC ke presisi tick. USDJPY = 3 desimal.
+  price_digits: 3
   timeframes:
     - M1
     - M5
@@ -56,6 +59,11 @@ spread:
     2026: 1.5
   # Kalau ini dipakai, spread harus dikalikan stress_multiplier.
   stress_multiplier: 2.0
+  # check_spread membandingkan p99 terukur terhadap by_year di atas.
+  # p99 > by_year x warn_multiplier  -> WARN
+  # p99 > by_year x error_multiplier -> ERROR
+  warn_multiplier: 2.0
+  error_multiplier: 5.0
   by_session:
     tokyo_early: 3.0
     tokyo_normal: 1.5
@@ -80,3 +88,13 @@ validation:
     H1: 120
   max_return_std: 10
   min_rows_per_year: 100000
+  # Jendela tempat jam break broker menyimpang dari nilai dominannya.
+  # Dipakai check_known_anomalies. Dihapus dari kode supaya bisa diperbarui
+  # tanpa menyentuh src/ (RULES.md §10).
+  anomaly_windows:
+    - start: "2024-10-29"
+      end: "2024-11-01"
+      note: "break harian di jam dinding 3, bukan 4"
+    - start: "2026-03-10"
+      end: "2026-03-27"
+      note: "break harian di jam dinding 3, bukan 4"

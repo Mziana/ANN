@@ -6,19 +6,26 @@ the suite stays deterministic and fast (RULES.md section 11).
 
 from __future__ import annotations
 
+import importlib
+import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from src.data import fetch_data as fetch_data_module
 from src.data.fetch_data import (
+    TIMEFRAME_NAMES,
     broker_epoch_to_utc,
     build_filename,
+    import_mt5,
     rates_to_frame,
     split_by_year,
     spread_points_to_pips,
+    timeframe_constant,
     write_csv,
 )
 from src.utils.config import ConfigError, load_config
@@ -196,3 +203,101 @@ class TestLoadConfig:
         (tmp_path / "scalar.yaml").write_text("- just\n- a\n- list\n", encoding="utf-8")
         with pytest.raises(ConfigError, match="mapping"):
             load_config("scalar", config_dir=tmp_path)
+
+
+class MetaTrader5Blocker:
+    """Context manager that makes importing MetaTrader5 fail.
+
+    MetaTrader5 only exists on Windows, so the module must stay importable on a
+    machine that cannot load it. Blocking the import is how these tests prove
+    that without needing a second environment.
+    """
+
+    class _Finder:
+        """Meta path finder that refuses to load MetaTrader5."""
+
+        def find_module(self, name: str, path: object = None) -> object:
+            """Return self for MetaTrader5 only.
+
+            Args:
+                name: Module name being imported.
+                path: Search path, unused.
+
+            Returns:
+                This finder when the name is blocked, otherwise None.
+            """
+            return self if name == "MetaTrader5" else None
+
+        def load_module(self, name: str) -> object:
+            """Reject the import.
+
+            Args:
+                name: Module name being imported.
+
+            Raises:
+                ImportError: Always, because the package is unavailable.
+            """
+            raise ImportError("MetaTrader5 blocked for test")
+
+    def __enter__(self) -> MetaTrader5Blocker:
+        """Install the blocking finder.
+
+        Returns:
+            This blocker.
+        """
+        self._finder = self._Finder()
+        sys.meta_path.insert(0, self._finder)
+        return self
+
+    def __exit__(self, *exc_info: object) -> bool:
+        """Remove the blocking finder.
+
+        Args:
+            *exc_info: Unused exception triple from the with block.
+
+        Returns:
+            False so exceptions are never suppressed.
+        """
+        if self._finder in sys.meta_path:
+            sys.meta_path.remove(self._finder)
+        return False
+
+
+class TestLazyMt5Import:
+    """MetaTrader5 is Windows-only, so it must not be imported at module level."""
+
+    def test_no_top_level_mt5_import_in_source(self):
+        source = Path(fetch_data_module.__file__).read_text(encoding="utf-8")
+        top_level = [line for line in source.splitlines() if line.startswith("import MetaTrader5")]
+        assert top_level == []
+
+    def test_mt5_absent_still_allows_pure_helpers(self):
+        """Every non-network helper must work with MetaTrader5 unimportable."""
+        with MetaTrader5Blocker():
+            for name in list(sys.modules):
+                if name.startswith("src.data.fetch_data"):
+                    del sys.modules[name]
+            module = importlib.import_module("src.data.fetch_data")
+            name = module.build_filename("USDJPY", "M1", "2026", "{symbol}_{tf}_{year}.{format}")
+            assert name == "usdjpy_m1_2026.csv"
+            assert module.spread_points_to_pips(6, 0.001, 0.01) == pytest.approx(0.6)
+
+    def test_mt5_absent_still_allows_validate_data(self):
+        """validate_data imports fetch_data only for its path helpers."""
+        with MetaTrader5Blocker():
+            for name in list(sys.modules):
+                if name.startswith(("src.data.fetch_data", "src.data.validate_data")):
+                    del sys.modules[name]
+            module = importlib.import_module("src.data.validate_data")
+            assert callable(module.check_bar_count)
+
+    def test_timeframe_constant_rejects_unknown_name(self):
+        with pytest.raises(ValueError, match="Unknown timeframe"):
+            timeframe_constant("M99")
+
+    def test_timeframe_names_cover_config(self):
+        config = load_config("data")
+        assert set(config["mt5"]["timeframes"]) == set(TIMEFRAME_NAMES)
+
+    def test_import_mt5_is_callable(self):
+        assert callable(import_mt5)

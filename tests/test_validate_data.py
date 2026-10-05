@@ -11,7 +11,6 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from src.data.validate_data import (
-    KNOWN_ANOMALY_WINDOWS,
     CheckResult,
     YearReport,
     check_bar_count,
@@ -26,10 +25,15 @@ from src.data.validate_data import (
     discover_files,
     prepare_frame,
     render_markdown,
+    validate_year,
 )
+from src.utils.config import load_config
 
 BROKER_TZ = ZoneInfo("Etc/GMT-3")
 START_EPOCH = 1_700_000_000
+
+DATA_CONFIG = load_config("data")
+ANOMALY_WINDOWS = DATA_CONFIG["validation"]["anomaly_windows"]
 
 
 def make_frame(
@@ -49,6 +53,64 @@ def make_frame(
     return pd.DataFrame(
         rows, columns=["broker_time_raw", "open", "high", "low", "close", "spread_pips"]
     )
+
+
+def frame_with_tail(tail_pips: float, rows: int = 200, wide: int = 5) -> pd.DataFrame:
+    """Build a frame whose p99 sits on a wide tail.
+
+    pandas interpolates the quantile, so a single outlier in a short frame never
+    reaches p99. Five wide rows out of 200 puts the 99th percentile on the tail.
+
+    Args:
+        tail_pips: Spread value used by the final rows.
+        rows: Total number of rows.
+        wide: How many final rows carry the wide spread.
+
+    Returns:
+        Frame with a predictable p99 equal to ``tail_pips``.
+    """
+    pips = [0.6] * (rows - wide) + [tail_pips] * wide
+    return make_frame([(START_EPOCH + i * 60, 1, 2, 0.5, 1, pips[i]) for i in range(rows)])
+
+
+def make_sessions(count: int, bars: int = 600, gap_minutes: int = 61) -> pd.DataFrame:
+    """Build ``count`` trading sessions separated by a single gap.
+
+    Args:
+        count: How many sessions to emit.
+        bars: Bars inside each session.
+        gap_minutes: Gap between one session and the next.
+
+    Returns:
+        Frame whose session count is exactly ``count``.
+    """
+    rows: list[tuple[int, float, float, float, float, float]] = []
+    cursor = START_EPOCH
+    for _ in range(count):
+        for i in range(bars):
+            rows.append((cursor + i * 60, 1.0, 2.0, 0.5, 1.0, 0.6))
+        cursor += (bars - 1) * 60 + gap_minutes * 60
+    return attach_broker_time(
+        pd.DataFrame(
+            rows,
+            columns=["broker_time_raw", "open", "high", "low", "close", "spread_pips"],
+        )
+    )
+
+
+def make_frame_with_tail(tail_pips: float, rows: int = 200, wide: int = 5) -> pd.DataFrame:
+    """Build a frame whose p99 sits on a wide tail.
+
+    Args:
+        tail_pips: Spread value used by the final rows.
+        rows: Total number of rows.
+        wide: How many final rows carry the wide spread.
+
+    Returns:
+        Frame with a predictable p99 equal to ``tail_pips``.
+    """
+    pips = [0.6] * (rows - wide) + [tail_pips] * wide
+    return make_frame([(START_EPOCH + i * 60, 1, 2, 0.5, 1, pips[i]) for i in range(rows)])
 
 
 def attach_broker_time(frame: pd.DataFrame) -> pd.DataFrame:
@@ -265,12 +327,32 @@ class TestCheckGaps:
 
 class TestCheckSpread:
     def test_reports_distribution(self):
-        result = check_spread(make_frame(), "2023")
-        assert result.passed
+        result = check_spread(make_frame(), DATA_CONFIG, "2023")
         assert "median" in result.detail
 
     def test_uses_year_in_name(self):
-        assert "2023" in check_spread(make_frame(), "2023").name
+        assert "2023" in check_spread(make_frame(), DATA_CONFIG, "2023").name
+
+    def test_quiet_year_passes(self):
+        frame = make_frame([(START_EPOCH + i * 60, 1, 2, 0.5, 1, 0.6) for i in range(100)])
+        result = check_spread(frame, DATA_CONFIG, "2025")
+        assert result.passed
+        assert result.severity == "INFO"
+
+    def test_wide_tail_warns(self):
+        """p99 between warn and error multiplier must warn, not pass silently."""
+        result = check_spread(frame_with_tail(9.0), DATA_CONFIG, "2023")
+        assert result.severity == "WARN"
+        assert not result.passed
+
+    def test_worst_tail_is_an_error(self):
+        result = check_spread(frame_with_tail(90.0), DATA_CONFIG, "2023")
+        assert result.severity == "ERROR"
+        assert not result.passed
+
+    def test_detail_shows_the_thresholds_used(self):
+        result = check_spread(make_frame(), DATA_CONFIG, "2023")
+        assert "config 3.00 pip" in result.detail
 
 
 class TestCheckBreakHour:
@@ -291,21 +373,82 @@ class TestCheckBreakHour:
 class TestCheckKnownAnomalies:
     def test_frame_before_all_windows_passes(self):
         frame = attach_broker_time(make_frame())
-        assert check_known_anomalies(frame).passed
+        assert check_known_anomalies(frame, ANOMALY_WINDOWS).passed
 
     def test_frame_inside_window_warns(self):
         start = pd.Timestamp("2026-03-15", tz="UTC").timestamp()
         frame = attach_broker_time(
             make_frame([(int(start) + i * 60, 1, 2, 0.5, 1, 0.6) for i in range(100)])
         )
-        result = check_known_anomalies(frame)
+        result = check_known_anomalies(frame, ANOMALY_WINDOWS)
         assert not result.passed
         assert "2026-03-10" in result.detail
 
     def test_windows_are_well_formed(self):
-        for start, end, note in KNOWN_ANOMALY_WINDOWS:
-            assert start < end
-            assert note
+        for window in ANOMALY_WINDOWS:
+            assert window["start"] < window["end"]
+            assert window["note"]
+
+    def test_empty_window_list_passes(self):
+        frame = attach_broker_time(make_frame())
+        assert check_known_anomalies(frame, []).passed
+
+
+class TestValidateYearSessions:
+    """trading_days must count sessions by gap, not by broker calendar date."""
+
+    def _write(self, tmp_path, frame):
+        path = tmp_path / "usdjpy_m1_2026.csv"
+        frame.assign(time="2026-01-01T00:00:00+0000").to_csv(path, index=False)
+        return path
+
+    def test_counts_one_session_per_break(self, tmp_path):
+        path = self._write(tmp_path, make_sessions(count=3))
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        assert report.trading_days == 3
+
+    def test_weekend_gap_starts_a_session(self, tmp_path):
+        path = self._write(tmp_path, make_sessions(count=2, gap_minutes=2900))
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        assert report.trading_days == 2
+
+    def test_broken_session_counts_as_one_session(self, tmp_path):
+        """A 10 minute hole must not start a new session."""
+        path = self._write(tmp_path, make_sessions(count=2, gap_minutes=10))
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        assert report.trading_days == 1
+
+    def test_session_spanning_many_dates_is_still_one_session(self, tmp_path):
+        """2023 Jan-Mei had no daily break, so one session ran for days."""
+        start = int(pd.Timestamp("2023-01-02 01:00", tz="UTC").timestamp())
+        rows = [(start + i * 60, 1.0, 2.0, 0.5, 1.0, 0.6) for i in range(5 * 1440)]
+        frame = attach_broker_time(
+            pd.DataFrame(
+                rows,
+                columns=["broker_time_raw", "open", "high", "low", "close", "spread_pips"],
+            )
+        )
+        path = self._write(tmp_path, frame)
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        distinct_dates = prepare_frame(path, BROKER_TZ)["broker_time"].dt.date.nunique()
+        assert report.trading_days == 1
+        assert distinct_dates > report.trading_days
+
+    def test_run_on_report_uses_configured_spread(self, tmp_path):
+        path = self._write(tmp_path, make_frame_with_tail(90.0))
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        spread = next(c for c in report.checks if c.name.startswith("Spread"))
+        assert spread.severity == "ERROR"
+
+    def test_uses_configured_anomaly_windows(self, tmp_path):
+        start = pd.Timestamp("2026-03-15", tz="UTC").timestamp()
+        frame = attach_broker_time(
+            make_frame([(int(start) + i * 60, 1, 2, 0.5, 1, 0.6) for i in range(100)])
+        )
+        path = self._write(tmp_path, frame)
+        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        anomaly = next(c for c in report.checks if c.name == "Anomali diketahui")
+        assert not anomaly.passed
 
 
 class TestPrepareFrame:

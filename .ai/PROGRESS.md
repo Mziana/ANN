@@ -75,3 +75,19 @@
 ## Milestone 9: Live (Fase 3)
 
 - [ ] Modal kecil
+
+## Kemajuan Fase B — Data (per 2026-10-05)
+
+- [x] Fetch MT5 M1 2023-2026 -> 1.347.847 bar CSV (raw, immutable)
+- [x] `fetch_data.py` — timezone UTC+3, spread POINT vs PIP, epoch mentah
+- [x] `validate_data.py` — 0 error, 5 peringatan, 4 tahun
+- [x] `clean_data.py` — Parquet 1.349.857 bar, 2.010 gap kecil terisi
+- [ ] `resample.py` — M1 -> M5/M15/M30/H1/H4/D1
+
+Regresi: 103 test hijau. Gate `pre-commit run --all-files` 12/12.
+
+### Update 2026-10-05 (audit Phase B)
+
+- [x] 8 temuan diperbaiki, 5 dibatalkan atas bukti data
+- [x] Validasi data nyata: exit 0, 2023 kini WARN karena spread p99 8,50 pip
+- [x] 120 test hijau, pre-commit 12/12

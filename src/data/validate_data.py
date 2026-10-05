@@ -9,17 +9,28 @@ Severity levels:
     ERROR  - the dataset is unsafe to use (duplicates, non-monotonic time)
     WARN   - suspicious but usable (wide gaps, extreme spread, odd break hour)
     INFO   - measured value, for the record
-
-LENGTH_EXCEPTION: 438 lines, over the 400 soft limit. Every public function
-carries a Google docstring because RULES.md section 6 makes that mandatory,
-and each check is deliberately a standalone pure function so it can be tested
-without touching disk. The longest function is 39 lines, well under the
-50 line limit.
 """
+
+# EXCEPTION: this file is over the 400 line soft limit. Re-audited 2026-10-05 and
+# kept whole, with the owner's agreement, because splitting checks from rendering
+# would move CheckResult and YearReport into a second module and create a circular
+# import between the checks and the renderer. Growth since commit 74f155d is
+# 444 -> 543 lines (+99): 22 code, 32 comments, 31 docstrings, 14 blank. Code is
+# the smallest content bucket, and every public function still stays well under
+# the 50 line limit, so the split is not needed yet. Measured 2026-10-05.
+#
+# HARD LIMITS, decided by the owner on 2026-10-05. This exception is only valid
+# while all three hold; if any one breaks, split the file into checks vs render:
+#   1. The file passes 600 lines (currently 543, so 57 lines of headroom).
+#   2. A new public function is added to this module.
+#   3. The end of Milestone 1 (Phase B data pipeline) is reached.
+# This also honours the standing pipeline rule in STATE.md, which asks for the
+# check-vs-render split; that split is deferred to end of Milestone 1.
 
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 from dataclasses import dataclass, field
 from datetime import date
@@ -32,18 +43,29 @@ import pandas as pd
 from src.data.fetch_data import RAW_DIR, build_filename
 from src.utils.config import load_config
 
-# Bar-count bands measured 2026-10-05 from data/raw/M1/
-# (1,347,847 bars across 1,174 calendar days):
-#     partial weekend days : 118 - 180    bars (200 hari)
-#     split days           : 1,100 - 1,330 bars (200 hari)
-#     full trading days    : 1,341 - 1,433 bars (774 hari)
-# Nothing lands between 180 and 1,100, so a day in that band means bars were
-# lost. Never assume a single bar count per day: the daily break sits at a
-# different clock hour across the dataset, which splits some trading days
-# across two calendar dates.
+logger = logging.getLogger(__name__)
+
+# Bar-count bands measured 2026-10-05 from data/raw/M1/ (1,347,847 bars across
+# 1,174 broker calendar dates), grouped by broker wall-clock date:
+#     Saturday (weekend tail) : 118 - 180 bars      (200 days)
+#     Monday  (week reopen)   : 1,167 - 1,260 bars  (194 days)
+#     Tuesday .. Friday       : 1,341 - 1,433 bars  (774 days)
+# Nothing lands between 180 and 1,167. A day inside that band means bars were
+# lost.
+#
+# The broker trading day is 04:00 -> 03:00 broker time, so Monday is a 20 hour
+# session (1,200 bars) because the week reopens at 04:00, while Tuesday through
+# Friday carry 23 hours (1,380 bars) after the 03:00-04:00 break. That is why
+# MIN_FULL_DAY_BARS stays at 1,100: raising it to the 1,300 the auditor
+# suggested would flag all 194 legitimate Monday sessions as lost bars.
 PARTIAL_DAY_MAX_BARS = 200
 MIN_FULL_DAY_BARS = 1100
 MAX_BARS_PER_DAY = 1440
+
+# A session starts after any gap at least this long. The daily break is about
+# 61 minutes and the weekend gap about 49 hours, so 55 minutes separates a real
+# session boundary from the routine 8-9 minute holes around the break.
+SESSION_BOUNDARY_MINUTES = 55
 
 # Gap classes measured from the same dataset.
 DAILY_BREAK_MINUTES = (55, 70)
@@ -52,11 +74,9 @@ WEEKEND_GAP_MINUTES = (2400, 3100)
 # this, otherwise every normal day produces noise.
 ODD_GAP_MINUTES = 20
 
-# Windows where the broker's break hour deviated from its usual value.
-KNOWN_ANOMALY_WINDOWS = [
-    ("2024-10-29", "2024-11-01", "break harian di jam dinding 3, bukan 4"),
-    ("2026-03-10", "2026-03-27", "break harian di jam dinding 3, bukan 4"),
-]
+# Windows where the broker's break hour deviated from its usual value now live
+# in configs/data.yaml under validation.anomaly_windows, so they can be
+# corrected without touching this file (RULES.md §10).
 
 REPORTS_DIR = RAW_DIR.parents[1] / "reports"
 
@@ -98,6 +118,23 @@ def check_bar_count(frame: pd.DataFrame) -> CheckResult:
 
     A healthy day is either a short weekend session or close to a full M1
     day. A day landing between the two means bars went missing.
+
+    This groups by broker calendar date on purpose, unlike ``trading_days`` which
+    counts sessions by gap. The two answer different questions, and only the
+    calendar grouping detects a short session:
+
+    - A broker date caps at 1,440 bars, so every band in this check is a fixed,
+      verifiable limit. A session has no such cap: Jan-May 2023 had no daily
+      break, so one session ran 7,160 bars across five days. Grouping sessions
+      would push 24 of those past ``MAX_BARS_PER_DAY`` and report the healthy
+      2023 dataset as an ERROR.
+    - The roughly 180 bar Saturday tail is the end of Friday's session, because
+      that session crosses broker midnight. Under session grouping the partial
+      signal disappears entirely (0 partial sessions across all four years),
+      losing the weekend detection this check relies on.
+
+    Switching to session grouping is therefore rejected; see the owner's Q2
+    decision of 2026-10-05.
 
     Args:
         frame: One year of data with a ``broker_time`` column.
@@ -216,33 +253,69 @@ def check_gaps(frame: pd.DataFrame) -> CheckResult:
     return CheckResult("Gap", "WARN", odd == 0, detail)
 
 
-def check_spread(frame: pd.DataFrame, year: str) -> CheckResult:
-    """Compare the year's spread against the configured value for that year.
+def check_spread(frame: pd.DataFrame, config: dict[str, Any], year: str) -> CheckResult:
+    """Check the year's spread tail against the configured spread for that year.
+
+    The configuration has to be enforceable, otherwise setting a spread for a
+    year is only a note in a file. The 99th percentile is compared against
+    ``spread.by_year[year]`` scaled by the configured multipliers: above the
+    warn multiplier it is a warning, above the error multiplier it is an error.
 
     Args:
         frame: One year of data with a ``spread_pips`` column.
+        config: Parsed contents of configs/data.yaml.
         year: Year label used to look up the configured spread.
 
     Returns:
-        A CheckResult with the measured spread distribution.
+        A CheckResult carrying the measured distribution and the verdict.
     """
+    spread_config = config["spread"]
+    # YAML parses an unquoted `2023:` as an int key, so normalise to str before
+    # looking up. Without this every year silently falls back to `default` and
+    # the per-year spread never gets enforced.
+    by_year = {str(key): float(value) for key, value in spread_config["by_year"].items()}
+    configured = by_year.get(str(year), float(spread_config["default"]))
+    warn_at = configured * float(spread_config["warn_multiplier"])
+    error_at = configured * float(spread_config["error_multiplier"])
+
     pips = frame["spread_pips"]
     median = float(pips.median())
     p95 = float(pips.quantile(0.95))
     p99 = float(pips.quantile(0.99))
-    detail = f"median {median:.2f} pip, p95 {p95:.2f}, p99 {p99:.2f}, maks {pips.max():.2f}"
-    return CheckResult(f"Spread {year}", "WARN", True, detail)
+
+    if p99 > error_at:
+        severity, passed = "ERROR", False
+    elif p99 > warn_at:
+        severity, passed = "WARN", False
+    else:
+        severity, passed = "INFO", True
+
+    detail = (
+        f"median {median:.2f} pip, p95 {p95:.2f}, p99 {p99:.2f}, maks {pips.max():.2f} "
+        f"| config {configured:.2f} pip (warn > {warn_at:.2f}, error > {error_at:.2f})"
+    )
+    return CheckResult(f"Spread {year}", severity, passed, detail)
 
 
 def check_break_hour(frame: pd.DataFrame, broker_tz: ZoneInfo) -> CheckResult:
-    """Report the dominant daily break hour on the broker wall clock.
+    """Report the dominant hour trading resumes after the daily break.
+
+    The hour reported is the wall-clock hour of the first bar *after* the gap,
+    which is why the dominant value is 4 even though the empty hour is 3: the
+    broker stops quoting at 03:00 and reopens at 04:00 broker time.
+
+    The 80 percent share is a measurement threshold rather than a configured
+    expectation, so this check reports drift instead of enforcing a fixed hour.
+    An ``expected_break_hour`` in config would be the way to turn it into a
+    hard assertion.
 
     Args:
         frame: One year of data with a ``broker_time`` column.
         broker_tz: Broker timezone used to render local hours.
 
     Returns:
-        A CheckResult with the dominant break hour, warning if unusual.
+        A CheckResult with the dominant reopen hour and the share of breaks
+        that used it.
     """
     gaps = frame["broker_time_raw"].diff() / 60.0
     dlow, dhigh = DAILY_BREAK_MINUTES
@@ -257,11 +330,16 @@ def check_break_hour(frame: pd.DataFrame, broker_tz: ZoneInfo) -> CheckResult:
     return CheckResult("Jam break", "WARN", share >= 80, detail)
 
 
-def check_known_anomalies(frame: pd.DataFrame) -> CheckResult:
+def check_known_anomalies(
+    frame: pd.DataFrame, anomaly_windows: list[dict[str, str]]
+) -> CheckResult:
     """Flag data falling inside a previously identified anomaly window.
 
     Args:
         frame: One year of data with a ``broker_time`` column.
+        anomaly_windows: Windows from ``validation.anomaly_windows`` in
+            configs/data.yaml, each with ``start``, ``end`` and optional
+            ``note`` keys.
 
     Returns:
         A CheckResult listing any overlapping known anomaly window.
@@ -272,10 +350,12 @@ def check_known_anomalies(frame: pd.DataFrame) -> CheckResult:
     first = frame["broker_time"].min().date()
     last = frame["broker_time"].max().date()
     hits = []
-    for start, end, note in KNOWN_ANOMALY_WINDOWS:
-        start_d, end_d = date.fromisoformat(start), date.fromisoformat(end)
+    for window in anomaly_windows:
+        start_d = date.fromisoformat(str(window["start"]))
+        end_d = date.fromisoformat(str(window["end"]))
         if first <= end_d and last >= start_d:
-            hits.append(f"{start}..{end} ({note})")
+            note = window.get("note", "")
+            hits.append(f"{start_d}..{end_d} ({note})" if note else f"{start_d}..{end_d}")
     detail = "tidak ada" if not hits else "; ".join(hits)
     return CheckResult("Anomali diketahui", "WARN", not hits, detail)
 
@@ -297,22 +377,32 @@ def prepare_frame(path: Path, broker_tz: ZoneInfo) -> pd.DataFrame:
     return frame.sort_values("broker_time_raw").reset_index(drop=True)
 
 
-def validate_year(path: Path, broker_tz: ZoneInfo) -> YearReport:
+def validate_year(path: Path, broker_tz: ZoneInfo, config: dict[str, Any]) -> YearReport:
     """Run every check against one year file.
 
     Args:
         path: CSV written by fetch_data.
         broker_tz: Broker timezone.
+        config: Parsed contents of configs/data.yaml.
 
     Returns:
         A YearReport holding the year and all check results.
     """
     frame = prepare_frame(path, broker_tz)
     year = path.stem[-4:]
+
+    # A trading session starts after any gap long enough to be the daily break
+    # or the weekend. Counting broker calendar dates instead would report the
+    # same total here but would mislabel a session that spans midnight as two
+    # days, which is the same class of bug as grouping by wall-clock date in
+    # check_bar_count.
+    gaps = frame["broker_time_raw"].diff() / 60.0
+    trading_days = int(gaps.ge(SESSION_BOUNDARY_MINUTES).sum()) + int(not frame.empty)
+
     report = YearReport(
         year=year,
         bars=len(frame),
-        trading_days=int(frame["broker_time"].dt.date.nunique()),
+        trading_days=trading_days,
     )
     report.checks = [
         check_bar_count(frame),
@@ -320,9 +410,9 @@ def validate_year(path: Path, broker_tz: ZoneInfo) -> YearReport:
         check_monotonic(frame),
         check_ohlc(frame),
         check_gaps(frame),
-        check_spread(frame, year),
+        check_spread(frame, config, year),
         check_break_hour(frame, broker_tz),
-        check_known_anomalies(frame),
+        check_known_anomalies(frame, config["validation"]["anomaly_windows"]),
     ]
     return report
 
@@ -411,6 +501,9 @@ def main(argv: list[str] | None = None) -> int:
         Process exit code: 0 when no error-level check failed, 1 otherwise.
     """
     args = parse_args(argv)
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+    )
     config: dict[str, Any] = load_config("data")
     symbol = config["mt5"]["symbol"]
     timeframe = args.timeframe or config["mt5"]["timeframes"][0]
@@ -420,10 +513,12 @@ def main(argv: list[str] | None = None) -> int:
 
     files = discover_files(symbol, timeframe, pattern, data_dir)
     if not files:
-        print(f"GAGAL: tidak ada file data di {data_dir}")
+        message = f"GAGAL: tidak ada file data di {data_dir}"
+        logger.error(message)
+        print(message, file=sys.stderr)
         return 1
 
-    reports = [validate_year(path, broker_tz) for path in files]
+    reports = [validate_year(path, broker_tz, config) for path in files]
     document = render_markdown(reports)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -432,10 +527,14 @@ def main(argv: list[str] | None = None) -> int:
 
     for report in reports:
         mark = "LOLOS" if report.ok else "GAGAL"
-        print(
+        line = (
             f"{report.year}: {report.bars:,} bar, {len(report.errors)} error, "
             f"{len(report.warnings)} peringatan -> {mark}"
         )
+        logger.info(line)
+        print(line)
+
+    logger.info("laporan ditulis ke %s", out)
     print(f"Laporan: {out}")
     return 0 if all(r.ok for r in reports) else 1
 

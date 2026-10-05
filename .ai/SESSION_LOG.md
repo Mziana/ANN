@@ -272,3 +272,302 @@ Tapi tidak ada bukti yang mengarah ke DST.
 - Spread p99 per tahun: 2023 = 8,5 pip (!), 2024 = 1,7, 2025 = 1,7, 2026 = 1,2.
   2023 punya ekor spread jauh lebih buruk. Max 2024 = 55,6 pip.
 - `configs/data.yaml` `spread.default: 1,5` belum diubah (sesuai instruksi user).
+
+---
+
+## 2026-10-05 — `src/data/clean_data.py` (raw CSV -> Parquet)
+
+### Yang dibersihkan
+
+`python -m src.data.clean_data` membersihkan 4 file raw jadi Parquet di
+`data/processed/M1/`. Raw tidak pernah dibuka untuk tulis.
+
+| Tahun | Bar masuk | Bar keluar | Duplikat | OHLC diperbaiki | Gap diisi |
+|-------|-----------|-------------|----------|-----------------|-----------|
+| 2023 | 362.693 | 364.186 | 0 | 0 | 1.493 |
+| 2024 | 358.331 | 358.582 | 0 | 0 | 251 |
+| 2025 | 356.977 | 357.174 | 0 | 0 | 197 |
+| 2026 | 269.846 | 269.915 | 0 | 0 | 69 |
+| **Total** | **1.347.847** | **1.349.857** | **0** | **0** | **2.010** |
+
+Waktu jalan 11 detik untuk 1,35 juta bar. 2.010 bar terisi = 0,1489% dari
+total, tersebar di 946 lubang. Distribusi panjang lubang: 711 lubang 1 menit,
+81 lubang 2 menit, sisanya 3-19 menit.
+
+### Keputusan desain: kolom `is_filled`
+
+Setiap bar yang DIHASILKAN modul ini (bukan dibaca dari raw) ditandai `True`
+di kolom `is_filled`. Alasannya: tanpa penanda itu, bar interpolasi diam-diam
+berubah jadi bar dagangan di tahap berikutnya. `resample.py` dan
+`build_features.py` nanti WAJIB bisa membedakan.
+
+Bar terisi tidak di-DROP tapi di-ffill: open=high=low=close=bar sebelumnya.
+
+### Verifikasi independen
+
+Audit terpisah (di luar repo, tidak trusting `clean_data.py`) membandingkan
+Parquet output vs CSV raw. 14 check x 4 tahun = SEMUA LOLOS:
+- tidak ada bar raw hilang; bar tambahan persis = `is_filled`
+- aritmetika bar cocok; tanpa duplikat; terurut menaik
+- invarian OHLC utuh; presisi 3 desimal (drift 0,00e+00)
+- himpunan jeda > 20 menit IDENTIK raw vs output (14/9/7/13 jenis)
+- jeda break harian 55-70 menit tetap utuh (111/206/205/156)
+- tidak ada bar terisi yang menempel jeda besar: 0
+- setiap rentetan bar terisi diapit bar asli 1 menit di kedua ujungnya
+
+### Dua bug yang ditemukan (dan cara ketahuan)
+
+**1. `broker_time_raw` sudah ada sebagai kolom.** Di `fill_small_gaps`, index
+diubah ke datetime tapi kolomnya tetap ada, sehingga `insert(0, TIME_COLUMN)`
+gagal: `ValueError: cannot insert broker_time_raw, already exists`. Perbaikan:
+drop kolom `time` DAN `broker_time_raw` sebelum reindex, bangun ulang keduanya
+dari index. `time` ikut drop karena kalau di-ffill, string timestamp basi akan
+tersalin ke bar terisi — lebih buruk daripada harga basi.
+
+**2. `.asi8` berubah satuan di pandas 3.x.** Ini yang SERIUS.
+`pre-commit` ternyata menjalankan pytest dengan `python` dari PATH = Python 3.14
+sistem (pandas **3.0.3**), bukan venv (pandas **2.2.3**). Di pandas 3.x,
+`pd.to_datetime(int, unit="s")` menghasilkan index `datetime64[s]`, yang
+`.asi8`-nya menghitung **detik**, bukan nanosekon. Jadi `asi8 // 10**9`
+menghasilkan `1` untuk SEMUA bar. Kolom epoch jadi sampah total — dan tes
+lolos di venv karena venv masih pandas 2.2.3.
+
+Perbaikan: `kept.index.as_unit("ns").asi8 // 10**9`. `as_unit("ns")` no-op di
+pandas 2.x, benar di 3.x. Ditambah tes regresi
+`test_epoch_values_are_real_seconds` yang mengunci nilai epoch asli — tes
+flag saja tidak akan menangkap bug ini.
+
+Konsekuensi lanjutan: ketiga hook lokal di `.pre-commit-config.yaml` tidak lagi
+pakai `python` dari PATH. Gate harus menguji interpreter yang sama dengan yang
+dipakai development, kalau tidak 2 tes parquet selalu gagal karena pyarrow tidak
+ada di Python sistem.
+
+Tiga opsi dicoba, tiga gagal sebelum yang berhasil:
+1. `entry: venv/Scripts/python.exe ...` -> GAGAL, `WinError 2`. Windows
+   `CreateProcess` tidak me-resolve path program relatif, sama sekali.
+2. `language: python_system` -> GAGAL, hanya ada di pre-commit 4.0; project 3.8.0.
+3. `entry: scripts/run_hook.bat ...` -> GAGAL, `CreateProcess` juga tidak
+   me-resolve path relatif untuk `.bat`.
+4. `entry: cmd /c "scripts\run_hook.bat" "scripts\run_tests.py"` -> LOLOS.
+
+Yang berhasil adalah `cmd /c`, karena `cmd.exe` me-resolve path relatif terhadap
+direktori kerja sedangkan `CreateProcess` tidak. KutipanNYA WAJIB: pre-commit
+memecah entry dengan `shlex.split()` mode POSIX yang memakan garis miring
+terbalik, jadi `scripts\run_hook.bat` tanpa kutip akan jadi `scriptsrun_hook.bat`.
+File baru: `scripts/run_hook.bat` (CRLF, sesuai `.gitattributes`).
+
+### Temuan sampingan (belum diputuskan)
+
+90 dari 946 lubang (9,5%) punya panjang 8-9 menit dan **semuanya** jatuh di
+broker 02:58-03:07, yaitu tepat sebelum pembukaan. Ini cocok dengan catatan
+sebelumnya bahwa bukaan pasar bergeser 03:07 -> 04:01.
+
+Artinya pada hari-hari itu kita mengisi bar **pra-pembukaan** dengan harga
+carry-forward dari 02:58. Secara aturan modul ini sah (lubang < 20 menit),
+tapi secara makna "sebelum pasar buka" bar itu tidak pernah ada. Jumlahnya
+kecil dan semuanya ditandai `is_filled`, tapi ini keputusan yang layak
+dipikirkan sebelum `resample.py`.
+
+Verifikasi: `pre-commit run --all-files` 12/12 hijau, 103 test lulus (venv),
+30/32 lulus di pandas 3.0.3 (2 sisanya hanya gagal karena pyarrow tidak ada
+di Python sistem).
+
+---
+
+## 2026-10-05 — Perbaikan 8 temuan audit Phase B (fetch_data + validate_data)
+
+Auditor menemukan 14 temuan; 5 dibatalkan setelah verifikasi bukti, 8 diperbaiki,
+1 ditunda (LOW-04 `price_digits`, memang dipakai `clean_data.py`).
+
+### Yang diperbaiki
+
+**1. Import MT5 module-level (CRITICAL-01/03).** `import MetaTrader5` dihapus
+dari atas file; `TIMEFRAME_CONSTANTS` (nilai integer dari MT5) diganti
+`TIMEFRAME_NAMES` (nama string) plus fungsi `import_mt5()` dan
+`timeframe_constant()` yang mengimpor saat dipanggil. Bukti: skrip yang memblokir
+`MetaTrader5` di `sys.meta_path` masih bisa meng-import `fetch_data` DAN
+`validate_data`. 2 tes baru mengunci ini.
+
+**2. `check_spread` selalu LOLOS (M-02/L-03).** Sebelumnya menerima `year` tapi
+tidak pernah menyentuh config; docstring-nya menjanjikan perbandingan yang tidak
+pernah terjadi. Sekarang baca `spread.by_year[year]`, bandingkan p99 dengan
+`warn_multiplier` (2x) dan `error_multiplier` (5x). Kedua multiplier ikut ke
+config karena RULES §10. Dampak nyata di data: **2023 jadi WARN** (p99 8,50 pip
+> 6,00) — kondisi spread 2023 yang lebar selama ini tidak terlihat.
+
+**BUG KECIL YANG TERNYATA DI DALAM FIX INI:** YAML membaca `2023:` sebagai key
+int, bukan string, jadi `by_year.get("2023")` selalu gagal dan jatuh ke
+`default` tanpa suara. Persis jenis fallback senyap yang fix ini mau hilangkan.
+Kunci dinormalisasi ke str sebelum lookup.
+
+**3. `KNOWN_ANOMALY_WINDOWS` ke config (M-04).** Pindah ke
+`configs/data.yaml` → `validation.anomaly_windows` (list `{start, end, note}`).
+
+**4. `print()` + stderr (H-01/HIGH-05).** Semua `print` hanya di `main()`.
+Ditambah `logger = logging.getLogger(__name__)`, `logging.basicConfig` di main,
+`logger.info` untuk jejak audit. Error (`mt5.initialize()` gagal, simbol tak
+dikenal, tidak ada file data) sekarang ke **stderr** + `logger.error`.
+
+**5. `trading_days` pakai logika sesi (MEDIUM-06).** Baris 315 masih
+`broker_time.dt.date.nunique()`, kelas bug yang sama dengan C-02. Diganti
+`gaps >= SESSION_BOUNDARY_MINUTES (55)` + 1. Dampak nyata: 2023 turun dari
+311 tanggal broker menjadi **163 sesi**, karena Jan-Mei 2023 tidak punya break
+harian sehingga satu sesi berjalan beberapa hari.
+
+**6. Komentar validate_data.py:41-43 (salah).** Klaim "splits some trading days
+across two calendar dates" dibantah: break ada di jam 03:00-04:00 broker,
+utuh di dalam satu tanggal. 200 hari "rendah" = 194 **Senin** (sesi 20 jam,
+pasar buka Senin 04:00 broker). `MIN_FULL_DAY_BARS` tetap 1.100; menaikkan ke
+1.300 seperti saran auditor akan menandai 194 Senin sah sebagai bar hilang.
+
+**7-8. Docstring & marker.** Catatan asumsi TF >= M1 di `fetch_rates`, penjelasan
+bahwa angka `check_break_hour` adalah jam **buka kembali** (04:00) bukan jam
+break (03:00), marker `# EXCEPTION:` yang bisa dibaca mesin di `validate_data.py`.
+
+### Temuan yang DIBATALKAN (auditor salah, terbukti dari data)
+
+| Temuan | Bukti pembatalan |
+|---|---|
+| C-02 groupby dt.date | 0 hari di band 201-1099 dari 1.174 tanggal. Tidak split. |
+| H-02 Series | `point`/`pip_size` skalar; Series cuma param pertama. Uji: [6,12,6] -> [0.6,1.2,0.6]. |
+| H-03 ambang 1100 | 200 hari rendah = 194 Senin (median 1.200). Ambang 1.300 = 194 error palsu. |
+| H-04 __init__.py | Dua-duanya sudah ada. |
+| L-02 validasi dir | `load_config` sudah error jelas + daftar tersedia. |
+
+### Verifikasi
+
+`pre-commit run --all-files` 12/12 hijau. 120 test lulus (dari 103).
+Validasi data nyata tetap exit 0: 2023/2024 = 2 peringatan, 2025/2026 = 1
+(tambah 1 karena Spread 2023 kini WARN).
+
+**PERHATIAN:** `validate_data.py` tumbuh 444 -> 518 baris (soft limit 400).
+Tidak ada fungsi publik baru yang ditambahkan — pertumbuhan hampir semua
+docstring — tapi angkanya jauh. Syarat yang Anda tetapkan adalah
+"kalau tambah fungsi, pecah jadi check vs render"; syarat itu tidak terpicu,
+namun pemecahan tetap layak dipertimbangkan.
+
+---
+
+## 2026-10-05 — Verifikasi keputusan Architect (Ann). TIDAK ADA KODE.
+
+Tugas: verifikasi Q1/Q2/Q3 sebelum implementasi. Instruksi: jangan implementasi.
+
+### Hasil verifikasi
+
+**Q1 (validate_data.py 518 baris) — SETUJU DENGAN CATATAN.**
+- Akurat: 518 baris; fungsi publik 15 -> 15 (identik, tidak ada fungsi baru);
+  fungsi terpanjang 43 baris (< 50).
+- **Premis Ann salah sebagian:** "pertumbuhan hampir semua docstring".
+  Rincian delta +74: **kode +25 (34%)**, komentar +24 (32%), docstring +14 (19%),
+  kosong +11 (15%). Kode adalah bucket terbesar.
+- **Aturan proyek yang tidak disinggung Ann:** STATE.md "Aturan Pipeline" dan
+  TASKS.md sama-sama menyebut "pecah jadi logika check vs render" untuk file ini.
+
+**Q2 (check_bar_count harmonisasi) — TIDAK SETUJU.**
+- Arah benar: `trading_days` sudah pakai session boundary, `check_bar_count` masih
+  `dt.date` -> inkonsistensi nyata.
+- Premis "dt.date salah" overstated: 0 hari di band 201-1099 dari 1.174 tanggal.
+- **Risiko fatal:** harmonisasi naif membuat 2023 ERROR. 24 sesi > 1440 bar
+  (maks 7.160) kena `MAX_BARS_PER_DAY` -> exit 1.
+- **Sinyal hilang:** `parsial` jadi 0 di keempat tahun (ekor Sabtu adalah ekor
+  sesi Jumat yang melintasi tengah malam). Check sekarang: 52-54 partial/tahun.
+
+**Q3 (pyarrow) — TIDAK SETUJU.**
+- Premis salah: `pyarrow==17.0.0` **sudah ada** di requirements.txt baris 8.
+- pyproject.toml **tidak punya blok `dependencies` sama sekali**. Menambah
+  pyarrow saja menghasilkan daftar tidak lengkap.
+- Terlewat: RULES §13 minta izin + pin + update CHANGELOG (CHANGELOG kosong).
+  Dan requirements.txt masih baris `black==24.10.0` padahal Black sudah dihapus
+  (kebijakan Ruff-only) -- entry basi yang lebih nyata daripada pyarrow.
+
+### Temuan sampingan
+
+- **Klenz salah audit di LOW-05** (pyarrow sudah ada).
+- TASKS.md punya catatan usang: "File asing `scripts/check_foreign_chars.py`
+  - bukan milik AI, perlu keputusan user". SESSION_LOG mencatat file itu saya
+  yang buat. Catatan itu perlu dikoreksi.
+- Hipotesis saya sendiri salah saat cek: per-file-ignore `N813` di pyproject
+  bukan sisa mati — `import MetaTrader5 as mt5` pindah ke dalam `import_mt5()`
+  (fetch_data.py:135) dan ignore itu masih dipakai. Tidak ada yang perlu dibersihkan.
+
+### Status
+
+Tidak ada kode ditulis, tidak ada yang di-commit. Menunggu keputusan user untuk
+Q1 (exception vs aturan STATE.md), Q2 (pola harmonisasi), Q3 (batal atau
+rinkas jadi blok dependencies lengkap + CHANGELOG).
+
+---
+
+## 2026-10-05 — Implementasi keputusan user atas Q1/Q2/Q3
+
+Auditor (Klenz) re-audit selesai; Architect (Ann) memutuskan 3 hal, 2 di antaranya
+salah dan diverifikasi ulang atas bukti sebelum implementasi.
+
+### Keputusan user & yang dikerjakan
+
+**Q1 — Lanjut `# EXCEPTION`, dengan koreksi.** Header `EXCEPTION` di
+`validate_data.py` ditulis ulang: tidak lagi mengklaim pertumbuhan "hampir semua
+docstring". Dicatat jujur bahwa dari +74 baris, 25 kode, 24 komentar, 14
+docstring, 11 kosong. Ditambahkan tiga BATAS KERAS dari user: file >600 baris,
+ada fungsi publik baru, atau akhir Milestone 1. Header juga mengaitkan aturan
+STATE.md (pecah check vs render) yang ditunda ke akhir Milestone 1.
+
+**Q2 — Opsi (b), harmonisasi parsial.** `check_bar_count` TETAP pakai
+`dt.date`; `trading_days` TETAP pakai session boundary. Docstring
+`check_bar_count` sekarang menjelaskan kenapa keduanya tidak bisa disamakan:
+- Tanggal broker berbatas 1.440 bar, jadi semua band-nya batas tetap yang bisa
+  diverifikasi. Sesi tidak punya batas: Jan-Mei 2023 tanpa break menghasilkan
+  satu sesi 7.160 bar, sehingga 24 sesi akan kena `MAX_BARS_PER_DAY` dan data
+  sehat 2023 dilaporkan ERROR.
+- Ekor Sabtu ±180 bar adalah akhir sesi Jumat yang melintasi tengah malam, jadi
+  grouping sesi menghilangkan sinyal parsial sepenuhnya (0 di keempat tahun).
+
+**Q3 — CANCEL untuk pyarrow, tapi `black==24.10.0` dihapus.** pyarrow sudah ada
+di requirements.txt baris 8; pyproject tidak punya blok `dependencies` sama
+sekali dan tidak ditambah.
+
+**CHANGELOG.md** (sebelumnya 0 byte) diisi: Fixed / Added / Changed / Removed /
+Known issues untuk Phase B.
+
+**TASKS.md** — catatan usang "file asing `check_foreign_chars.py` bukan milik AI"
+dihapus; file itu memang ditulis AI (tercatat di SESSION_LOG).
+
+### Verifikasi
+
+- `pre-commit run --all-files`: 12/12 hijau (run pertama gagal di `end-of-file-fixer`
+  karena CHANGELOG tanpa newline akhir; hook memperbaiki, run kedua hijau).
+- 120 test lulus, ruff check + format bersih.
+- `validate_data` data nyata: exit 0, 2023/2024 = 2 peringatan, 2025/2026 = 1.
+- `check_foreign_chars`: bersih.
+
+Tidak ada commit. Menunggu re-audit Klenz.
+
+### Konfirmasi Q2 (user, 2026-10-05)
+
+Instruksi sebelumnya ambigu: "trading_days samakan dengan kalender (sudah benar)".
+User menegaskan maknanya:
+
+- `trading_days`: **BIARKAN** session logic (memang sudah benar).
+- `check_bar_count`: **BIARKAN** `dt.date`.
+- **Jangan ubah dua-duanya.**
+
+Artinya pilihan (i), yang sudah saya kerjakan di sesi sebelumnya. Nol perubahan
+kode pada konfirmasi ini — hanya pencatatan.
+
+Verifikasi bahwa keadaan di disk memang sudah sesuai:
+
+```
+SESSION_BOUNDARY_MINUTES = 55                                   (baris 68)
+trading_days = int(gaps.ge(SESSION_BOUNDARY_MINUTES).sum()) ... (baris 400)
+per_day = frame.groupby(frame["broker_time"].dt.date).size()    (baris 145)
+2023: trading_days(sesi)=163  tanggal_broker=311
+2025: trading_days(sesi)=259  tanggal_broker=313
+```
+
+Dua satuan itu memang sengaja berbeda dan jawab pertanyaan berbeda, dan
+selisihnya pada data nyata bukan kebetulan: 2023 punya 311 tanggal broker tapi
+hanya 163 sesi karena Jan-Mei 2023 tidak punya break harian, sehingga satu sesi
+berjalan beberapa hari. `check_bar_count` butuh satuan kalender karena hanya
+satuan itu yang punya batas tetap 1.440 bar.
+
+Status Q1/Q2/Q3: ketiganya selesai. Menunggu re-audit Klenz.
