@@ -8,15 +8,15 @@ from __future__ import annotations
 
 import importlib
 import sys
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
 import pytest
 
 from src.data import fetch_data as fetch_data_module
+from src.data.broker_time import BrokerSchedule
 from src.data.fetch_data import (
     TIMEFRAME_NAMES,
     broker_epoch_to_utc,
@@ -30,7 +30,17 @@ from src.data.fetch_data import (
 )
 from src.utils.config import ConfigError, load_config
 
-BROKER_TZ = ZoneInfo("Etc/GMT-3")
+SCHEDULE = BrokerSchedule(
+    standard_offset=7200,
+    daylight_offset=10800,
+    daylight_windows=(
+        (date(2023, 3, 12), date(2023, 11, 5)),
+        (date(2024, 3, 10), date(2024, 11, 3)),
+        (date(2025, 3, 9), date(2025, 11, 2)),
+        (date(2026, 3, 8), date(2026, 11, 1)),
+    ),
+)
+
 POINT = 0.001
 PIP_SIZE = 0.01
 
@@ -63,7 +73,7 @@ def make_rates(epochs: list[int], spread: int = 6) -> np.ndarray:
 class TestBrokerEpochToUtc:
     def test_converts_broker_time_to_utc(self):
         """A broker epoch on UTC+3 lands three hours earlier in UTC."""
-        utc = broker_epoch_to_utc(1788224460, BROKER_TZ)
+        utc = broker_epoch_to_utc(1788224460, SCHEDULE)
         assert utc.tzinfo is not None
         assert utc.utcoffset().total_seconds() == 0
 
@@ -75,7 +85,7 @@ class TestBrokerEpochToUtc:
         """
         epoch = 1788224460
         broker_wall = datetime.fromtimestamp(epoch, tz=UTC).replace(tzinfo=None)
-        utc_wall = broker_epoch_to_utc(epoch, BROKER_TZ).replace(tzinfo=None)
+        utc_wall = broker_epoch_to_utc(epoch, SCHEDULE).replace(tzinfo=None)
         assert broker_wall - utc_wall == timedelta(hours=3)
 
     def test_epoch_shifts_back_by_the_broker_offset(self):
@@ -85,7 +95,7 @@ class TestBrokerEpochToUtc:
         hours ahead of real UTC. This test pins the corrected direction.
         """
         epoch = 1788224460
-        assert broker_epoch_to_utc(epoch, BROKER_TZ).timestamp() == epoch - 10800
+        assert broker_epoch_to_utc(epoch, SCHEDULE).timestamp() == epoch - 10800
 
     def test_matches_measured_evidence(self):
         """The exact bar audited on 2026-10-05 must land on real UTC.
@@ -95,15 +105,59 @@ class TestBrokerEpochToUtc:
         has to reproduce 10:07:00. If this ever flips back to 13:07 the stored
         data is three hours ahead again.
         """
-        assert broker_epoch_to_utc(1791205620, BROKER_TZ).isoformat() == "2026-10-05T10:07:00+00:00"
+        assert broker_epoch_to_utc(1791205620, SCHEDULE).isoformat() == "2026-10-05T10:07:00+00:00"
 
     def test_epoch_zero_maps_to_known_instant(self):
+        """Epoch 0 is a stable reference point for regression tests.
+
+        Zero on the broker clock is 22:00 UTC on 1969-12-31, because the epoch
+        carries a wall clock rather than an instant and no DST window covers
+        1970, so the standard GMT+2 offset applies.
+        """
+        assert broker_epoch_to_utc(0, SCHEDULE).isoformat() == "1969-12-31T22:00:00+00:00"
+
+    def test_winter_bars_use_standard_offset(self):
+        """Inside a winter window the broker sits on GMT+2, not GMT+3.
+
+        2023-12-15 13:00 server time must land on 11:00 UTC. A fixed +3
+        conversion would put it at 10:00 and be an hour early.
+        """
+        epoch = int(pd.Timestamp("2023-12-15 13:00").tz_localize("UTC").timestamp())
+        assert broker_epoch_to_utc(epoch, SCHEDULE).isoformat() == "2023-12-15T11:00:00+00:00"
+
+    def test_summer_bars_use_daylight_offset(self):
+        """The same wall-clock reading in summer must be an hour earlier in UTC."""
+        epoch = int(pd.Timestamp("2023-07-15 13:00").tz_localize("UTC").timestamp())
+        assert broker_epoch_to_utc(epoch, SCHEDULE).isoformat() == "2023-07-15T10:00:00+00:00"
+
+    def test_offset_switches_exactly_on_the_transition_sunday(self):
+        """The DST window must be half-open so no trading day is split.
+
+        Both transition dates are Sundays with no bars, so the boundary may be
+        resolved from the date alone.
+        """
+        schedule = SCHEDULE
+        assert schedule.offset_seconds(date(2023, 3, 11)) == 7200
+        assert schedule.offset_seconds(date(2023, 3, 12)) == 10800
+        assert schedule.offset_seconds(date(2023, 11, 4)) == 10800
+        assert schedule.offset_seconds(date(2023, 11, 5)) == 7200
+
+    def test_dates_beyond_the_schedule_are_rejected(self):
+        """A silent fallback would mislabel a whole future summer by an hour.
+
+        After the last known daylight window every date is technically winter,
+        so returning the standard offset would look correct until the next
+        spring and then be quietly wrong for seven months.
+        """
+        with pytest.raises(ValueError, match="di luar jadwal DST"):
+            SCHEDULE.offset_seconds(date(2027, 7, 15))
+        assert SCHEDULE.offset_seconds(date(2026, 10, 5)) == 10800
         """Epoch 0 is a stable reference point for regression tests.
 
         Zero on the broker clock is 21:00 UTC on 1969-12-31, because the epoch
         carries a wall clock rather than an instant.
         """
-        assert broker_epoch_to_utc(0, BROKER_TZ).isoformat() == "1969-12-31T21:00:00+00:00"
+        assert broker_epoch_to_utc(0, SCHEDULE).isoformat() == "1969-12-31T22:00:00+00:00"
 
 
 class TestSpreadPointsToPips:
@@ -127,13 +181,13 @@ class TestRatesToFrame:
     def test_keeps_broker_epoch_and_adds_utc(self):
         """Both the raw broker epoch and the corrected UTC timestamp must survive."""
         rates = make_rates([1788224460])
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         assert frame.loc[0, "broker_time_raw"] == 1788224460
         assert frame.loc[0, "time"] == "2026-08-31T22:01:00+0000"
 
     def test_column_order_is_stable(self):
         rates = make_rates([1788224460, 1788224520])
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         expected = [
             "time",
             "broker_time_raw",
@@ -150,14 +204,14 @@ class TestRatesToFrame:
 
     def test_spread_columns_agree(self):
         rates = make_rates([1788224460], spread=6)
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         assert frame.loc[0, "spread_points"] == 6
         assert frame.loc[0, "spread_pips"] == pytest.approx(0.6)
 
     def test_ohlc_pass_through_unchanged(self):
         """OHLC is bid data from MT5; this module must not alter it."""
         rates = make_rates([1788224460])
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         assert frame.loc[0, "open"] == 159.700
         assert frame.loc[0, "high"] == 159.750
         assert frame.loc[0, "low"] == 159.690
@@ -165,7 +219,7 @@ class TestRatesToFrame:
 
     def test_sorts_by_broker_epoch(self):
         rates = make_rates([1788224520, 1788224400])
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         assert frame["broker_time_raw"].tolist() == [1788224400, 1788224520]
 
 
@@ -187,18 +241,28 @@ class TestSplitByYear:
         broker midnights belong to the previous calendar year in real UTC.
         """
         rates = make_rates([1704067200, 1735689600])
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         pattern = "{symbol}_{tf}_{year}.{format}"
         written = split_by_year(frame, tmp_path, pattern, "USDJPY", "M1")
         assert [p.name for p in written] == ["usdjpy_m1_2023.csv", "usdjpy_m1_2024.csv"]
 
     def test_bar_near_new_year_lands_in_its_utc_year(self, tmp_path):
-        """A 02:00 broker bar on 1 January is still December in UTC."""
-        rates = make_rates([1735696800])  # 2025-01-01 02:00:00 on the broker clock
-        frame = rates_to_frame(rates, BROKER_TZ, POINT, PIP_SIZE)
+        """A 01:00 broker bar on 1 January is still December in UTC.
+
+        January falls in the GMT+2 window, so the first two hours of broker
+        1 January belong to the previous calendar year in real UTC.
+        """
+        rates = make_rates([1735693200])  # 2025-01-01 01:00:00 on the broker clock
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
         assert frame.loc[0, "time"] == "2024-12-31T23:00:00+0000"
         written = split_by_year(frame, tmp_path, "{symbol}_{tf}_{year}.{format}", "USDJPY", "M1")
         assert [p.name for p in written] == ["usdjpy_m1_2024.csv"]
+
+    def test_bar_after_the_winter_window_stays_in_its_own_year(self):
+        """At 02:00 broker on 1 January the UTC year has already rolled over."""
+        rates = make_rates([1735696800])  # 2025-01-01 02:00:00 on the broker clock
+        frame = rates_to_frame(rates, SCHEDULE, POINT, PIP_SIZE)
+        assert frame.loc[0, "time"] == "2025-01-01T00:00:00+0000"
 
     def test_raises_on_empty_frame(self, tmp_path):
         empty = pd.DataFrame(columns=["time", "broker_time_raw"])
@@ -222,7 +286,8 @@ class TestLoadConfig:
     def test_loads_data_config(self):
         config = load_config("data")
         assert config["mt5"]["symbol"] == "USDJPY"
-        assert config["mt5"]["broker_timezone"] == "Etc/GMT-3"
+        assert config["mt5"]["broker_utc_offset_hours"] == {"standard": 2, "daylight": 3}
+        assert len(config["mt5"]["broker_dst_schedule"]) == 4
 
     def test_missing_file_raises(self, tmp_path):
         with pytest.raises(ConfigError, match="Config not found"):

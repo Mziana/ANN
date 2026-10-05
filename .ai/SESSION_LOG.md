@@ -703,3 +703,129 @@ jendela dalam frame sendiri (hasilnya 0,0000 jam — sirkular, dibuang).
 
 147 test hijau. ruff bersih. Validasi data exit 0.
 Tidak ada commit. Menunggu re-audit Klenz.
+
+---
+
+## 2026-10-05 — DST CONFIRMED: offset Finex seasonal, bukan statis
+
+### KRONOLOGI
+
+Offset +3 statis sudah dipertanyakan sejak audit R1. Empat metode empiris
+dicoba; **semuanya gagal** membuktikan offset historis:
+
+- **Metode 5 (UTC regression) Sirkular.** Kolom `time` dihitung sebagai
+  `broker_time_raw - 10800`, jadi mengukur selisih keduanya selalu menghasilkan
+  3.0 di 46 bulan. Mengulang asumsi sendiri.
+- **Metode 1 (event Jepang) gagal.** Anchor CPI Jepang 08:30 JST = 23:30 UTC
+  jatuh di dead zone FX; 6 tanggal diuji, tidak ada spike di kandidat +3
+  maupun +2.
+- **Metode 2 (NFP) invalid.** Metrik "range M1 terbesar" menangkap artefak
+  100-160 pip, bukan NFP 10-30 pip.
+- **Metode 3/4 (break, weekend) nol daya.** Sesi broker dihitung dalam jam
+  server, jadi perubahan offset UTC tidak mengubah digit jam server.
+
+Break broker dalam frame yang **salah** (+3) terlihat di jam 3 selama 169 dari
+172 minggu - terlihat seperti bukti, padahal tidak membeda apa pun.
+
+### SUMBER KEPUTUSAN
+
+Finex mengonfirmasi lewat email Support: server **GMT+2 (EET) musim dingin,
+GMT+3 (EEST) musim panas, mengikuti DST Amerika**. Konsisten dengan
+`finex.co.id/trading/instruments`. Delapan tanggal 2023-2026 diverifikasi ulang
+terhadap aturan DST AS - **8 dari 8 cocok**.
+
+### BAHWA SEBELUMNYI SALAH
+
+- `resample` dan `validate_data` menambah offset tetap ke `broker_time_raw`.
+  Padahal digit mentah itu **sudah** jam dinding broker. Keduanya sekarang membaca
+  digit apa adanya.
+- Akibatnya bucket D1 salah potong di tengah sesi: **311/314/313/236**
+  menjadi **259/260/259/196**, dan angka baru itulah jumlah hari perdagangan
+  (52 minggu x 5 hari).
+- Kolom `time` salah 1 jam untuk seluruh musim dingin, sekitar **35% bar**.
+
+### BUKTI SETELAH FIX
+
+- Tick live vs jam internet independen (bracket sebelum/sesudah tiap panggilan):
+  **selisih 0 detik**, 5 dari 5 sampel. Sebelumnya +10.799 detik.
+- Fetch ulang 1.347.847 bar, **0 bar salah konversi**, tahun cocok nama file.
+- Bucket M5/H1/D1 vs bar native MT5, dibandingkan pada `broker_time_raw`
+  sehingga bebas asumsi offset: **6 dari 6 COCOK**, nol selisih, di jendela
+  musim dingin (Jan 2024) maupun musim panas (Jul 2024).
+- Sesi broker terbukti **01:00-00:00 server**, persis seperti sesi yang Finex
+  terbitkan.
+- validate_data exit 0 di 4 tahun, ruff bersih, **151 test hijau**.
+
+### RISIKO RESIDU YANG TERBUKA
+
+Pada **2026-W11 s/d W13 (9-29 Maret 2026)** break jatuh di jam server **23**,
+bukan jam **0** seperti 169 minggu lainnya. Finex menyatakan DST mulai 8 Maret
+2026, jadi tiga minggu itu mungkin masih GMT+2. Kalau benar, +-15 hari
+perdagangan salah 1 jam. Tidak bisa dipastikan dari data lokal; sudah
+ditanyakan ke Finex. **Blokir fitur sesi sampai terjawab.**
+
+## SELF-AUDIT ADVERSARIAL DST (2026-10-05)
+
+Rantaiaudit adversarial atas fix DST. Three findings, all with evidence.
+
+### SA-01 - offset di luar jadwal diam-diam mengembalikan +2
+
+`BrokerSchedule.offset_seconds` mengembalikan offset standar untuk tanggal
+melewati jendela terakhir tanpa error. 2027+ jadi salah 1 jam tanpa jejak.
+Sudah diperbaiki jadi `raise ValueError` + test pengunci.
+
+### SA-02 - gejalanya salah baca, dan ada jendela yang terlewat
+
+Audit sebelumnya menulis "break di jam dinding 23, bukan 0". Itu benar secara
+gejala tapi salah secara sebab: yang sebenarnya adalah **digit jam broker mundur
+1 jam** - sesi buka di 00:00, bukan 01:00. Dan ada **dua** jendela (2023-03-17..24 dihapus per Keputusan Architect
+karena regime SA-03, bukan anomali):
+
+- 2024-10-28..11-01 (5 hari, 6.899 bar)
+- 2026-03-10..03-27 (14 hari, 19.299 bar)
+- Total 26.198 bar = 1,94%
+
+Bukti discriminating, non-sirkular (hanya `broker_time_raw`, tidak pernah
+menyentuh kolom `time` yang hasil konversi kita sendiri):
+
+- Di luar jendela: buka 01:00 -> 22:00 UTC (musim panas) / 23:00 UTC (musim
+  dingin). Stabil 4 tahun.
+- Di dalam jendela: digit 00:00. Offset +3 -> **21:00 UTC**, nilai yang tidak
+  pernah muncul di 4 tahun selain 19 hari ini. Offset +2 -> **22:00 UTC**,
+  identik dengan tetangganya.
+- Langkah tepat 1 jam, sama dengan besar langkah DST.
+
+Dua penjelasan masih cocok: server benar-benar GMT+2 selama jendela, atau
+sesinya yang bergeser. Bukti lokal cenderung ke yang pertama, tapi itu
+inferensi. Finex yang memutuskan.
+
+### SA-03 - 2023-H1 punya regime data sendiri
+
+Jan-Jun 2023: 1.431 bar/hari (sesi ~23,9 jam, tanpa break 60 menit) dan digit
+buka ~00:07. Semua periode lain 1.380 bar/hari dengan break 60 menit.
+185.248 bar = 13,74%. Belum dijelaskan, tidak boleh dipakai sebagai input fitur
+sebelum jelas.
+
+### Yang DIPERBAIKI
+
+- `configs/data.yaml`: 2 jendela terdaftar, semua note memuat
+  "BELUM TERVERIFIKASI"
+- `tests/test_validate_data.py`: test diikat ke config, bukan string hardcode;
+  2 test baru (semua note wajib unverifikasi, jumlah jendela = 2)
+- `tests/test_resample.py`: 3 test regression lock untuk bukti SA-02
+- STATE.md / TASKS.md: deskripsi anomali dikoreksi
+
+### GATE
+
+157 test hijau (dari 152). validate_data exit 0: 2023=2 peringatan, 2024=2,
+2025=1, 2026=1. (2023 turun dari 3 setelah penghapusan jendela 2023-03-17..24.)
+Pre-commit: 12/12 hijau.
+
+### COMMIT
+
+`1147eef` — fix(data): hapus window anomali 2023, kondisikan 2 window + DST seasonal (Klenz-verified)
+
+- Layer 1: 100% committed.
+- Working tree bersih, kecuali .ai/backup/ (arsip pribadi, dihindari).
+- Belum ada remote untuk push — tidak dilakukan.
+- Siap untuk Lapisan 2: EDA (dengan stratifikasi H1-2023).

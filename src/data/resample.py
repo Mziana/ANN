@@ -28,13 +28,12 @@ import argparse
 import logging
 import sys
 from dataclasses import dataclass
-from datetime import UTC
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+from src.data.broker_time import BrokerSchedule, utc_series, wall_clock_series
 from src.data.clean_data import TIME_COLUMN
 from src.data.fetch_data import TIME_FORMAT, build_filename
 from src.utils.config import load_config
@@ -100,19 +99,21 @@ class ResampleResult:
         return TIMEFRAME_MINUTES[self.timeframe]
 
 
-def broker_bucket_start(frame: pd.DataFrame, minutes: int, broker_tz: ZoneInfo) -> pd.Series:
+def broker_bucket_start(frame: pd.DataFrame, minutes: int) -> pd.Series:
     """Floor each bar to the start of its broker wall-clock bucket.
+
+    The raw broker epoch already holds the server's wall-clock digits, so no
+    offset is applied here. Flooring those digits keeps bucket boundaries on the
+    server's own clock, which is what MT5's native bars use.
 
     Args:
         frame: Frame carrying an integer broker timestamp column.
         minutes: Bucket length in minutes.
-        broker_tz: Broker timezone. Must have no DST for flooring to be
-            unambiguous, which Etc/GMT-3 satisfies.
 
     Returns:
         Series of broker-local bucket start timestamps aligned to ``frame``.
     """
-    stamps = pd.to_datetime(frame[TIME_COLUMN], unit="s", utc=True).dt.tz_convert(broker_tz)
+    stamps = wall_clock_series(frame[TIME_COLUMN])
     frequency = "D" if minutes >= 1440 else f"{minutes}min"
     return stamps.dt.floor(frequency)
 
@@ -146,12 +147,13 @@ def aggregate_buckets(frame: pd.DataFrame, buckets: pd.Series) -> pd.DataFrame:
     return out.reset_index()
 
 
-def finalise(frame: pd.DataFrame, digits: int) -> pd.DataFrame:
+def finalise(frame: pd.DataFrame, digits: int, schedule: BrokerSchedule) -> pd.DataFrame:
     """Rebuild the timestamp columns and round prices to the symbol tick.
 
     Args:
         frame: Aggregated buckets with a ``BUCKET_COLUMN`` column.
         digits: Price decimals for the symbol.
+        schedule: Broker schedule turning the bucket wall clock into UTC.
 
     Returns:
         Frame in :data:`OUTPUT_COLUMNS` order with UTC ``time`` and epoch
@@ -160,26 +162,28 @@ def finalise(frame: pd.DataFrame, digits: int) -> pd.DataFrame:
     result = frame.copy()
     # as_unit("ns") matters on pandas 3.x, where a seconds-resolution index
     # would make .asi8 report seconds and collapse every epoch to 1.
-    stamps = result[BUCKET_COLUMN].dt.tz_convert(UTC).dt.tz_localize(None)
-    epoch_seconds = (pd.DatetimeIndex(stamps).as_unit("ns").asi8 // 10**9).astype("int64")
+    stamps = result[BUCKET_COLUMN]
+    epoch_seconds = (
+        pd.DatetimeIndex(stamps).tz_localize("UTC").as_unit("ns").asi8 // 10**9
+    ).astype("int64")
 
     result[TIME_COLUMN] = epoch_seconds
-    result["time"] = pd.to_datetime(epoch_seconds, unit="s", utc=True).strftime(TIME_FORMAT)
+    result["time"] = utc_series(result[TIME_COLUMN], schedule).dt.strftime(TIME_FORMAT)
     for column in OHLC_COLUMNS:
         result[column] = result[column].round(digits)
     return result[OUTPUT_COLUMNS]
 
 
 def resample_frame(
-    frame: pd.DataFrame, timeframe: str, broker_tz: ZoneInfo, digits: int
+    frame: pd.DataFrame, timeframe: str, digits: int, schedule: BrokerSchedule
 ) -> tuple[pd.DataFrame, ResampleResult]:
     """Resample one cleaned M1 frame into a single higher timeframe.
 
     Args:
         frame: Cleaned M1 frame sorted by broker timestamp.
         timeframe: Output timeframe name from :data:`TIMEFRAME_MINUTES`.
-        broker_tz: Broker timezone used for bucket boundaries.
         digits: Price decimals for the symbol.
+        schedule: Broker schedule used to label the UTC timestamp.
 
     Returns:
         Tuple of the resampled frame and a ResampleResult.
@@ -194,9 +198,9 @@ def resample_frame(
     if frame.empty:
         raise ValueError("Cannot resample an empty frame")
 
-    buckets = broker_bucket_start(frame, TIMEFRAME_MINUTES[timeframe], broker_tz)
+    buckets = broker_bucket_start(frame, TIMEFRAME_MINUTES[timeframe])
     aggregated = aggregate_buckets(frame, buckets)
-    out = finalise(aggregated, digits)
+    out = finalise(aggregated, digits, schedule)
 
     counts = out["m1_bars"]
     result = ResampleResult(
@@ -216,8 +220,8 @@ def resample_year(
     timeframe: str,
     symbol: str,
     pattern: str,
-    broker_tz: ZoneInfo,
     digits: int,
+    schedule: BrokerSchedule,
 ) -> ResampleResult:
     """Resample one cleaned year file and write it as Parquet.
 
@@ -227,8 +231,8 @@ def resample_year(
         timeframe: Output timeframe name.
         symbol: Trading symbol.
         pattern: Filename pattern from config.
-        broker_tz: Broker timezone.
         digits: Price decimals for the symbol.
+        schedule: Broker schedule used to label the UTC timestamp.
 
     Returns:
         ResampleResult for the year.
@@ -240,7 +244,7 @@ def resample_year(
         raise FileNotFoundError(f"Cleaned M1 file not found: {source}")
 
     frame = pd.read_parquet(source)
-    out, result = resample_frame(frame, timeframe, broker_tz, digits)
+    out, result = resample_frame(frame, timeframe, digits, schedule)
     result.year = source.stem[-4:]
 
     name = build_filename(symbol, timeframe, result.year, pattern).replace(".csv", ".parquet")
@@ -308,8 +312,8 @@ def main(argv: list[str] | None = None) -> int:
     symbol = args.symbol or config["mt5"]["symbol"]
     source_tf = config["mt5"]["timeframes"][0]
     pattern = config["data"]["filename_pattern"]
-    broker_tz = ZoneInfo(config["mt5"]["broker_timezone"])
     digits = int(config["mt5"]["price_digits"])
+    schedule = BrokerSchedule.from_config(config["mt5"])
 
     if args.timeframes:
         wanted = [name.strip() for name in args.timeframes.split(",") if name.strip()]
@@ -329,7 +333,7 @@ def main(argv: list[str] | None = None) -> int:
     for timeframe in wanted:
         out_dir = PROCESSED_DIR / timeframe
         for source in sources:
-            result = resample_year(source, out_dir, timeframe, symbol, pattern, broker_tz, digits)
+            result = resample_year(source, out_dir, timeframe, symbol, pattern, digits, schedule)
             mark = "penuh" if result.complete else f"ada bucket < {result.expected} bar"
             line = (
                 f"{timeframe} {result.year}: {result.buckets:,} bucket dari "

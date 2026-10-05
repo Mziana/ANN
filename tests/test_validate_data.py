@@ -6,10 +6,9 @@ synthetic year. No test touches disk, the network, or the real dataset.
 
 from __future__ import annotations
 
-from zoneinfo import ZoneInfo
-
 import pandas as pd
 
+from src.data.broker_time import wall_clock_series
 from src.data.validate_data import (
     CheckResult,
     YearReport,
@@ -29,7 +28,6 @@ from src.data.validate_data import (
 )
 from src.utils.config import load_config
 
-BROKER_TZ = ZoneInfo("Etc/GMT-3")
 START_EPOCH = 1_700_000_000
 
 DATA_CONFIG = load_config("data")
@@ -116,13 +114,13 @@ def make_frame_with_tail(tail_pips: float, rows: int = 200, wide: int = 5) -> pd
 def attach_broker_time(frame: pd.DataFrame) -> pd.DataFrame:
     """Add the broker wall-clock column the time-based checks need."""
     frame = frame.copy()
-    frame["broker_time"] = pd.to_datetime(
-        frame["broker_time_raw"], unit="s", utc=True
-    ).dt.tz_convert(BROKER_TZ)
+    frame["broker_time"] = wall_clock_series(frame["broker_time_raw"])
     return frame
 
 
-SESSION_START = int(pd.Timestamp("2026-01-05", tz=BROKER_TZ).timestamp())
+# The raw epoch digits are the broker's wall clock, so a fixture reading
+# 2026-01-05 00:00 server time needs the epoch whose UTC rendering is that.
+SESSION_START = int(pd.Timestamp("2026-01-05").tz_localize("UTC").timestamp())
 SESSION_BARS_BEFORE_BREAK = 1000
 SESSION_BREAK_MINUTES = 61
 SESSION_TOTAL_BARS = 1440 - SESSION_BREAK_MINUTES
@@ -357,7 +355,7 @@ class TestCheckSpread:
 
 class TestCheckBreakHour:
     def test_reports_dominant_hour(self):
-        result = check_break_hour(make_trading_year(days=4), BROKER_TZ)
+        result = check_break_hour(make_trading_year(days=4))
         assert result.severity == "WARN"
         assert "jam dinding dominan" in result.detail
 
@@ -365,7 +363,7 @@ class TestCheckBreakHour:
         frame = attach_broker_time(
             pd.DataFrame({"broker_time_raw": [START_EPOCH, START_EPOCH + 60]})
         )
-        result = check_break_hour(frame, BROKER_TZ)
+        result = check_break_hour(frame)
         assert result.severity == "INFO"
         assert "tanpa break" in result.detail
 
@@ -376,13 +374,29 @@ class TestCheckKnownAnomalies:
         assert check_known_anomalies(frame, ANOMALY_WINDOWS).passed
 
     def test_frame_inside_window_warns(self):
-        start = pd.Timestamp("2026-03-15", tz="UTC").timestamp()
+        window = next(w for w in ANOMALY_WINDOWS if w["start"] == "2026-03-10")
+        start = pd.Timestamp(window["start"], tz="UTC").timestamp()
         frame = attach_broker_time(
             make_frame([(int(start) + i * 60, 1, 2, 0.5, 1, 0.6) for i in range(100)])
         )
         result = check_known_anomalies(frame, ANOMALY_WINDOWS)
         assert not result.passed
-        assert "2026-03-10" in result.detail
+        assert f"{window['start']}..{window['end']}" in result.detail
+        assert "BELUM TERVERIFIKASI" in result.detail
+
+    def test_every_window_carries_the_unverified_warning(self):
+        """Each anomaly window must say its offset is unverified (Klenz 2026-10-05)."""
+        for window in ANOMALY_WINDOWS:
+            assert "BELUM TERVERIFIKASI" in window["note"], window["start"]
+
+    def test_the_two_known_windows_are_registered(self):
+        """Self-audit SA-02 found three windows, but Klenz re-verification
+        (2026-10-05) showed the 2023-03-17..24 entry is SA-03 regime, not
+        an anomaly. The Architect deleted it. Lock the remaining two so a
+        silent re-addition of 2023 fails."""
+        starts = {w["start"] for w in ANOMALY_WINDOWS}
+        assert len(ANOMALY_WINDOWS) == 2
+        assert starts == {"2024-10-28", "2026-03-10"}
 
     def test_windows_are_well_formed(self):
         for window in ANOMALY_WINDOWS:
@@ -404,18 +418,18 @@ class TestValidateYearSessions:
 
     def test_counts_one_session_per_break(self, tmp_path):
         path = self._write(tmp_path, make_sessions(count=3))
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        report = validate_year(path, DATA_CONFIG)
         assert report.trading_days == 3
 
     def test_weekend_gap_starts_a_session(self, tmp_path):
         path = self._write(tmp_path, make_sessions(count=2, gap_minutes=2900))
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        report = validate_year(path, DATA_CONFIG)
         assert report.trading_days == 2
 
     def test_broken_session_counts_as_one_session(self, tmp_path):
         """A 10 minute hole must not start a new session."""
         path = self._write(tmp_path, make_sessions(count=2, gap_minutes=10))
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        report = validate_year(path, DATA_CONFIG)
         assert report.trading_days == 1
 
     def test_session_spanning_many_dates_is_still_one_session(self, tmp_path):
@@ -429,14 +443,14 @@ class TestValidateYearSessions:
             )
         )
         path = self._write(tmp_path, frame)
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
-        distinct_dates = prepare_frame(path, BROKER_TZ)["broker_time"].dt.date.nunique()
+        report = validate_year(path, DATA_CONFIG)
+        distinct_dates = prepare_frame(path)["broker_time"].dt.date.nunique()
         assert report.trading_days == 1
         assert distinct_dates > report.trading_days
 
     def test_run_on_report_uses_configured_spread(self, tmp_path):
         path = self._write(tmp_path, make_frame_with_tail(90.0))
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        report = validate_year(path, DATA_CONFIG)
         spread = next(c for c in report.checks if c.name.startswith("Spread"))
         assert spread.severity == "ERROR"
 
@@ -446,7 +460,7 @@ class TestValidateYearSessions:
             make_frame([(int(start) + i * 60, 1, 2, 0.5, 1, 0.6) for i in range(100)])
         )
         path = self._write(tmp_path, frame)
-        report = validate_year(path, BROKER_TZ, DATA_CONFIG)
+        report = validate_year(path, DATA_CONFIG)
         anomaly = next(c for c in report.checks if c.name == "Anomali diketahui")
         assert not anomaly.passed
 
@@ -455,7 +469,7 @@ class TestPrepareFrame:
     def test_adds_broker_time_column(self, tmp_path):
         path = tmp_path / "usdjpy_m1_2026.csv"
         make_frame().assign(time="2026-01-01T00:00:00+0000").to_csv(path, index=False)
-        frame = prepare_frame(path, BROKER_TZ)
+        frame = prepare_frame(path)
         assert "broker_time" in frame.columns
 
     def test_sorts_by_raw_timestamp(self, tmp_path):
@@ -465,7 +479,7 @@ class TestPrepareFrame:
             rows, columns=["broker_time_raw", "open", "high", "low", "close", "spread_pips"]
         )
         frame.assign(time="2026-01-01T00:00:00+0000").to_csv(path, index=False)
-        assert prepare_frame(path, BROKER_TZ)["broker_time_raw"].is_monotonic_increasing
+        assert prepare_frame(path)["broker_time_raw"].is_monotonic_increasing
 
 
 class TestRenderMarkdown:

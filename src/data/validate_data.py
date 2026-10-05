@@ -36,10 +36,10 @@ from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+from src.data.broker_time import wall_clock_series
 from src.data.fetch_data import RAW_DIR, build_filename
 from src.utils.config import load_config
 
@@ -297,12 +297,13 @@ def check_spread(frame: pd.DataFrame, config: dict[str, Any], year: str) -> Chec
     return CheckResult(f"Spread {year}", severity, passed, detail)
 
 
-def check_break_hour(frame: pd.DataFrame, broker_tz: ZoneInfo) -> CheckResult:
+def check_break_hour(frame: pd.DataFrame) -> CheckResult:
     """Report the dominant hour trading resumes after the daily break.
 
     The hour reported is the wall-clock hour of the first bar *after* the gap,
-    which is why the dominant value is 4 even though the empty hour is 3: the
-    broker stops quoting at 03:00 and reopens at 04:00 broker time.
+    so the dominant value is 1 while the empty hour is 0: the broker stops
+    quoting at 00:00 server time and reopens at 01:00, which matches the
+    "Senin 01:00 sampai Jumat 00:00" session Finex publishes.
 
     The 80 percent share is a measurement threshold rather than a configured
     expectation, so this check reports drift instead of enforcing a fixed hour.
@@ -311,7 +312,6 @@ def check_break_hour(frame: pd.DataFrame, broker_tz: ZoneInfo) -> CheckResult:
 
     Args:
         frame: One year of data with a ``broker_time`` column.
-        broker_tz: Broker timezone used to render local hours.
 
     Returns:
         A CheckResult with the dominant reopen hour and the share of breaks
@@ -360,24 +360,21 @@ def check_known_anomalies(
     return CheckResult("Anomali diketahui", "WARN", not hits, detail)
 
 
-def prepare_frame(path: Path, broker_tz: ZoneInfo) -> pd.DataFrame:
+def prepare_frame(path: Path) -> pd.DataFrame:
     """Load one CSV and add the derived columns the checks need.
 
     Args:
         path: CSV written by fetch_data.
-        broker_tz: Broker timezone used to render wall-clock times.
 
     Returns:
         DataFrame sorted by broker timestamp with ``broker_time`` attached.
     """
     frame = pd.read_csv(path)
-    frame["broker_time"] = pd.to_datetime(
-        frame["broker_time_raw"], unit="s", utc=True
-    ).dt.tz_convert(broker_tz)
+    frame["broker_time"] = wall_clock_series(frame["broker_time_raw"])
     return frame.sort_values("broker_time_raw").reset_index(drop=True)
 
 
-def validate_year(path: Path, broker_tz: ZoneInfo, config: dict[str, Any]) -> YearReport:
+def validate_year(path: Path, config: dict[str, Any]) -> YearReport:
     """Run every check against one year file.
 
     Args:
@@ -388,7 +385,7 @@ def validate_year(path: Path, broker_tz: ZoneInfo, config: dict[str, Any]) -> Ye
     Returns:
         A YearReport holding the year and all check results.
     """
-    frame = prepare_frame(path, broker_tz)
+    frame = prepare_frame(path)
     year = path.stem[-4:]
 
     # A trading session starts after any gap long enough to be the daily break
@@ -411,7 +408,7 @@ def validate_year(path: Path, broker_tz: ZoneInfo, config: dict[str, Any]) -> Ye
         check_ohlc(frame),
         check_gaps(frame),
         check_spread(frame, config, year),
-        check_break_hour(frame, broker_tz),
+        check_break_hour(frame),
         check_known_anomalies(frame, config["validation"]["anomaly_windows"]),
     ]
     return report
@@ -431,7 +428,7 @@ def render_markdown(reports: list[YearReport]) -> str:
     total_warnings = sum(len(r.warnings) for r in reports)
     verdict = "LOLOS" if total_errors == 0 else "GAGAL"
     lines += [
-        f"**Verdict: {verdict}** " f"({total_errors} error, {total_warnings} peringatan)",
+        f"**Verdict: {verdict}** ({total_errors} error, {total_warnings} peringatan)",
         "",
         "| Tahun | Bar | Hari | Error | Peringatan |",
         "|---|---|---|---|---|",
@@ -508,7 +505,7 @@ def main(argv: list[str] | None = None) -> int:
     symbol = config["mt5"]["symbol"]
     timeframe = args.timeframe or config["mt5"]["timeframes"][0]
     pattern = config["data"]["filename_pattern"]
-    broker_tz = ZoneInfo(config["mt5"]["broker_timezone"])
+
     data_dir = Path(args.data_dir) if args.data_dir else RAW_DIR / timeframe
 
     files = discover_files(symbol, timeframe, pattern, data_dir)
@@ -518,7 +515,7 @@ def main(argv: list[str] | None = None) -> int:
         print(message, file=sys.stderr)
         return 1
 
-    reports = [validate_year(path, broker_tz, config) for path in files]
+    reports = [validate_year(path, config) for path in files]
     document = render_markdown(reports)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)

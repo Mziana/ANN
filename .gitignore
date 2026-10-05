@@ -54,3 +54,6 @@ checkpoints/
 
 # Freebuff (state internal editor, bukan bagian dari proyek)
 .freebuff/
+
+# uv (project pakai pip, bukan uv)
+uv.lock

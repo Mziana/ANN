@@ -140,8 +140,27 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
 - [x] Fetch ulang 4 file M1: 1.347.847 bar, 0 salah konversi, tahun cocok nama file
 - [x] Bersihkan + resample ulang; native M5 vs resample 2.760 bucket, beda 0
 - [x] Validasi data exit 0 di 4 tahun; ruff bersih; 147 test hijau
-- [ ] **DST belum diverifikasi.** `Etc/GMT-3` dipakai statis. Perlu cek
-      broker apakah GMT+2 di musim dingin sebelum fitur sesi dibangun.
+- [x] **DST diverifikasi dari broker.** Finex mengonfirmasi GMT+2/GMT+3 mengikuti
+      DST Amerika, dengan tanggal persis 2023-2026. Jadwal masuk
+      `configs/data.yaml`, logika di `src/data/broker_time.py`, data di-fetch
+      ulang, 151 test hijau.
+- [x] **Self-audit adversarial DST (2026-10-05).** Temuan SA-01 (offset 2027+
+      diam-diam +2) sudah diperbaiki + test. Temuan SA-02 membongkar bahwa
+      gejalanya bukan "break di jam 23" tapi **digit jam mundur 1 jam** (buka
+      00:00), dan self-audit menemukan **tiga** jendela, tetapi Klenz
+      re-verifikasi menentukan 2023-03-17..24 adalah regime SA-03, bukan anom-
+      ali. Arsitek menghapus entri 2023 — tinggal **dua** jendela.
+- [x] Bukti lokal non-sirkular: dengan offset +3, buka sesi di jendela itu jadi
+      21:00 UTC, nilai yang tidak pernah muncul di 4 tahun selain 19 hari
+      tersebut. Dengan +2 jadi 22:00 UTC, identik dengan tetangganya.
+- [x] Kedua jendela terdaftar di `anomaly_windows`; test mengunci jumlahnya
+      (2) dan mewajibkan tiap note memuat "BELUM TERVERIFIKASI".
+- [ ] **Offset kedua jendela masih BELUM TERVERIFIKASI.** Pertanyaan presisi ke
+      Finex sudah disiapkan (gejalanya tepat -1 jam, bukan "break di jam 23").
+- [ ] **Jangan bangun fitur sesi Tokyo/London/NY** sebelum anomali di atas ditutup.
+- [ ] **SA-03: regime 2023-H1 berbeda.** Jan-Jun 2023 = 1.431 bar/hari (sesi
+      ~23,9 jam, tanpa break 60 menit) dan digit buka ~00:07, berbeda dari
+      seluruh periode lain. 185.248 bar = 13,74%. Belum dijelaskan.
 - [x] Hapus `data/raw/M1/usdjpy_m1_2026-10_test.csv` (2026-10-05, atas izin
       user) — sisa uji sesi lalu, format lama salah label. `data/raw/M1/` kini
       hanya 4 file tahun 2023-2026.

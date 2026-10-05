@@ -9,6 +9,39 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 ### Fixed
 
+- **Offset di luar jadwal DST tidak lagi diam-diam mengembalikan +2.**
+  `BrokerSchedule.offset_seconds` untuk tanggal melewati jendela terakhir
+  sekarang melempar `ValueError` alih-alih diam-diam memakai offset standar.
+  Tanpa ini, fetch data setelah 1 Nov 2026 akan menghasilkan kolom `time` yang
+  salah 1 jam tanpa jejak apa pun.
+- **Deskripsi anomali jam broker dikoreksi setelah self-audit adversarial.**
+  Gejalanya bukan "break di jam dinding 23" melainkan digit jam broker mundur
+  1 jam (sesi buka 00:00, bukan 01:00), dan self-audit menemukan **tiga**
+  jendela — termasuk 2023-03-17..24 yang sebelumnya tidak tercatat — tetapi
+  Klenz membedakan 2023 sebagai regime SA-03. Arsitek menghapus entri 2023;
+  dua jendela tersisa: 2024-10-28..11-01 dan 2026-03-10..03-27. Total
+  **26.198 bar = 1,94%**. Keduanya kini terdaftar di `validation.anomaly_windows` dan tidak bisa terlewat diam-diam.
+  Bukti internal menunjukkan offset +3 menghasilkan waktu buka sesi 21:00 UTC
+  yang tidak pernah muncul di 4 tahun selain 19 hari tersebut, sedangkan +2
+  menghasilkan 22:00 UTC yang identik dengan tetangganya. Status tetap BELUM
+  TERVERIFIKASI sampai Finex menjawab.
+- **Server Finex ternyata seasonal, bukan offset tetap.** Kolom `time` di
+  `data/raw` dan bucket di `data/processed` memakai GMT+3 sepanjang tahun,
+  padahal server berjalan GMT+2 (EET) di musim dingin dan GMT+3 (EEST) di
+  musim panas, mengikuti DST Amerika. Konversi sekarang memakai jadwal
+  transisi dari `configs/data.yaml` lewat modul baru `src/data/broker_time.py`,
+  dan data di-fetch ulang. Effect: sekitar 35% bar (seluruh musim dingin) yang
+  sebelumnya salah 1 jam. Sumber: `finex.co.id/trading/instruments` plus
+  jawaban Finex Support 2026-10-05 yang menyebut tanggal persis 2023-2026;
+  kedelapan tanggal diverifikasi ulang terhadap aturan DST AS dan 8 dari 8
+  cocok.
+- `resample` dan `validate_data` menghitung jam dinding broker dengan cara
+  menambah offset tetap, padahal digit mentah `broker_time_raw` sudah berisi
+  jam dinding broker. Keduanya sekarang membaca digit itu apa adanya. Akibatnya
+  bucket D1 turun dari 311/314/313/236 menjadi 259/260/259/196, yang
+  sesuai jumlah hari perdagangan (52 minggu x 5 hari), dan bucket M5/H1/D1
+  kini identik dengan bar native MT5 di jendela musim dingin maupun musim
+  panas.
 - **Kolom `time` di `data/raw` tersimpan 3 jam Maju dari UTC (bug R1).** MT5
   tidak mengembalikan instants Unix; ia mengembalikan jam dinding broker
   yang dikodekan seolah-olah epoch UTC. Fungsi `broker_epoch_to_utc` lama

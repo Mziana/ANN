@@ -1,20 +1,30 @@
 # Konfigurasi data & koneksi MT5
 mt5:
   symbol: "USDJPY"
-  # VERIFIED 2026-10-05: offset server = +3.00 jam (bukan +2).
-  # Bukti: symbol_info_tick().time  05:58:13 vs UTC 02:58:06 -> +3.0019 jam
-  #        last M1 bar timestamp    05:58:00 vs UTC 02:58:06 -> +2.9983 jam
-  # Dua pengukuran independen, keduanya +3.00.
+  # VERIFIED 2026-10-05: server Finex BUKAN offset tetap. Ia GMT+2 (EET) di
+  # musim dingin dan GMT+3 (EEST) di musim panas, mengikuti DST Amerika.
+  # Sumber: finex.co.id/trading/instruments ("GMT+2 ... selama Waktu Musim
+  # Panas, waktu akan beralih ke GMT+3") + jawaban Finex Support 2026-10-05
+  # yang menyebut tanggal persis per tahun. Kedelapan tanggal di bawah
+  # diverifikasi ulang terhadap aturan DST AS (Minggu ke-2 Maret, Minggu
+  # ke-1 November) dan 8 dari 8 cocok.
   #
-  # PERINGATAN - offset HISTORIS belum terverifikasi:
-  # - 2023-01: tidak ada daily break sama sekali (hanya gap weekend ~48jam).
-  # - 2026-03: gap harian muncul di jam server 0 DAN 1 (indikasi transisi).
-  # Pola ini TIDAK konsisten dengan offset tetap +3 selama 3.75 tahun.
-  # TINDAKAN: fetch_data.py WAJIB menyimpan timestamp broker mentah bersama
-  # timestamp UTC, lalu validate_data.py menguji offset terhadap anchor UTC
-  # yang dikenal sebelum fitur session dipakai. Jangan percaya nilai ini
-  # untuk data sebelum 2023-06 tanpa validasi.
-  broker_timezone: "Etc/GMT-3"
+  # Pengukuran langsung 5 Okt 2026: tick MT5 meleset +10.799 detik (= +3)
+  # dari jam internet independen. Oktober masih sebelum 1 November, jadi
+  # GMT+3 memang benar saat itu - konsisten, bukan pembuktian winter.
+  #
+  # Semua transisi jatuh di MINGGU saat pasar tutup: ketujuh tanggal di
+  # bawah punya 0 bar, dan bar pertama sesudahnya selalu Senin. Jadi tidak
+  # ada hari perdagangan yang terbelah antar offset, dan pencarian offset
+  # berbasis tanggal eksak.
+  broker_utc_offset_hours:
+    standard: 2  # EET, musim dingin
+    daylight: 3  # EEST, musim panas
+  broker_dst_schedule:
+    - {start: "2023-03-12", end: "2023-11-05"}
+    - {start: "2024-03-10", end: "2024-11-03"}
+    - {start: "2025-03-09", end: "2025-11-02"}
+    - {start: "2026-03-08", end: "2026-11-01"}
   # Digit harga dari symbol_info().digits. Dipakai clean_data.py untuk
   # membulatkan OHLC ke presisi tick. USDJPY = 3 desimal.
   price_digits: 3
@@ -88,13 +98,32 @@ validation:
     H1: 120
   max_return_std: 10
   min_rows_per_year: 100000
-  # Jendela tempat jam break broker menyimpang dari nilai dominannya.
-  # Dipakai check_known_anomalies. Dihapus dari kode supaya bisa diperbarui
-  # tanpa menyentuh src/ (RULES.md §10).
+  # Jendela tempat digit jam broker menyimpang 1 jam dari dominannya
+  # (buka 00:00, bukan 01:00). Dipakai check_known_anomalies. Dihapus dari
+  # kode supaya bisa diperbarui tanpa menyentuh src/ (RULES.md §10).
+  #
+  # Temuan self-audit 2026-10-05 (SA-02): digit jamming Mundur 1 jam, jadi
+  # ini BUKAN "offset belum terverifikasi" secara netral. Bukti internal
+  # (hanya broker_time_raw, tanpa kolom `time` yang kita karunia sendiri):
+  #   - di luar jendela, buka sesi = 01:00 -> 22:00 UTC (offset +3) di musim
+  #     panas dan 23:00 UTC (offset +2) di musim dingin.
+  #   - di dalam jendela, digit 00:00. Dengan offset +3 hasilnya 21:00 UTC,
+  #     nilai yang TIDAK PERNAH muncul di 4 tahun selain 19 hari ini.
+  #     Dengan offset +2 hasilnya 22:00 UTC, identik dengan tetangganya.
+  # Jadi bukti lokal mengarah ke +2, tapi ini tetap inferensi, bukan
+  # konfirmasi broker. Menunggu jawaban Finex. Lihat .ai/STATE.md.
   anomaly_windows:
-    - start: "2024-10-29"
+    - start: "2024-10-28"
       end: "2024-11-01"
-      note: "break harian di jam dinding 3, bukan 4"
+      note: >-
+        Digit jam mundur 1 jam (buka 00:00) selama lima hari perdagangan,
+        lalu kembali normal 4 Nov 2024. Offset jendela ini BELUM
+        TERVERIFIKASI; jangan dipakai untuk fitur sesi Tokyo/London/NY
+        sebelum sebabnya dikonfirmasi ke Finex.
     - start: "2026-03-10"
       end: "2026-03-27"
-      note: "break harian di jam dinding 3, bukan 4"
+      note: >-
+        Digit jam mundur 1 jam (buka 00:00) selama empat belas hari
+        perdagangan, lalu kembali normal 30 Mar 2026. Offset jendela ini
+        BELUM TERVERIFIKASI; jangan dipakai untuk fitur sesi Tokyo/London/NY
+        sebelum sebabnya dikonfirmasi ke Finex.

@@ -35,11 +35,12 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
 
+from src.data.broker_time import BrokerSchedule, utc_series
+from src.data.broker_time import broker_epoch_to_utc as _broker_epoch_to_utc
 from src.utils.config import PROJECT_ROOT, load_config
 
 logger = logging.getLogger(__name__)
@@ -76,24 +77,21 @@ RAW_DIR = PROJECT_ROOT / "data" / "raw"
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 
 
-def broker_epoch_to_utc(epoch: int, broker_tz: ZoneInfo) -> datetime:
+def broker_epoch_to_utc(epoch: int, schedule: BrokerSchedule) -> datetime:
     """Convert an MT5 broker wall-clock stamp to a timezone-aware UTC datetime.
 
-    MT5 encodes the broker server's wall clock as if it were UTC, so
-    ``datetime.fromtimestamp(epoch, tz=broker_tz)`` is a no-op: it reads the
-    broker digits as a true instant and merely re-labels them, which is what
-    made this module store every bar 3 hours ahead. The broker digits have to
-    be recovered first, tagged with the broker offset, and only then converted.
+    Thin re-export kept so callers of this module do not need a second import.
+    The real logic lives in :mod:`src.data.broker_time` because resample and
+    validate_data need the same seasonal offset.
 
     Args:
         epoch: Raw epoch seconds as returned by MT5, holding broker wall clock.
-        broker_tz: Timezone of the broker server.
+        schedule: Broker schedule supplying the seasonal offset.
 
     Returns:
         The real instant expressed in UTC, with tzinfo attached.
     """
-    wall_clock = datetime.fromtimestamp(epoch, tz=UTC)
-    return wall_clock.replace(tzinfo=broker_tz).astimezone(UTC)
+    return _broker_epoch_to_utc(epoch, schedule)
 
 
 def spread_points_to_pips(
@@ -208,13 +206,13 @@ def fetch_rates(symbol: str, timeframe: str, start: datetime, end: datetime) -> 
 
 
 def rates_to_frame(
-    rates: np.ndarray, broker_tz: ZoneInfo, point: float, pip_size: float
+    rates: np.ndarray, schedule: BrokerSchedule, point: float, pip_size: float
 ) -> pd.DataFrame:
     """Convert raw MT5 rates into the project's CSV schema.
 
     Args:
         rates: Structured array from ``fetch_rates``.
-        broker_tz: Broker server timezone.
+        schedule: Broker schedule supplying the seasonal UTC offset.
         point: Symbol price increment.
         pip_size: Pip value from config.
 
@@ -224,9 +222,7 @@ def rates_to_frame(
     """
     frame = pd.DataFrame(rates)
     frame["broker_time_raw"] = frame["time"].astype("int64")
-    frame["time"] = [
-        broker_epoch_to_utc(int(epoch), broker_tz) for epoch in frame["broker_time_raw"]
-    ]
+    frame["time"] = utc_series(frame["broker_time_raw"], schedule)
     frame = frame.rename(columns={"spread": "spread_points"})
     frame["spread_pips"] = spread_points_to_pips(frame["spread_points"], point, pip_size)
     frame = frame[OUTPUT_COLUMNS].sort_values("broker_time_raw").reset_index(drop=True)
@@ -330,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
     timeframe = args.timeframe or mt5_config["timeframes"][0]
     start = datetime.fromisoformat(args.start or mt5_config["start_date"]).replace(tzinfo=UTC)
     end = datetime.fromisoformat(args.end or mt5_config["end_date"]).replace(tzinfo=UTC)
-    broker_tz = ZoneInfo(mt5_config["broker_timezone"])
+    schedule = BrokerSchedule.from_config(mt5_config)
     pip_size = float(config["spread"]["pip_size"][symbol])
     pattern = config["data"]["filename_pattern"]
 
@@ -345,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
             report_error(f"GAGAL: simbol {symbol} tidak dikenal")
             return 1
         rates = fetch_rates(symbol, timeframe, start, end)
-        frame = rates_to_frame(rates, broker_tz, info.point, pip_size)
+        frame = rates_to_frame(rates, schedule, info.point, pip_size)
     finally:
         mt5.shutdown()
 

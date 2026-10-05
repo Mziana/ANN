@@ -12,7 +12,6 @@ from __future__ import annotations
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -20,12 +19,13 @@ import pandas as pd
 # the import path; pytest would have added it, a plain run does not.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from src.data.broker_time import BrokerSchedule  # noqa: E402
 from src.data.fetch_data import import_mt5  # noqa: E402
 from src.data.resample import resample_frame  # noqa: E402
 from src.utils.config import load_config  # noqa: E402
 
 SYMBOL = "USDJPY"
-BROKER_TZ = ZoneInfo("Etc/GMT-3")
+SCHEDULE = BrokerSchedule.from_config(load_config("data")["mt5"])
 START = datetime(2026, 9, 1, tzinfo=UTC)
 END = datetime(2026, 9, 15, tzinfo=UTC)
 
@@ -80,7 +80,7 @@ def main() -> None:
     print(f"  bar M1  : {len(window):,}")
     print()
 
-    mine, result = resample_frame(window, "M5", BROKER_TZ, digits)
+    mine, result = resample_frame(window, "M5", digits, SCHEDULE)
     print("=== HASIL RESAMPLE ===")
     print(f"  bucket  : {len(mine):,}")
     print(f"  bar/bucket: {result.shortest_bucket}-{result.longest_bucket}")
