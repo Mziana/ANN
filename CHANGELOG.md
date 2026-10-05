@@ -76,6 +76,10 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 ### Added
 
+- **`tzdata==2026.5` dipin eksplisit di `requirements.txt`.** `zoneinfo` di
+  Windows bergantung padanya; sebelumnya hanya masuk sebagai dependensi
+  transitif sehingga tidak terjaga saat reinstall. Pin atas persetujuan user
+  (RULES §13).
 - `validate_data.check_break_hour` kini mendokumentasikan bahwa angka yang
   dilaporkan adalah jam buka kembali (04:00), bukan jam break (03:00).
 - `src/data/clean_data.py`: raw CSV ke Parquet. Tidak pernah mengarang bar; hanya
@@ -89,6 +93,13 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
 
 ### Changed
 
+- **`MetaTrader5` dipin ke `==5.0.6231`** (versi terinstal terverifikasi via
+  `pip show`) — dependency terakhir yang sebelumnya tanpa pin versi.
+- **Venv kanonik `venv/` diverifikasi sinkron dengan requirements**:
+  `pip install -r requirements.txt` no-op; `jupyter==1.1.0` dan
+  `ipykernel==6.29.5` sudah terpasang. Env bantu `.venv/` (dibuat uv
+  2026-10-05 oleh sesi AI) tidak dipakai gate dan dicatat di `.ai/STATE.md`
+  agar tidak tertukar.
 - `validate_data.trading_days` dihitung dari jeda sesi (>= 55 menit), bukan
   `dt.date`. Dampak: 2023 turun dari 311 tanggal broker menjadi 163 sesi.
 - `configs/data.yaml` mendapat `mt5.price_digits`, `spread.warn_multiplier`,

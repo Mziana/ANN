@@ -179,3 +179,18 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
 - [x] Perbaiki catatan usang TASKS.md soal `scripts/check_foreign_chars.py`
       (file itu dibuat AI, bukan file asing)
 - [x] Hapus `black==24.10.0` dari requirements.txt (basi, Black sudah dihapus)
+
+## Lapisan 2 — EDA (2026-10-06)
+
+- [x] Langkah 0 — Reuse-Check: `load_config` + `broker_time` + parquet + tzdata
+      terverifikasi; temuan **dua venv** (`venv/` kanonik vs `.venv/` env bantu)
+- [x] Langkah 1 — pin `tzdata==2026.5` + `MetaTrader5==5.0.6231`; jupyter no-op
+      (sudah terpasang di venv kanonik); commit `chore(deps)`
+- [ ] Langkah 2 — `notebooks/scalping/eda_00_setup.ipynb` (audit strata, tabel
+      sesi, preregistrasi placebo, Kontrak 00) + laporan mini → STOP
+- [ ] Notebook 01 returns → 02 volatility + fragmen spread → 4b → 03 autocorr →
+      04 swings/levels → 05 regimes + report
+- [ ] **Aturan baru (untuk masuk AGENTS/RULES): Setiap upgrade venv wajib update
+      requirements di commit yang sama.**
+- [ ] Arsip: entri SESSION_LOG 2026-10-05 menyebut hash `1147eef`; hash final
+      `a63d117`. Koreksi disimpan sebagai item terbuka.

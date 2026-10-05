@@ -1,7 +1,7 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-05
-**Fase:** Fase B (Data) — pipeline data berjalan
+**Update terakhir:** 2026-10-06
+**Fase:** Lapisan 2 (EDA) — dimulai; Lapisan 0–1 selesai dan ter-commit
 **Progress keseluruhan:** ~60%
 
 ## Ringkasan Eksekutif
@@ -15,6 +15,10 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Yang Sedang Dikerjakan
 
+- **Lapisan 2 (EDA) dimulai (2026-10-06).** Langkah 0 (reuse-check) dan
+  Langkah 1 (pin `tzdata==2026.5` + `MetaTrader5==5.0.6231`) selesai.
+  Venv kanonik = `venv/`; `.venv/` = env bantu uv (tidak dipakai gate).
+  Berikutnya: notebook 00 (setup + audit strata A/B/C).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi
@@ -114,9 +118,25 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Langkah Berikutnya
 
-1. **`src/data/clean_data.py`** — raw -> `data/processed/M1/`, raw tidak diubah.
-2. `src/data/resample.py` (M1 -> TF lain) — setelah clean.
-3. EDA.
+1. **Lapisan 2 EDA** — `notebooks/scalping/eda_00_setup.ipynb` (audit strata
+   A/B/C, tabel sesi winter/summer, preregistrasi placebo, Kontrak 00) →
+   laporan mini → STOP untuk review user.
+2. Notebook 01–05 sesuai Rancangan EDA v3 Final, lalu audit adversarial Klenz
+   dan penguncian hipotesis.
+3. Pemilihan metode strategi — setelah EDA lulus audit (tugas terpisah).
+
+## Venv — satu kanonik (2026-10-06)
+
+- **`venv/` = kanonik.** Dibuat setup.ps1 (Python 3.12.8, pip 24.3.1); dipakai
+  `setup.ps1`, `run.ps1`, `pipeline.ps1`, dan `run_hook.bat` (hook pre-commit).
+  Semua gate dijalankan dengan `venv/Scripts/python.exe`.
+- **`.venv/` = env bantu, JANGAN dipakai gate/notebook.** Dibuat uv 0.12.13
+  pada 2026-10-05 22:13 oleh sesi AI (Python 3.12.13; pandas 3.0.6 dkk, tanpa
+  pip, tanpa torch/sklearn/MT5/jupyter). Dibiarkan di disk; penghapusan
+  menunggu perintah eksplisit user.
+- `requirements.txt` mengikuti `venv/`: `tzdata==2026.5` dan
+  `MetaTrader5==5.0.6231` dipin 2026-10-06; `pip install -r requirements.txt`
+  no-op (semua requirement sudah terpenuhi).
 
 ## Aturan Pipeline (2026-10-05)
 

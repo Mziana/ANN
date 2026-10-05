@@ -829,3 +829,68 @@ Pre-commit: 12/12 hijau.
 - Working tree bersih, kecuali .ai/backup/ (arsip pribadi, dihindari).
 - Belum ada remote untuk push — tidak dilakukan.
 - Siap untuk Lapisan 2: EDA (dengan stratifikasi H1-2023).
+
+---
+
+## 2026-10-06 — EDA Langkah 0 (Reuse-Check) + Langkah 1 (pin deps)
+
+### KONTEKS
+
+Lapisan 1 selesai dan ter-commit (`a63d117`). Lapisan 2 EDA dimulai memakai
+Rancangan EDA v3 Final (disetujui user, diaudit Klenz).
+
+### LANGKAH 0 — REUSE-CHECK
+
+- Dependensi rancangan terverifikasi: `load_config("data")`, `BrokerSchedule`
+  (standard 7200 s / daylight 10800 s / 4 jendela), `wall_clock_series` +
+  `utc_series` identik dengan kolom `time` tersimpan (M1/M5/M15/H1/D1 2024,
+  460.194 bar).
+- Parquet lengkap: M1 1.347.847 (362.693/358.331/356.977/269.846); M5 269.964;
+  M15 90.041; H1 22.513; D1 974 (2024 = 260; semua bucket hari kerja, nol
+  Sabtu/Minggu). M30/H4 ada tetapi tidak dipakai EDA.
+- `tzdata==2026.5` terverifikasi; `zoneinfo` berfungsi untuk 4 zona IANA
+  (Tokyo +9; London GMT 2024-10-28; New York EDT 2026-03-10; Sydney AEDT
+  2024-10-28).
+- Skema: kolom `time` disimpan sebagai string ISO-8601 UTC (bukan timestamp
+  parquet). Notebook harus parse `pd.to_datetime(..., utc=True)` atau memakai
+  `utc_series(broker_time_raw)`; keduanya terbukti setara.
+- `src/` bersih: 9 file tracked, tanpa file baru; working tree bersih kecuali
+  `.ai/backup/` (tidak disentuh).
+
+### TEMUAN UTAMA — DUA VENV
+
+- `venv/` (Python 3.12.8, dibuat setup.ps1 2026-10-05 09:15, pip 24.3.1) =
+  KANONIK. Dipakai `setup.ps1`/`run.ps1`/`pipeline.ps1`/`run_hook.bat`; versi
+  paketnya cocok PERSIS dengan `requirements.txt`; jupyter 1.1.0 + ipykernel
+  6.29.5 terpasang.
+- `.venv/` (Python 3.12.13, dibuat uv 0.12.13 pada 2026-10-05 22:13 oleh sesi
+  AI) = env bantu: pandas 3.0.6 dkk, tetapi tanpa pip dan tanpa
+  torch/sklearn/MT5/jupyter.
+- Akibat: premis "requirements.txt basi" pada laporan Langkah 0 berasal dari
+  `.venv`; untuk venv kanonik, requirements justru sudah sinkron. Keputusan
+  user: `venv/` kanonik; `.venv/` dibiarkan dan dicatat di STATE.md;
+  penghapusan menunggu perintah eksplisit terpisah.
+- 157 test + ruff hijau di KEDUA env (tidak ada regresi pandas 2 vs 3).
+
+### LANGKAH 1 — PIN DEPS
+
+- `requirements.txt`: tambah `tzdata==2026.5` (pin eksplisit, persetujuan user)
+  dan pin `MetaTrader5==5.0.6231` (versi terinstal terverifikasi via `pip show`).
+- jupyter/ipykernel tidak diubah — sudah terpasang dan sudah tercantum.
+- Verifikasi `pip install -r requirements.txt` di `venv` = no-op (semua
+  `Requirement already satisfied`), exit 0.
+- Gate di `venv` kanonik: pytest 157 passed (exit 0); ruff check `All checks
+  passed`; ruff format `14 files already formatted`; `validate_data` exit 0
+  (2023: 2 peringatan, 2024: 2, 2025: 1, 2026: 1 — 0 error).
+- Commit tunggal: `chore(deps): pin tzdata==2026.5 + MetaTrader5==5.0.6231`
+  (hash final ada di `git log`; sengaja tidak ditulis di file ini agar tidak
+  basi seperti entri 2026-10-05).
+- `.ai/TASKS.md`: aturan baru dicatat — setiap upgrade venv wajib update
+  requirements di commit yang sama (untuk masuk AGENTS/RULES).
+
+### CATATAN ARSIP
+
+- Entri 2026-10-05 menulis hash `1147eef` (pra-amend); hash final `a63d117`.
+  Koreksi disimpan sebagai item terbuka di TASKS.md.
+- `reports/data_validation_2026-10-06.md` dihasilkan gate `validate_data`;
+  tidak ikut commit chore deps (artefak gate).
