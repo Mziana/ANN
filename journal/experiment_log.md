@@ -1,4 +1,4 @@
-﻿# experiment_log.md - Log Eksperimen
+# experiment_log.md - Log Eksperimen
 
 ## (Belum ada eksperimen)
 

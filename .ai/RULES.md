@@ -1,4 +1,4 @@
-﻿# RULES.md — Panduan Kode & Trading Proyek USDJPY Bot
+# RULES.md — Panduan Kode & Trading Proyek USDJPY Bot
 
 > Ini panduan, bukan kitab suci.
 > Aturan dibagi 3 tingkat:

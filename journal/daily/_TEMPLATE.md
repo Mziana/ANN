@@ -1,4 +1,4 @@
-﻿# <YYYY-MM-DD> (<Hari>)
+# <YYYY-MM-DD> (<Hari>)
 
 ## Ringkasan Trading
 - Total trade: <N>

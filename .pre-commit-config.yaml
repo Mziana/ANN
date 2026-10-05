@@ -1,14 +1,11 @@
-﻿# Pre-commit hooks untuk proyek USDJPY Bot
+# Pre-commit hooks untuk proyek USDJPY Bot
 # Install: pre-commit install
 # Jalankan manual: pre-commit run --all-files
 
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
-        language_version: python3.11
-
+  # Formatting done entirely by ruff-format (black removed 2026-10-05).
+  # Reason: one formatter only. Two formatters on the same files can
+  # disagree and rewrite each other's output on every commit.
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
     hooks:
@@ -26,9 +23,10 @@ repos:
       - id: check-toml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: mixed-line-ending
-        args: [--fix=lf]
       - id: detect-private-key
+      # mixed-line-ending dihapus 2026-10-05. Hook itu memaksa LF ke semua
+      # file dan berbalik mengubah .ps1 dari CRLF ke LF, menabrak aturan
+      # `*.ps1 text eol=crlf` di .gitattributes. Satu sumber kebenaran saja.
 
   - repo: local
     hooks:
@@ -41,7 +39,7 @@ repos:
 
       - id: pytest-quick
         name: Pytest (quick)
-        entry: python -m pytest tests/ -q --no-header
+        entry: python scripts/run_tests.py
         language: system
         pass_filenames: false
         always_run: true

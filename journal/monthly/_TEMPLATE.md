@@ -1,4 +1,4 @@
-﻿# Bulan: <YYYY-MM>
+# Bulan: <YYYY-MM>
 
 ## Metrik Utama
 - Total trade: <N>

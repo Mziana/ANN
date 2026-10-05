@@ -1,4 +1,4 @@
-﻿# PROMPTS.md - Prompt Siap Pakai
+# PROMPTS.md - Prompt Siap Pakai
 
 > Kumpulan prompt untuk user paste ke AI coder.
 > Versi: 2.0
@@ -600,12 +600,12 @@ Kandidat:
 Tabel:
 
 Metrik	A	B	C	Baseline
-Sharpe				
-Max DD				
-WR				
-PF				
-Expectancy				
-Robust				
+Sharpe
+Max DD
+WR
+PF
+Expectancy
+Robust
 Analisis:
 
 Mana paling robust (bukan tertinggi)?

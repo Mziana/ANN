@@ -1,4 +1,4 @@
-﻿# scripts/setup.ps1
+# scripts/setup.ps1
 # Setup environment proyek USDJPY Bot. Jalankan SEKALI.
 # Cara: powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 

@@ -1,4 +1,4 @@
-﻿# Backtest Report - <nama>
+# Backtest Report - <nama>
 
 **Tanggal:** <YYYY-MM-DD>
 **Strategi:** <nama>

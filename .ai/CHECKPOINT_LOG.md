@@ -1,4 +1,4 @@
-﻿# CHECKPOINT_LOG.md â€” Log Checkpoint
+# CHECKPOINT_LOG.md â€” Log Checkpoint
 
 ## Checkpoint 05 â€” 2026-10-05
 - Tulis STATE.md, TASKS.md, PROGRESS.md, SESSION_LOG.md.

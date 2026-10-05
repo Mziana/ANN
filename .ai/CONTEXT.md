@@ -1,9 +1,9 @@
-﻿# CONTEXT.md â€” Konteks Proyek USDJPY Bot
+# CONTEXT.md â€” Konteks Proyek USDJPY Bot
 
 > Memori jangka panjang AI agent.
 > Update saat ada perubahan besar (bukan setiap sesi).
 >
-> Versi: 1.2
+> Versi: 1.3
 > Update: 2026-10-05
 > Proyek: USDJPY Trading Bot
 
@@ -176,6 +176,8 @@ Detail: RULES.md Â§18.
 | 2026-10-05 | RULES.md v2.0 |
 | 2026-10-05 | PROMPTS.md v2.0 |
 | 2026-10-05 | CONTEXT.md v1.2 |
+| 2026-10-05 | Broker timezone = UTC+3 (terverifikasi empiris) |
+| 2026-10-05 | Simbol MT5 = USDJPY, bukan USDJPYm (terverifikasi) |
 | 2026-10-05 | Risk: no %, daily limit $ |
 | 2026-10-05 | 3 fase: Training, Graduation, Live |
 | 2026-10-05 | Metode dipilih setelah EDA |
@@ -187,16 +189,33 @@ Detail: RULES.md Â§18.
 
 ---
 
-## 8. Asumsi (Belum Diverifikasi)
+## 8. Asumsi
 
-- Simbol MT5 Finex: USDJPY (mungkin USDJPYm).
-- Timezone broker: GMT+2 atau GMT+3.
-- Finex punya cent account: BELUM DIKONFIRMASI.
-- Spread USDJPY: 1,5-3 pip (perlu dicek).
-- Data MT5: 3 tahun.
-- Freebuff + Hermes bisa browse (harus dipaksa).
+### 8.1 Sudah Terverifikasi (2026-10-05)
 
-Aksi: verifikasi saat fetch data pertama.
+| Asumsi lama | Hasil verifikasi | Bukti |
+|---|---|---|
+| Simbol MT5 Finex: USDJPY (mungkin USDJPYm) | **TERVERIFIKASI: `USDJPY`** | `mt5.symbols_get()` mengembalikan 82 simbol; `USDJPYm` TIDAK ada |
+| Timezone broker: GMT+2 atau GMT+3 | **TERVERIFIKASI: UTC+3** (`Etc/GMT-3`) | `now UTC` 02:48:49 vs last M1 bar 05:48 -> offset +3 jam |
+| Data MT5: 3 tahun | **TERVERIFIKASI: 3,75 tahun = 1.348.135 bar M1** | `copy_rates_range('USDJPY', M1, 2023-01-01, 2026-10-06)` |
+
+Tambahan terverifikasi (2026-10-05):
+- Terminal: **Finex Bisnis Solusi MT5 Terminal**, build 6230, `connected=True`.
+- USDJPY: `digits=3`, `point=0.001` -> 1 pip = 0.01 (cocok `configs/data.yaml`).
+- Spread live terukur: **0,8 pip** (8 point; tick bid 157.851 / ask 157.859).
+- `configs/data.yaml` `spread.default: 1.5` **konservatif** vs live 0,8 -> aman untuk backtest.
+- `trade_allowed=False` -> akun belum login untuk trading.
+- First bar M1: 2023-01-02 00:07 (waktu broker UTC+3).
+
+### 8.2 Belum Diverifikasi
+
+- Finex punya cent account: **BELUM DIKONFIRMASI**. `trade_allowed=False` adalah indikasi belum login trading, bukan bukti adanya akun cent. Perlu cek manual di terminal.
+- Spread per sesi (Tokyo/London/NY) di config: **ANGKA ASUMSI**, belum diukur dari data.
+- Spread multiplier berita (FOMC/CPI/NFP/BoJ): **ANGKA ASUMSI**.
+- Spread `sunday_open: 5.0`: **ANGKA ASUMSI**, belum diukur.
+- Freebuff + Hermes bisa browse: belum diuji di sesi ini.
+
+Aksi: ukur spread per sesi dari data M1 (setelah fetch), lalu update `configs/data.yaml`.
 
 ---
 
@@ -299,4 +318,4 @@ reports/backtest/
 
 ---
 
-Akhir CONTEXT.md v1.2
+Akhir CONTEXT.md v1.3

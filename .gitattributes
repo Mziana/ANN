@@ -1,0 +1,30 @@
+# Line ending & file type untuk repo USDJPY Bot.
+#
+# Alasan: tanpa file ini, core.autocrlf=true di Windows menyebabkan
+# working copy menjadi CRLF, lalu bentrok dengan hook pre-commit
+# `mixed-line-ending --fix=lf` dan ruff-format yang menghendaki LF.
+#
+# Aturan:
+# - Semua file teks: LF di working copy dan di repository.
+# - .ps1 / .bat: CRLF (PowerShell & batch di Windows butuh CRLF).
+# - Biner: jangan disentuh sama sekali.
+
+# Default: normalisasi semua file teks ke LF
+* text=auto eol=lf
+
+# Script Windows butuh CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Biner: tanpa normalisasi, tanpa diff
+*.png binary
+*.jpg binary
+*.parquet binary
+
+# Lockfile Python: LF
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.csv text eol=lf

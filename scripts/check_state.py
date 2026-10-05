@@ -1,4 +1,5 @@
-﻿"""Cek apakah STATE.md diupdate hari ini."""
+"""Check whether STATE.md was updated today."""
+
 from __future__ import annotations
 
 import sys
@@ -7,6 +8,13 @@ from pathlib import Path
 
 
 def main() -> int:
+    """Verify that .ai/STATE.md mentions today's date.
+
+    Used as a pre-commit gate so state files are never left stale.
+
+    Returns:
+        0 if STATE.md exists and contains today's date, 1 otherwise.
+    """
     state = Path(".ai/STATE.md")
     if not state.exists():
         print("GAGAL: .ai/STATE.md tidak ada")

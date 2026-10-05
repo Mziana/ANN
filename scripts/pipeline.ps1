@@ -1,4 +1,4 @@
-﻿# scripts/pipeline.ps1
+# scripts/pipeline.ps1
 # Menu interaktif pipeline proyek USDJPY Bot.
 
 $ErrorActionPreference = "Stop"

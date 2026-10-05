@@ -1,4 +1,4 @@
-﻿# decision_log.md - Log Keputusan Penting
+# decision_log.md - Log Keputusan Penting
 
 ## 2026-10-05 - Update AGENTS/RULES/CONTEXT/PROMPTS
 

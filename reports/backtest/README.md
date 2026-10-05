@@ -1,4 +1,4 @@
-﻿# reports/backtest/ - Struktur Backtest
+# reports/backtest/ - Struktur Backtest
 
 ## Struktur
 

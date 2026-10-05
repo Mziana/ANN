@@ -1,4 +1,4 @@
-﻿# AGENTS.md â€” Kontrak Kerja AI Agent
+# AGENTS.md â€” Kontrak Kerja AI Agent
 
 > File ini dibaca AI agent sebelum menulis kode apa pun.
 > Aturan WAJIB. Kalau tidak jelas, tanya dulu, jangan asumsi.

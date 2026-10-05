@@ -1,4 +1,4 @@
-﻿# scripts/run.ps1
+# scripts/run.ps1
 # Shortcut: aktifkan venv + jalankan pipeline menu.
 # Cara: .\scripts\run.ps1
 

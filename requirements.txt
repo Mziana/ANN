@@ -1,4 +1,4 @@
-﻿# Proyek: USDJPY Trading Bot
+# Proyek: USDJPY Trading Bot
 # Python: 3.11+
 # Update: 2026-10-05
 

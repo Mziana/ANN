@@ -1,22 +1,8 @@
-﻿[project]
+[project]
 name = "usdjpy-bot"
 version = "0.1.0"
 description = "USDJPY trading bot berbasis ANN + rule-based hybrid"
 requires-python = ">=3.11"
-
-[tool.black]
-line-length = 100
-target-version = ["py311"]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | venv
-  | __pycache__
-  | \.ipynb_checkpoints
-)/
-'''
 
 [tool.ruff]
 line-length = 100

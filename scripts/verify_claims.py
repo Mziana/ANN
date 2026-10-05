@@ -1,4 +1,14 @@
-﻿"""Verifikasi klaim AI secara otomatis."""
+"""Verify AI claims automatically.
+
+Checks that the required rule files exist, that key modules import, and that
+the test suite passes. Run before commit and before reporting work as done.
+
+Notes:
+    This script uses print() on purpose: the console report is the product.
+    Switching to logging (RULES.md section 9) would hide the report from the
+    terminal output the way this script is meant to be read.
+"""
+
 from __future__ import annotations
 
 import subprocess
@@ -18,10 +28,30 @@ REQUIRED_IMPORTS = ["src"]
 
 
 def check_file_exists(path: str) -> bool:
+    """Check that a path exists on disk.
+
+    Args:
+        path: Path to check, relative to the project root.
+
+    Returns:
+        True if the path exists, False otherwise.
+    """
     return Path(path).exists()
 
 
 def check_import(module: str) -> bool:
+    """Check that a Python module can be imported in a subprocess.
+
+    The import runs in a child process so that a hard failure (segfault,
+    missing shared library) is reported as False instead of killing this
+    script.
+
+    Args:
+        module: Dotted module name to import, for example ``"src"``.
+
+    Returns:
+        True if the import process exits with code 0, False otherwise.
+    """
     result = subprocess.run(
         [sys.executable, "-c", f"import {module}"],
         capture_output=True,
@@ -31,6 +61,13 @@ def check_import(module: str) -> bool:
 
 
 def check_tests() -> tuple[bool, str]:
+    """Run the pytest suite and capture its output.
+
+    Returns:
+        A tuple of ``(passed, output)``. When the tests directory holds no
+        test files the check is skipped and reported as passing with a SKIP
+        note, because an empty suite is not a failure.
+    """
     tests_dir = Path("tests")
     if not tests_dir.exists() or not list(tests_dir.glob("test_*.py")):
         return True, "SKIP: belum ada test"
@@ -44,6 +81,13 @@ def check_tests() -> tuple[bool, str]:
 
 
 def main() -> int:
+    """Run every verification check and print a summary report.
+
+    Writes a per-check report to stdout.
+
+    Returns:
+        0 when every check passed, 1 when at least one check failed.
+    """
     print("\n=== Verifikasi Klaim AI ===\n")
     all_ok = True
 

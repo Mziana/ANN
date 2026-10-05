@@ -1,4 +1,4 @@
-﻿# Backtest <YYYY-MM-DD>
+# Backtest <YYYY-MM-DD>
 
 ## Daftar Backtest
 | # | Nama | Sharpe | DD | WR | PF | Verdict |

@@ -1,4 +1,4 @@
-﻿# Journal INDEX.md - Peta Jurnal
+# Journal INDEX.md - Peta Jurnal
 
 **Update terakhir:** 2026-10-05
 **Bulan aktif:** (belum ada trade)

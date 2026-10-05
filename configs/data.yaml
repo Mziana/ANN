@@ -1,7 +1,20 @@
-﻿# Konfigurasi data & koneksi MT5
+# Konfigurasi data & koneksi MT5
 mt5:
   symbol: "USDJPY"
-  broker_timezone: "Etc/GMT-2"
+  # VERIFIED 2026-10-05: offset server = +3.00 jam (bukan +2).
+  # Bukti: symbol_info_tick().time  05:58:13 vs UTC 02:58:06 -> +3.0019 jam
+  #        last M1 bar timestamp    05:58:00 vs UTC 02:58:06 -> +2.9983 jam
+  # Dua pengukuran independen, keduanya +3.00.
+  #
+  # PERINGATAN - offset HISTORIS belum terverifikasi:
+  # - 2023-01: tidak ada daily break sama sekali (hanya gap weekend ~48jam).
+  # - 2026-03: gap harian muncul di jam server 0 DAN 1 (indikasi transisi).
+  # Pola ini TIDAK konsisten dengan offset tetap +3 selama 3.75 tahun.
+  # TINDAKAN: fetch_data.py WAJIB menyimpan timestamp broker mentah bersama
+  # timestamp UTC, lalu validate_data.py menguji offset terhadap anchor UTC
+  # yang dikenal sebelum fitur session dipakai. Jangan percaya nilai ini
+  # untuk data sebelum 2023-06 tanpa validasi.
+  broker_timezone: "Etc/GMT-3"
   timeframes:
     - M1
     - M5
@@ -20,6 +33,8 @@ data:
   raw_format: "csv"
   processed_format: "parquet"
   filename_pattern: "{symbol}_{tf}_{year}.{format}"
+  # Semua bar disimpan dalam UTC. Kolom broker_time_raw disimpan terpisah
+  # supaya konversi bisa diaudit ulang tanpa fetch ulang (RULES.md §20).
   internal_timezone: "UTC"
 
 # SPREAD CONFIG (WAJIB - section 18.16 RULES.md)
