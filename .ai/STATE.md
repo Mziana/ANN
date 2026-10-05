@@ -15,7 +15,8 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **KESIMPULAN DST: broker TIDAK ikut DST. Offset tetap `Etc/GMT-3` untuk 2023-2026.**
-- Menunggu konfirmasi user sebelum commit.
+- **Validasi data LOLOS**: 0 error, 5 peringatan di 4 tahun.
+- Berikutnya: `src/data/clean_data.py` (raw -> `data/processed/M1/`).
 
 ## Yang Sudah Selesai
 
@@ -67,15 +68,20 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 | Spread live | 0,8 pip | tick 157.851 / 157.859 |
 | Pipeline order | M1 dulu, 1 TF, verifikasi, baru expand | diputuskan user 2026-10-05 |
 | Format simpan | CSV per tahun: `usdjpy_m1_<year>.csv` | diputuskan user 2026-10-05 |
+| Spread per tahun | `by_year`: 2023=3,0 · 2024-2026=1,5 | p99 2023 = 8,5 pip vs 1,2-1,7 tahun lain |
 | Total data | **1.347.847 bar M1** (2023-2026) | jumlah file = jumlah `copy_rates_range` awal |
 
 ## Langkah Berikutnya
 
-1. **Phase B: `src/data/fetch_data.py`** — M1 per tahun, simpan `broker_time_raw`.
-2. Tambah `__init__.py` untuk subpackage `src/data/`.
-3. `tests/test_fetch_data.py` — min 3 test, tanpa API live.
-4. `validate_data.py` — cek gap, baris, offset historis vs anchor UTC.
-5. EDA.
+1. **`src/data/clean_data.py`** — raw -> `data/processed/M1/`, raw tidak diubah.
+2. `src/data/resample.py` (M1 -> TF lain) — setelah clean.
+3. EDA.
+
+## Aturan Pipeline (2026-10-05)
+
+- **Raw immutable.** `data/raw/` tidak pernah ditulis ulang.
+- Processed = Parquet di `data/processed/M1/`.
+- Kalau `validate_data.py` jadi panjang, pecah jadi logika check vs render.
 
 ## Format Kode (KEGIATAN 2026-10-05)
 

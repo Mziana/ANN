@@ -16,8 +16,11 @@
 - [x] Phase B: `fetch_data.py`, `config.py`, 2 `__init__.py`, 22 test — 7/7 verifikasi lolos (2026-10-05)
 - [x] Fetch full 2023-2026: **1.347.847 bar M1** (2026-10-05)
 - [x] Investigasi DST 2023-2026: **broker tidak ikut DST, offset tetap +3**
-- [ ] `validate_data.py`: tandai 2 jendela anomali break (Okt-Nov 2024, Mar 2026) sebagai peringatan, bukan error
-- [ ] `src/data/validate_data.py`
+- [x] `validate_data.py`: 2 jendela anomali ditandai sebagai peringatan, bukan error
+- [x] `src/data/validate_data.py` + 33 test — **LOLOS 4 tahun, 0 error** (2026-10-05)
+- [x] Config spread `by_year` (2023=3,0) — dasar p99 2023 = 8,5 pip
+- [ ] **`src/data/clean_data.py`** — raw -> `data/processed/M1/` (Parquet)
+- [ ] Catatan: kalau `validate_data.py` tambah fungsi, pecah check vs render
 - [ ] File asing `scripts/check_foreign_chars.py` (isi YAML, ekstensi .py) — bukan milik AI, perlu keputusan user
 - [x] `.gitattributes` dibuat (text=auto eol=lf, ps1/bat crlf, biner) (2026-10-05)
 - [x] Line ending dinormalisasi: 38 file LF, 3 `.ps1` CRLF (2026-10-05)
@@ -28,7 +31,6 @@
 - [ ] Phase B: `src/data/fetch_data.py` — fetch M1 per tahun -> `data/raw/M1/`
 - [ ] Phase B: `fetch_data.py` WAJIB simpan `broker_time_raw` (timestamp broker mentah) bersama kolom UTC (keputusan user 2026-10-05)
 - [ ] Phase B: `validate_data.py` WAJIB uji offset historis vs anchor UTC yang dikenal sebelum fitur session dipakai
-- [ ] Phase B: `src/data/validate_data.py` — gap, jumlah baris, sanity check
 - [ ] Phase B: `src/data/clean_data.py` — raw -> processed (Parquet)
 - [ ] Tambah `src/__init__.py` per subpackage (`data`, `features`, `models`, `backtest`, `utils`)
 - [ ] `tests/test_fetch_data.py` — minimal 3 test, tanpa API live

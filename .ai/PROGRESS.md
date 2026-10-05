@@ -29,10 +29,10 @@
 
 ## Milestone 1: Data Pipeline
 
-- [ ] Fetch data MT5 M1 per tahun -> `data/raw/M1/usdjpy_m1_<year>.csv`
-- [ ] Validasi data (gap, jumlah baris, konversi timezone UTC+3 -> UTC)
-- [ ] Clean data
-- [ ] Simpan Parquet ke `data/processed/M1/`
+- [x] Fetch data MT5 M1 per tahun -> `data/raw/M1/usdjpy_m1_<year>.csv`
+- [x] Validasi data (gap, jumlah baris, duplikat, OHLC, spread) — **LOLOS 4 tahun**
+- [ ] Clean data -> `data/processed/M1/` (Parquet)
+- [ ] Simpan Parquet ke `data/processed/M1/` (menunggu clean_data.py)
 - [ ] Resample M1 -> M5/M15/M30/H1/H4/D1 (setelah M1 tervalidasi)
 
 ## Milestone 2: Eksplorasi (EDA)

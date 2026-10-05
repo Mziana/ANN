@@ -163,6 +163,38 @@
 
 **Full fetch BELUM dijalankan** — menunggu approval user.
 
+## validate_data.py + config spread
+
+**Config:** ditambah `spread.by_year` (2023=3,0; 2024-2026=1,5).
+Dasar: p99 spread 2023 = 8,5 pip vs 1,2-1,7 tahun lain. `by_session`,
+`by_news`, `pip_size` dipertahankan.
+
+**`src/data/validate_data.py`** (445 baris, fungsi terpanjang 39):
+delapan check murni (bar/hari, duplikat, monoton, OHLC, gap, spread,
+jam break, anomali dikenal) + laporan Markdown ke `reports/`.
+33 test di `tests/test_validate_data.py`.
+
+**Dua bug yang tertangkap test, keduanya di kode produksi:**
+1. `check_bar_count` group by TIMESTAMP bukan TANGGAL -> tiap hari berisi
+   "1 bar" -> semua hari masuk kategori parsial -> check selalu LOLOS tanpa
+   memeriksa apa pun. False negative yang diam-diam lolos semua data.
+2. Ambang `(1200, 1400)` bar/hari salah bukti. Data nyata bimodal: 200 hari
+   parsial (118-180 bar) dan 774 hari penuh (1341-1433 bar), dengan celah
+   KOSONG antara 180 dan 1100. Ambang lama akan menandai 17% hari yang sah
+   sebagai rusak. Sekarang: hari di rentang kosong = ERROR, parsial = sah.
+
+**Validasi data nyata: LOLOS, 0 error, 5 peringatan di 4 tahun.**
+Dua jendela anomali terdeteksi otomatis (2024-10-29..11-01, 2026-03-10..27).
+
+**Gate menangkap slip saya sendiri:** `check_foreign_chars.py` menolak
+karakter Mandarin (U+7684 U+5B9E U+73B0) yang nyasar ke komentar
+`configs/data.yaml`. Sudah diperbaiki. Gate ini langsung membuktikan
+dirinya berguna. Menolak commit ini untuk kedua kalinya — kedua-kalinya
+karena slip saya sendiri.
+
+**LENGTH_EXCEPTION:** file 445 baris, melewati batas RULES §15. Disetujui user
+dengan syarat: kalau nambah fungsi, pecah jadi check vs render.
+
 ## Fetch 2026 + hook karakter asing
 
 **`scripts/check_foreign_chars.py`** (draft YAML dari user ditulis ulang jadi Python valid):

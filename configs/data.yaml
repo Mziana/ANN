@@ -44,6 +44,18 @@ data:
 # Spread dalam PIP (bukan point).
 spread:
   default: 1.5
+  # Spread per tahun, dipakai backtest. Diukur dari data M1 2023-2026:
+  # median semua tahun 0,6 pip, tapi p99 2023 = 8,5 pip (jauh lebih lebar
+  # dari 2024-2026 yang p99 = 1,2-1,7). Likuiditas 2023 lebih tipis, jadi
+  # default 1,5 akan terlalu optimis untuk tahun itu.
+  # Diukur 2026-10-05 dari data/raw/M1/.
+  by_year:
+    2023: 3.0
+    2024: 1.5
+    2025: 1.5
+    2026: 1.5
+  # Kalau ini dipakai, spread harus dikalikan stress_multiplier.
+  stress_multiplier: 2.0
   by_session:
     tokyo_early: 3.0
     tokyo_normal: 1.5
@@ -56,7 +68,6 @@ spread:
     cpi: 3.0
     nfp: 4.0
     boj: 4.0
-  stress_multiplier: 2.0
   pip_size:
     USDJPY: 0.01
     default: 0.0001
