@@ -490,6 +490,86 @@ display(YEAR_TOTAL)
 print(YEAR_TOTAL.to_string())'''
 )
 
+md(
+    """## 5b. Ekor spread per bucket: M1 vs M5
+
+Rancangan §5: "dari M5 dipakai `spread_pips_max` untuk ekor per bucket". Sel ini memuat M5
+(kolom `spread_pips_max`) dengan **mask strata dan label sesi yang sama** dengan M1, lalu
+memperlihatkan ekor per **tahun x sesi** berdampingan: p95/p99/maks M1 vs p95/p99/maks M5.
+
+Catatan seri: M5 hanya menyimpan harga **last-tick per bucket**, sehingga `spread_pips_max`
+adalah **maksimum dalam bucket 5 menit**, bukan sampel semua tick - batas yang sudah dicatat
+di Lampiran A2 (caveat sampling last-tick). 2023 tetap dilaporkan terpisah."""
+)
+
+code(
+    '''"""D10: ekor spread per bucket, M1 `spread_pips` vs M5 `spread_pips_max` (strata A)."""
+M5_COLUMNS = ["time", "broker_time_raw", "spread_pips_max"]
+m5_spread = pd.concat(
+    [
+        pd.read_parquet(
+            PROJECT_ROOT / "data/processed/M5" / f"usdjpy_m5_{year}.parquet",
+            columns=M5_COLUMNS,
+        )
+        for year in YEARS
+    ],
+    ignore_index=True,
+)
+m5_spread["utc"] = pd.to_datetime(m5_spread["time"], utc=True)
+m5_spread["wall"] = wall_clock_series(m5_spread["broker_time_raw"])
+m5_spread["broker_day"] = m5_spread["wall"].dt.normalize()
+m5_spread = m5_spread.sort_values("utc", kind="mergesort").reset_index(drop=True)
+
+m5_day = m5_spread["broker_day"]
+m5_b_mask = (m5_day >= pd.Timestamp("2023-01-01")) & (m5_day <= pd.Timestamp("2023-06-30"))
+m5_c_mask = pd.Series(False, index=m5_spread.index)
+for start, end in ANOMALY_WINDOWS:
+    m5_c_mask |= (m5_day >= pd.Timestamp(start)) & (m5_day <= pd.Timestamp(end))
+m5_a_mask = ~(m5_b_mask | m5_c_mask)
+m5_a = add_labels(m5_spread[m5_a_mask].copy())
+
+print(f"M5 strata A={int(m5_a_mask.sum()):,} B={int(m5_b_mask.sum()):,} C={int(m5_c_mask.sum()):,}")
+TAIL_ROWS = []
+for year in YEARS:
+    for label in SESSION_ORDER:
+        m1_window = a_frame.loc[
+            (a_frame["utc"].dt.year == year) & (a_frame["session_label"] == label), "spread_pips"
+        ]
+        m5_window = m5_a.loc[
+            (m5_a["utc"].dt.year == year) & (m5_a["session_label"] == label), "spread_pips_max"
+        ]
+        if len(m1_window) == 0:
+            continue
+        TAIL_ROWS.append(
+            {
+                "tahun": year,
+                "sesi": label,
+                "n_M1": len(m1_window),
+                "p95_M1": float(m1_window.quantile(0.95)),
+                "p99_M1": float(m1_window.quantile(0.99)),
+                "max_M1": float(m1_window.max()),
+                "n_M5": len(m5_window),
+                "p95_M5max": float(m5_window.quantile(0.95)),
+                "p99_M5max": float(m5_window.quantile(0.99)),
+                "max_M5max": float(m5_window.max()),
+            }
+        )
+
+TAIL_M5 = pd.DataFrame(TAIL_ROWS).set_index(["tahun", "sesi"])
+print("=== D10: ekor spread per tahun x sesi, M1 vs M5-max (strata A) ===")
+print(TAIL_M5.round(3).to_string())
+print()
+print("Ekor per SESI (seluruh tahun, strata A): p99 dan maks")
+for label in SESSION_ORDER:
+    m1_values = a_frame.loc[a_frame["session_label"] == label, "spread_pips"]
+    m5_values = m5_a.loc[m5_a["session_label"] == label, "spread_pips_max"]
+    if len(m1_values) and len(m5_values):
+        print(
+            f"  {label:8s}: p99 M1={m1_values.quantile(0.99):.2f} | p99 M5-max={m5_values.quantile(0.99):.2f} "
+            f"| maks M1={m1_values.max():.2f} | maks M5-max={m5_values.max():.2f}"
+        )'''
+)
+
 code(
     '''"""Porsi bar spread > 3 pip per tahun x jam UTC (pivot 24 jam)."""
 hour_share_rows = []
@@ -518,6 +598,78 @@ for year in YEARS:
 )
 
 md(
+    """## 5c. Event marker deskriptif (BUKAN event-study)
+
+Rancangan §2 menetapkan dua marker **deskriptif**: **Tokyo fix 09:55 JST = 00:55 UTC** (tetap
+sepanjang tahun karena JST tanpa DST) dan **buka bursa NYSE 09:30 waktu lokal New York**
+(= 14:30 UTC musim dingin, 13:30 UTC musim panas).
+
+Sel ini **hanya menandai** bar-nya lalu mengagregasi per jam UTC, sehingga "flag jam" bisa
+dibaca langsung. **Tidak ada** return setelah marker, tidak ada reaksi, tidak ada klaim -
+itu event-study dan di luar scope EDA (putusan Architect atas D12). Bukti DST-aware dihitung,
+bukan diasumsikan: bar buka NYSE harus muncul di jam **13 dan 14 UTC**."""
+)
+
+code(
+    '''"""Flag Tokyo fix 00:55 UTC + buka NYSE 09:30 lokal NY (strata A) - deskriptif saja."""
+m1_utc = m1["utc"]
+m1["flag_tokyo_fix"] = (m1_utc.dt.hour == 0) & (m1_utc.dt.minute == 55)
+m1["flag_nyse_open"] = (m1_utc.dt.tz_convert("America/New_York").dt.hour == 9) & (
+    m1_utc.dt.tz_convert("America/New_York").dt.minute == 30
+)
+
+# Self-check: 00:55 UTC harus identik dengan 09:55 waktu lokal Tokyo (JST tanpa DST).
+tokyo_local = m1_utc.dt.tz_convert("Asia/Tokyo")
+assert (
+    m1["flag_tokyo_fix"] == ((tokyo_local.dt.hour == 9) & (tokyo_local.dt.minute == 55))
+).all(), "Tokyo fix 00:55 UTC harus identik dengan 09:55 JST sepanjang tahun"
+
+MARKER_ROWS = []
+for nama, kolom in (("tokyo_fix_0055", "flag_tokyo_fix"), ("nyse_open", "flag_nyse_open")):
+    sel = m1.loc[a_mask & m1[kolom]]
+    MARKER_ROWS.append(
+        {
+            "marker": nama,
+            "n_bar": int(len(sel)),
+            "n_hari": int(sel["broker_day"].nunique()),
+            "jam_utc": ",".join(str(h) for h in sorted(sel["utc_hour"].unique().tolist())),
+            "tahun": ",".join(str(y) for y in sorted(sel["utc"].dt.year.unique().tolist())),
+        }
+    )
+MARKERS = pd.DataFrame(MARKER_ROWS).set_index("marker")
+print("=== D12 (nb02): marker deskriptif, strata A ===")
+print(MARKERS.to_string())
+print()
+
+NYSE_JAM_UTC = m1.loc[a_mask & m1["flag_nyse_open"], "utc"].dt.hour.value_counts().sort_index()
+print("jam UTC pada bar 'buka NYSE' (bukti DST-aware, bukan asumsi):")
+print(NYSE_JAM_UTC.to_string())
+print()
+
+nyse_local = a_frame["utc"].dt.tz_convert("America/New_York")
+MARKER_HOUR_TABLE = (
+    a_frame.assign(
+        is_tokyo_fix=a_frame["utc"].dt.hour.eq(0) & a_frame["utc"].dt.minute.eq(55),
+        is_nyse_open=nyse_local.dt.hour.eq(9) & nyse_local.dt.minute.eq(30),
+    )
+    .groupby("utc_hour")[["is_tokyo_fix", "is_nyse_open"]]
+    .sum()
+    .reindex(range(24), fill_value=0)
+    .astype(int)
+    .rename(columns={"is_tokyo_fix": "n_tokyo_fix", "is_nyse_open": "n_nyse_open"})
+)
+MARKER_HOUR_TABLE["n_bar"] = a_frame.groupby("utc_hour").size().reindex(range(24), fill_value=0)
+MARKER_HOUR_TABLE["marker"] = ""
+MARKER_HOUR_TABLE.loc[0, "marker"] = "Tokyo fix 00:55 UTC"
+MARKER_HOUR_TABLE.loc[13, "marker"] = "NYSE open (EDT: 13:30 UTC)"
+MARKER_HOUR_TABLE.loc[14, "marker"] = "NYSE open (EST: 14:30 UTC)"
+print("=== jam UTC dengan marker (agregasi per jam, strata A) ===")
+print(MARKER_HOUR_TABLE.to_string())
+print()
+print("DESKRIPTIF SAJA: tidak ada return pasca-marker, tidak ada reaksi, tidak ada klaim.")'''
+)
+
+md(
     """## 6. Fragmen YAML spread (BELUM diterapkan)
 
 Fragmen dibangun dari **angka terukur** di atas, memakai kunci yang **sama** dengan
@@ -536,10 +688,6 @@ mean_by_session = {
     for label in SESSION_ORDER
     if label != "Off"
 }
-# "Off" di strata A = 0 bar (empat sesi menutup 24 jam). Dicatat eksplisit
-# sebagai null agar tidak disalahartikan sebagai spread tak berhingga.
-mean_by_session_full = dict(mean_by_session)
-mean_by_session_full["Off"] = None
 
 fragment = {
     "_status": (
@@ -684,6 +832,29 @@ checks = [
         and "Off" not in fragment["cost_basis"]["by_session"],
     ),
     ("M4 rasio > 0 semua sesi", bool((M4["rasio_mayar"] > 0).all())),
+    ("D10: tabel ekor M1 vs M5 terisi (>= 12 bucket)", len(TAIL_M5) >= 12),
+    ("D10: M5 spread_pips_max tidak ada NaN di strata A", bool(m5_a["spread_pips_max"].notna().all())),
+    (
+        "D10: ordering p95 <= p99 <= maks di M5 per bucket",
+        bool((TAIL_M5["p95_M5max"] <= TAIL_M5["p99_M5max"]).all())
+        and bool((TAIL_M5["p99_M5max"] <= TAIL_M5["max_M5max"]).all()),
+    ),
+    (
+        "D10: bucket M5 lebih sedikit bar dari M1 (skala ~1/5)",
+        bool((TAIL_M5["n_M5"] < TAIL_M5["n_M1"]).all()),
+    ),
+    ("D12: dua marker terdeteksi", set(MARKERS.index) == {"tokyo_fix_0055", "nyse_open"}),
+    ("D12: satu bar per hari untuk tiap marker", bool((MARKERS["n_bar"] == MARKERS["n_hari"]).all())),
+    ("D12: marker muncul di >= 700 hari strata A", bool((MARKERS["n_hari"] >= 700).all())),
+    (
+        "D12: NYSE open di jam 13 DAN 14 UTC (bukti DST-aware)",
+        {13, 14} <= set(NYSE_JAM_UTC.index.tolist()),
+    ),
+    ("D12: tabel jam marker 24 baris", len(MARKER_HOUR_TABLE) == 24),
+    (
+        "D12: tidak ada kolom pasca-marker (bukan event-study)",
+        not any("return" in kolom for kolom in MARKER_HOUR_TABLE.columns),
+    ),
 ]
 
 for label, passed in checks:
@@ -699,14 +870,42 @@ md(
     """## Ringkasan hasil dan batasnya
 
 **Yang dijawab:** bentuk volatilitas per jam broker dan per sesi UTC, kalibrasi M1–M4,
-dan spread terukur per tahun × sesi / jam.
+spread terukur per tahun × sesi / jam, **ekor M5 vs M1 (D10)**, dan **marker deskriptif
+Tokyo fix + buka NYSE (D12)**.
+
+### Angka kunci (hasil eksekusi)
+
+| Metrik | nilai |
+|---|---|
+| M5 strata A / B / C | 227.568 / 37.152 / 5.244 bar |
+| **D10** p99 ekor London/NewYork/Tokyo/Sydney | M1 1,20/2,00/1,30/2,70 pip vs M5-max 1,40/2,80/1,50/3,40 pip |
+| **D10** maksimum M1 vs M5-max | **identik di setiap bucket** (mis. NY 2024 55,60 pip; Sydney 24,10 pip) |
+| **D12** Tokyo fix 00:55 UTC | 825 bar = 825 hari (jam UTC 0), 2023–2026 |
+| **D12** buka NYSE | 824 bar = 824 hari; jam UTC **13** = 560 bar (EDT) dan **14** = 264 bar (EST) |
+
+### Temuan penting
+
+1. **D10: agregasi M5 tidak menemukan ekor baru.** `spread_pips_max` per bucket M5 menaikkan
+   **p99** (mis. Sydney 2,70 → 3,40 pip) karena satu bucket meringkas 5 menit ke satu nilai
+   maksimum, tetapi **maksimum absolutnya identik dengan M1 di setiap bucket** → M1 sudah
+   menangkap titik ekstrem yang ada; M5 hanya menyajikannya pada granularitas lebih kasar.
+2. **D12: bukti DST-aware, bukan asumsi.** Bar buka NYSE jatuh di **dua** jam UTC (13:30 saat
+   EDT, 14:30 saat EST), satu bar per hari; Tokyo fix 00:55 UTC identik dengan 09:55 JST
+   sepanjang tahun (self-check assertion di dalam sel itu sendiri).
+3. Jumlah hari Tokyo fix (825) sama dengan jumlah hari berbar strata A → marker hadir setiap
+   hari perdagangan dan tidak ada bar ganda pada menit itu.
 
 **Yang TIDAK dijawab dan sengaja ditolak:**
 - Tidak ada kesimpulan prediktif (Q4, nb03).
 - Tidak ada P&L atau keputusan metode.
 - **Kalender berita di luar scope** → profil volatilitas masih memuat lonjakan berita.
   Cleaner (membersihkan) news spike adalah keputusan metode, bukan Q2.
-- Fragmen spread **belum** diterapkan; menunggu 4b.
+- **Marker D12 bukan event-study**: tidak ada return pasca-marker, tidak ada reaksi; marker
+  hanya flag deskriptif per bar + agregasi per jam UTC.
+- Fragmen spread: statusnya **sudah DITERAPKAN** ke `configs/data.yaml` sebagai sub-kunci
+  `spread.cost_basis` + `spread.stress_bands` (Lampiran A2, commit `cb84717`). Rerun notebook
+  ini **tidak** mengubah fragmen (byte-identical, diverifikasi). Klaim lama "belum diterapkan"
+  dikoreksi di sini.
 
 **Cara memakai angka ini nanti:** bila M4 memberi flag "biaya-mendominasi" pada suatu sesi,
 itu bahan hipotesis (mis. jangan entry di jam spread lebar), **bukan** keputusan filter.

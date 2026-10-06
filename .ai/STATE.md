@@ -18,12 +18,13 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 - **Lapisan 2 (EDA) berjalan (2026-10-06).** Langkah 0 (reuse-check), Langkah 1
   (pin `tzdata==2026.5` + `MetaTrader5==5.0.6231`, commit `9a60995`), Langkah 2
   (nb00 setup + audit strata 11/11 PASS), dan **Langkah 3 (nb01, Q1 distribusi return,
-  16/16 assertion PASS)** selesai. Venv kanonik = `venv/`; `.venv/` = env bantu uv
+  23/23 assertion PASS pasca rework D9 — improvisasi mikro **diratifikasi Klenz + user**)** selesai.
+  Venv kanonik = `venv/`; `.venv/` = env bantu uv
   (JANGAN dipakai gate/notebook).
   **Putusan Architect atas SA-03 (R1–R4) dicatat di nb01 dan SESSION_LOG**: kerja
   level-hari (Q6/Q7) dikunci pada tanggal-broker; hari-UTC hanya sekunder.
   Berikutnya: **Langkah 4 — nb02** (Q2 volatilitas per jam broker + Q3 per sesi UTC +
-  pengukuran spread → fragmen YAML) **SELESAI** (20/20 assertion PASS) dan
+  pengukuran spread → fragmen YAML) **SELESAI** (**30/30** assertion PASS pasca rework D10) dan
   **Langkah 4b SELESAI**: fragmen revisi spread sudah diaudit Klenz
   (LULUS DENGAN CATATAN), 5 fix terpasang, LOW-27.1 ditutup sebagai no-op,
   lalu **fragmen sudah DITERAPKAN ke `configs/data.yaml`** sebagai sub-kunci baru
@@ -36,18 +37,50 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
   definisi sesi masih hanya hidup di `notebooks/scalping/_eda_common.py`.
   **Catatan tipe kunci:** `spread.by_year` = int, `cost_basis.by_year` = str
   (consumer harus pakai `str(year)`).
-  **nb03 belum di-commit** (menunggu keputusan user).
-  **Langkah 5 SELESAI — nb03 `eda_03_autocorr.ipynb`** (Q4 autokorelasi, 17/17 assertion
-  PASS, 0 error, VALID, urutan eksekusi terbukti). Temuan: |ACF| ≤ 0,012 di semua TF
-  (efek kecil, di bawah biaya 0,65 pip); VR(1)=1,0000; M1 mean-reversion (VR 0,9771),
-  M15 momentum lemah (VR 1,0127); **tanda ACF1 M1 tidak stabil antar tahun**
+  **nb03 sudah di-commit** (`e4efbfd`, bersama fix builder import).
+  **nb04 sudah di-commit** (`4c914b0`, Langkah 6 Commit A — notebook + builder +
+  laporan tahap 6–7; 4 file, 3.205 baris). **Commit B (Langkah 6)** = koreksi
+  nb01/nb02/nb03 + builder (D1–D5, D9, D10, LOW-34/35/37), rename FIG-01/02/03
+  (blob PNG identik), laporan tahap 5 (addendum)/9/10, audit §F/§F.1,
+  governance INDEX ×2 (putusan user), dan STATE/SESSION_LOG ini — entri ini
+  ikut ter-commit dalam Commit B.
+  **Langkah 5 SELESAI — nb03 `eda_03_autocorr.ipynb`** (Q4 autokorelasi, **31/31** assertion
+  PASS pasca rework D1–D5, 0 error, VALID, urutan eksekusi terbukti). **Klaim lama
+  "|ACF| ≤ 0,012 di semua TF" DICABUT (terbantahkan):** maks |ACF| lintas strata/TF/lag 1–60
+  = **0,022639** (strata B, M15, lag 50; no-gap) — ~2× lipat klaim lama. Temuan baru:
+  **sign-ACF lag-1 negatif di SEMUA sel** (A & B × M1/M5/M15; A: M1 −0,017702 · M5 −0,009805
+  · M15 −0,022624; B: M1 −0,013226 · M5 −0,012994 · M15 −0,017336) dan **lebih besar
+  magnitudonya daripada ACF mentah** → mean-reversion jangka sangat pendek lebih terbaca di
+  tanda daripada di besaran. **Struktur ikut muncul di lag 21–60** (mis. M1-A lag 23 =
+  +0,005862, lag 30 = −0,004757), di luar cakupan lama 1–20. VR(1)=1,0000; rata-rata VR
+  (lag 2–60) A: M1 0,9796 (mean-reversion), M5 0,9942, M15 1,0337 (momentum lemah).
+  **Ljung-Box** kini dihitung manual (scipy `chi2.sf`) untuk h=5/15/60; **p-value BUKAN
+  kesimpulan** — baca Q/n + besaran rho_k. **Tabel A-vs-B** ditambahkan; untuk strata B
+  (n kecil, M15 n=12.430) hasil negatif dibaca "tidak terdeteksi pada n ini" (daya unbalanced),
+  bukan bukti kesamaan. **Tanda ACF1 M1 masih tidak stabil antar tahun**
   (2023 −, 2024 +, 2025 −, 2026 −). **Koreksi penting:** klaim laporan 4b bahwa
   "7 isu ruff diperbaiki di builder" **tidak benar** — perbaikan hanya di `.ipynb`,
   sehingga regenerasi memunculkan kembali I001 (nb02) dan F401 `utc_series` (nb01).
   Akar masalah kini diperbaiki di ketiga builder, dan setiap `build()` menjalankan
   `ruff format` pada notebook hasil generator (idempoten).
-  Berikutnya: **Langkah 6 — nb04** (Q6 prior-day H/L + Q7 regime; dikunci pada
-  tanggal-broker sesuai putusan Architect R1–R4).
+  **Langkah 6 SELESAI — nb04 `eda_04_swings_levels.ipynb`** (Q5 struktur swing + Q6 level
+  + placebo, **30/30** assertion PASS pasca rework D6/D7, 0 error, VALID, urutan terbukti).
+  (Nama file dikoreksi dari `eda_04_swing_level.ipynb` pada 2026-10-06 sesuai D8:
+  `git mv` + `NB_PATH`/docstring `scripts/_build_eda04.py`; isi notebook tidak berubah.)
+  Protokol placebo **dibaca langsung dari `eda_00_setup.ipynb`** dan di-assert sama persis
+  (seed 20261006, M5, theta 0,5×ATR(14), window 6/12/24, bootstrap 10.000 day-cluster).
+  **Temuan NEGATIF (penting):** hit-rate reversal level nyata (0,469–0,490) **TIDAK
+  melampaui placebo** (0,499–0,505); jadi belum ada bukti round-number atau prior-day H/L
+  "dihormati" pasar lebih dari level acak.
+  **PERTANYAAN TERBUKA untuk Klenz:** nb00 menulis pergeseran level tanpa menyatakan
+  syarat "level placebo harus benar-benar disentuh". Implementasi literal menghasilkan
+  placebo degeneratif (0,89 vs 0,47) karena level jatuh di luar rentang bar. Saya memakai
+  interpretasi placebo = touch genuine (semua parameter preregistrasi dipertahankan).
+  Retensi event placebo 1 = 46,8–55,7% (keterbatasan, dilaporkan).
+  Berikutnya: **Langkah 7 — nb05** (Q7 regime + `report.md` EDA + penomoran figure SA-09).
+  **Backlog tercatat (Klenz):** (a) **T-01 "massa nol"** (5,83% bar M1 ber-return persis 0, nb01)
+  menunggu **ratifikasi via laporan EDA final** `report.md` (tugas nb05); (b) **ratifikasi user atas
+  improvisasi mikro nb01** (`16/16`→`23/23`) dicatat resmi di STATE + SESSION_LOG.
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi

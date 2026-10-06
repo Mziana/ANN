@@ -509,7 +509,9 @@ CELLS.append(
         "FIGURE_DIR.mkdir(parents=True, exist_ok=True)\n"
         "\n"
         "figures = []\n"
-        "for timeframe in Q1_TIMEFRAMES:\n"
+        "# Skema FIG global (putusan D9): nb01 mengklaim FIG-01..03 = M1/M5/M15.\n"
+        "# Penomoran dari enumerate supaya regenerasi TIDAK mengembalikan penamaan lama qq_timeframe.\n"
+        "for nomor, timeframe in enumerate(Q1_TIMEFRAMES, start=1):\n"
         "    frame = DATA[timeframe]\n"
         "    masks = stratify(frame)\n"
         '    clean = frame.loc[masks["A"], "r"].dropna()\n'
@@ -529,7 +531,7 @@ CELLS.append(
         '    axis.set_xlabel("Kuantil normal standar")\n'
         '    axis.set_ylabel("Kuantil observasi (log return BID)")\n'
         "    fig.tight_layout()\n"
-        '    path = FIGURE_DIR / f"FIG-01_qq_{timeframe}.png"\n'
+        '    path = FIGURE_DIR / f"FIG-{nomor:02d}.png"\n'
         "    fig.savefig(path, dpi=120)\n"
         "    plt.close(fig)\n"
         "    figures.append(path)\n"
@@ -608,6 +610,7 @@ CELLS.append(
         '    ("Pangsa 3sigma > pangsa 5sigma (semua)", bool((Q1_TABLE["share_gt_3sigma"] > Q1_TABLE["share_gt_5sigma"]).all())),\n'
         '    ("Ekses kurtosis > 0 semua baris (heavy tail)", bool((Q1_TABLE["kurt_excess"] > 0).all())),\n'
         '    ("Tiga QQ figure benar-benar ada di disk", all(p.is_file() and p.stat().st_size > 0 for p in figures)),\n'
+        '    ("Skema FIG-01/02/03 terkunci (D9)", [p.name for p in figures] == ["FIG-01.png", "FIG-02.png", "FIG-03.png"]),\n'
         '    ("Kontrak: tidak ada kolom P&L/equity di tabel Q1", not ({"pnl", "equity", "profit", "balance"} & set(Q1_TABLE.columns))),\n'
         '    ("Kontrak: tidak ada kolom sinyal/entry/exit di tabel Q1", not ({"signal", "entry", "exit", "side", "direction"} & set(Q1_TABLE.columns))),\n'
         "]\n"

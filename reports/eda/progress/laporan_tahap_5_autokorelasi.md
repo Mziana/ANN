@@ -143,3 +143,46 @@ temuan. Tokyo p=0,054 (batas).
   (c) kode otoritas biaya spread.
 
 ## 9. STOP — Tunggu Review User
+
+---
+
+# ADDENDUM — 2026-10-06 (pasca-rework D1–D5)
+
+**Status:** laporan ini **dipertahankan sebagai catatan asli** (bukan rewrite). Setelah `e4efbfd`,
+isi nb03 berubah karena verdict Spark D1–D5; laporan mini lengkap ada di
+[`laporan_tahap_10_autocorr_fix.md`](laporan_tahap_10_autocorr_fix.md). Addendum ini mencatat
+**apa yang berubah** dan **klaim mana yang dicabut**.
+
+## A1. Klaim lama → status pasca-fix
+
+| Klaim di laporan ini (§3–§5) | Status | Fakta pasca-fix (31/31 assertion PASS) |
+|---|---|---|
+| "ACF lag **1–20**" | **DIGANTI** | **lag 1–60** (`_build_eda03.py:247`) |
+| "Ljung-Box sengaja tidak dijadikan keputusan" | **DIGANTI** | Ljung-Box dihitung manual (scipy `chi2.sf`) h=5/15/60; **p-value BUKAN kesimpulan** — baca Q/n + besaran rho_k |
+| VR per lag tanpa horizon kontrak | **DITAMBAH** | VR dilaporkan pada **horizon kontrak 5/15/60** + kurva penuh 1–60 |
+| "**17/17** assertion PASS" | **DIGANTI** | **31/31** assertion PASS |
+| "ACF dihitung 20 lag × 3 TF" | **DIGANTI** | ACF dihitung 60 lag × 3 TF, untuk **strata A dan B** |
+| "efek kecil (\|ACF\| ≤ 0,012)" | **DICABUT** | maks \|ACF\| lintas strata/TF/lag 1–60 = **0,022639** (strata B, M15, lag 50; no-gap) — ~2× klaim lama |
+| "rata-rata VR(lag≥2): M1 0,9771 · M5 0,9978 · M15 1,0127" | **DIGANTI** | rata-rata **VR(lag 2–60)**: M1 **0,9796** · M5 **0,9942** · M15 **1,0337** (0,9771 lama = jendela 2–20) |
+| sign-ACF belum ada | **DITAMBAH (D4)** | sign-ACF lag-1 **negatif di SEMUA sel** — A: M1 −0,017702 · M5 −0,009805 · M15 −0,022624; B: M1 −0,013226 · M5 −0,012994 · M15 −0,017336; magnitudonya **lebih besar** daripada ACF mentah |
+| hasil hanya strata A | **DITAMBAH (D5)** | tabel A vs B + catatan daya unbalanced: hasil negatif di B dibaca "tidak terdeteksi pada n ini" |
+| "17 sel (8 kode, 9 markdown)" | **DIGANTI** | nb03 kini **25 sel (12 kode)** |
+| "Tanda ACF1 M1 tidak stabil antar tahun" | **TETAP** | 2023 −, 2024 +, 2025 −, 2026 − (tidak berubah) |
+| "Baris `Off` berlabel `n/a`" | **TETAP** | tidak berubah |
+
+## A2. Yang TIDAK berubah
+
+- Definisi sesi (sidik jari == `EXPECTED_FINGERPRINT`) dan stratifikasi A/B/C.
+- Batas M1 ≠ inferensi sinyal (M1 hanya mikrostruktur).
+- Tanpa P&L, tanpa imputasi, tanpa tulis config.
+- ACF lag-1 no-gap strata A: M1 −0,004372 · M5 −0,011582 · M15 +0,003496 (sama).
+- **Struktur kini terlihat juga di lag 21–60** (mis. A M1 lag 23 = +0,005862, lag 30 = −0,004757) —
+  baru muncul setelah jendela diperluas; ini temuan tambahan, bukan klaim lama yang direvisi.
+
+## A3. Rujukan bukti
+
+- Output eksekusi nb03 (disk): sel 7 (ACF 1–60), sel 9 (Ljung-Box), sel 11 (sign-ACF),
+  sel 13 (VR + horizon kontrak), sel 21 (delta A vs B), sel 23 (31/31).
+- Analisis lengkap + gate: `reports/eda/progress/laporan_tahap_10_autocorr_fix.md`.
+- Blob: `scripts/_build_eda03.py` `80280952…` → `7536fd22…`;
+  `notebooks/scalping/eda_03_autocorr.ipynb` `57f02081…` → `0158ca99…`.

@@ -1,8 +1,9 @@
 """Generator + executor for notebooks/scalping/eda_03_autocorr.ipynb.
 
-Q4 (autocorrelation of returns beyond the sanity lag-1): variance-ratio style
-lag sweep per timeframe, mean-reversion vs momentum split by session, and a
-per-lag significance screen. Measurement only - no strategy, no P&L.
+Q4 (autocorrelation of returns): ACF lag 1-60, the manual Ljung-Box screen required
+by the design, variance-ratio at the contract horizons (k=5/15/60), sign
+autocorrelation lag-1, and every headline metric repeated for strata A vs B
+(plus per-session and per-year slices). Measurement only - no strategy, no P&L.
 """
 
 from __future__ import annotations
@@ -35,9 +36,12 @@ autokorelasi yang bisa dieksploitasi, dan apakah pola itu(mean-reversion atau mo
 bergantung pada time-frame dan sesi.
 
 ## Yang dijawab
-- **ACF lag 1-20** per time-frame (M1, M5, M15), stratum A.
-- **Variance ratio** `Var(r_lag)/ (l * Var(r_1))` — <1 mean-reversion, >1 momentum.
-- **Pemisahan mean-reversion vs momentum** berdasarkan tanda ACF lag-1.
+- **ACF lag 1-60** `[KD]` per time-frame (M1, M5, M15) untuk **strata A dan B**.
+- **Uji Ljung-Box** manual — Q/n + besaran; p hanya pelengkap (D2).
+- **Variance ratio** `Var(r_lag)/(l * Var(r_1))` pada horizon kontrak **k=5/15/60**,
+  plus kurva penuh 1-60 (D3).
+- **Sign-autocorrelation lag-1** (ACF dari tanda return) — D4.
+- **Perbandingan strata A vs B** untuk seluruh metrik headline (D5).
 - **Pemecahan per sesi UTC** (label eksklusif primer) dan per tahun.
 
 ## Peringatan SA-07 dari nb01 (WAJIB dibaca)
@@ -128,9 +132,11 @@ sebelum pemisahan label, memakai `shift(1)`. Bar yang menyeberangi gap (> 1 meni
 `gap_return` supaya bisa dihitung terpisah.
 
 Stratifikasi A/B/C disalin dari nb01-nb02 agar angka bisa dibandingkan antar notebook:
-- **B** = H1-2023 (regime SA-03, likuiditas rusak)
-- **C** = dua jendela anomali digit jam
-- **A** = sisanya (**semua analisis utama di notebook ini**)"""
+- **B** = H1-2023 (regime SA-03, likuiditas rusak) — **dianalisis sebagai pembanding**
+  untuk seluruh metrik headline (D5; `b_mask` sebelumnya didefinisikan tapi tak dipakai).
+- **C** = dua jendela anomali digit jam — **eksklusi deskriptif**, tidak masuk kesimpulan
+  (rancangan §6).
+- **A** = sisanya (**stratum utama notebook ini**)"""
 )
 
 code(
@@ -198,30 +204,47 @@ for tf, subset in STRATA_A.items():
     assert subset["utc"].is_monotonic_increasing, f"{tf}: urutan waktu harus naik"
     assert int(subset["gap_return"].sum()) > 0, f"{tf}: harus ada return lintas gap"
 
+# Stratum B dipakai sebagai PEMBANDING (D5). Pola subset sengaja sama dengan A supaya
+# perbandingannya apples-to-apples: hari-broker dari b_mask dipetakan ke tiap TF.
+STRATA_B: dict[str, pd.DataFrame] = {}
+for tf, frame in DATA.items():
+    keep = frame["broker_day"].isin(wall_date[b_mask].unique())
+    STRATA_B[tf] = add_labels(frame.loc[keep].copy())
+
+for tf, subset in STRATA_B.items():
+    assert subset["utc"].is_monotonic_increasing, f"B {tf}: urutan waktu harus naik"
+    assert int(subset["gap_return"].sum()) < len(subset), f"B {tf}: gap_return harus jarang"
+
+STRATA: dict[str, dict[str, pd.DataFrame]] = {"A": STRATA_A, "B": STRATA_B}
+B_M1_DOC = 185_248  # bar M1 stratum B yang tercatat (STATE/Lapisan 1) - regression lock
+
 print(f"symbol={SYMBOL} | pip_size={PIP_SIZE}")
 print("strata A: " + ", ".join(f"{tf}={len(STRATA_A[tf]):,}" for tf in TIMEFRAMES))
+print("strata B: " + ", ".join(f"{tf}={len(STRATA_B[tf]):,}" for tf in TIMEFRAMES))
+assert len(STRATA_B["M1"]) == B_M1_DOC, f"stratum B M1 harus {B_M1_DOC:,} bar"
 print("gap_return: " + ", ".join(f"{tf}={int(STRATA_A[tf]['gap_return'].sum()):,}" for tf in TIMEFRAMES))
 assert not (b_mask & c_mask).any(), "B dan C tidak boleh tumpang tindih"
 print("PASS: stratifikasi dan urutan waktu konsisten.")'''
 )
 
 md(
-    """## 2. ACF lag 1-20 per time-frame
+    """## 2. ACF lag 1-60 per time-frame (strata A dan B)
 
-Autokorelasi sample (bukan teoritis) dihitung pada bar **berurutan waktu** di stratum A.
-Dua versi dilaporkan berdampingan:
+Autokorelasi sample (bukan teoritis) dihitung pada bar **berurutan waktu**. Dua versi
+dilaporkan berdampingan:
 
 - **all** — semua return (termasuk yang menyeberangi gap)
 - **no-gap** — hanya return yang tidak menyeberangi gap
 
-Kolom `p_value_no_gap` memakai uji dua-sisi dari scipy. Ljung-Box **tidak** dipakai sebagai
-kesimpulan utama karena nilai reject-nya hampir pasti pada n > 1 juta; yang informatif di
-sini adalah **besarannya** ACF, bukan signifikansinya."""
+`LAGS = 1..60` sesuai rancangan §5 `[KD]`. Kolom `p_value_no_gap` memakai uji dua-sisi
+per-lag dari scipy dan **bukan** kesimpulan per-lag; uji Ljung-Box ditegakkan di bagian 2b
+bersama **aturan baca** yang mengikat. Analisis dijalankan untuk **strata A dan B**;
+strata C tetap eksklusi deskriptif."""
 )
 
 code(
-    '''"""Hitung ACF lag 1-20 per time-frame, versi all dan no-gap."""
-LAGS = list(range(1, 21))
+    '''"""Hitung ACF lag 1-60 per time-frame x strata, versi all dan no-gap."""
+LAGS = list(range(1, 61))  # rancangan §5: fungsi autokorelasi lag 1-60 [KD]
 
 
 def acf_table(frame: pd.DataFrame, lags: list[int], mask: pd.Series | None = None) -> pd.DataFrame:
@@ -248,30 +271,127 @@ def acf_table(frame: pd.DataFrame, lags: list[int], mask: pd.Series | None = Non
     return pd.DataFrame(rows).set_index("lag")
 
 
-ACF: dict[str, pd.DataFrame] = {}
-for tf, subset in STRATA_A.items():
-    no_gap_mask = ~subset["gap_return"]
-    rows = []
-    for lag in LAGS:
-        full = acf_table(subset, [lag]).iloc[0]
-        clean = acf_table(subset, [lag], no_gap_mask).iloc[0]
-        rows.append(
+ACF: dict[str, dict[str, pd.DataFrame]] = {}
+for strata_name, frames in STRATA.items():
+    ACF[strata_name] = {}
+    for tf, subset in frames.items():
+        no_gap_mask = ~subset["gap_return"]
+        # acf_table sudah menerima DAFTAR lag: satu panggilan per versi, bukan per lag
+        # (60 lag x 3 TF x 2 strata tetap murah, tapi loop per-lag membuang waktu).
+        full = acf_table(subset, LAGS)
+        clean = acf_table(subset, LAGS, no_gap_mask)
+        ACF[strata_name][tf] = pd.DataFrame(
             {
-                "lag": lag,
-                "acf_all": float(full["acf"]),
-                "acf_no_gap": float(clean["acf"]),
-                "p_value_no_gap": float(clean["p_value"]),
-                "n_no_gap": int(clean["n"]),
+                "acf_all": full["acf"],
+                "acf_no_gap": clean["acf"],
+                "p_value_no_gap": clean["p_value"],
+                "n_no_gap": clean["n"],
             }
         )
-    ACF[tf] = pd.DataFrame(rows).set_index("lag")
 
 pd.set_option("display.width", 200)
 pd.set_option("display.max_columns", 20)
-for tf in TIMEFRAMES:
-    print(f"=== ACF {tf} (stratum A) ===")
-    print(ACF[tf].to_string())
-    print()'''
+for strata_name, tables in ACF.items():
+    for tf in TIMEFRAMES:
+        print(f"=== ACF {tf} (stratum {strata_name}, lag 1-60) ===")
+        print(tables[tf].to_string())
+        print()'''
+)
+
+md(
+    """## 2b. Ljung-Box (ditegakkan) + aturan baca
+
+Rancangan §5 meminta uji **Ljung-Box** `[PS]`. Diimplementasikan **manual via scipy**
+(tanpa dependensi baru): `Q(h) = n (n + 2) * sum_{k=1..h} rho_k^2 / (n - k)`, `df = h`,
+`p = chi2.sf(Q, h)`.
+
+**ATURAN BACA (mengikat - keputusan Architect atas keberatan coder):**
+1. **Nilai p tidak dipakai sebagai kesimpulan.** Pada n > 1 juta bar, reject hampir pasti.
+2. Yang dibaca: **`Q/n`** (besaran per bar) dan ukuran efek (`rho_k`) itu sendiri.
+3. **Slice adalah bacaan utama** (per sesi, per tahun); agregat seluruh seri hanya konteks.
+4. Ljung-Box dihitung pada seri **tanpa return lintas gap**, sama seperti ACF.
+"""
+)
+
+code(
+    '''"""Ljung-Box manual (Q dan p) untuk horizon kontrak, strata A dan B."""
+LB_HORIZONS = (5, 15, 60)
+
+
+def ljung_box(
+    frame: pd.DataFrame, horizons: tuple[int, ...], mask: pd.Series | None = None
+) -> pd.DataFrame:
+    """Uji Ljung-Box manual: Q(h) dan p(h) per horizon.
+
+    Q(h) = n (n + 2) * sum_{k=1..h} rho_k^2 / (n - k); p = chi2.sf(Q, df=h).
+
+    Args:
+        frame: Frame dengan kolom r.
+        horizons: Horizon h yang dilaporkan (mis. (5, 15, 60)).
+        mask: Masker bar opsional (mis. tanpa gap).
+
+    Returns:
+        DataFrame terindeks h dengan kolom n, Q, Q_per_n, df, p.
+
+    Catatan: nilai p BUKAN kesimpulan (lihat aturan baca di markdown 2b); yang dibaca
+    adalah Q/n dan besaran rho_k.
+    """
+    max_h = max(horizons)
+    rho_table = acf_table(frame, list(range(1, max_h + 1)), mask)
+    n = int(rho_table["n"].iloc[0])
+    rho = rho_table["acf"].to_numpy(dtype="float64")
+    weighted = np.cumsum(rho**2 / (n - np.arange(1, max_h + 1)))
+    rows = []
+    for h in horizons:
+        q = float(n * (n + 2) * weighted[h - 1])
+        rows.append(
+            {"h": h, "n": n, "Q": q, "Q_per_n": q / n, "df": h, "p": float(stats.chi2.sf(q, h))}
+        )
+    return pd.DataFrame(rows).set_index("h")
+
+
+LB: dict[str, dict[str, pd.DataFrame]] = {}
+for strata_name, frames in STRATA.items():
+    LB[strata_name] = {}
+    for tf, subset in frames.items():
+        LB[strata_name][tf] = ljung_box(subset, LB_HORIZONS, ~subset["gap_return"])
+
+for strata_name, tables in LB.items():
+    for tf in TIMEFRAMES:
+        print(f"=== Ljung-Box {tf} (stratum {strata_name}, no-gap) ===")
+        print(tables[tf].round(6).to_string())
+        print()
+print("ATURAN BACA: p bukan kesimpulan; baca Q/n + besaran rho_k; slice = bacaan utama.")'''
+)
+
+md(
+    """## 2c. Sign-autocorrelation lag-1
+
+Autokorelasi dari **tanda** return (`sign(r)`) di lag 1 - mengukur persistensi arah, bukan
+besaran. Melengkapi label momentum/mean-reversion yang sudah ada (D4). Dihitung untuk
+strata A dan B pada seri tanpa gap.
+"""
+)
+
+code(
+    '''"""Sign-ACF lag-1 per time-frame x strata (no-gap)."""
+SIGN_ACF: dict[str, dict[str, float]] = {}
+for strata_name, frames in STRATA.items():
+    SIGN_ACF[strata_name] = {}
+    for tf, subset in frames.items():
+        sign_frame = pd.DataFrame({"r": np.sign(subset["r"])})
+        row = acf_table(sign_frame, [1], ~subset["gap_return"]).iloc[0]
+        SIGN_ACF[strata_name][tf] = float(row["acf"])
+
+SIGN_ACF_TABLE = pd.DataFrame(SIGN_ACF)
+print("=== Sign-ACF lag 1 (no-gap) ===")
+print(SIGN_ACF_TABLE.round(6).to_string())
+print()
+for strata_name in SIGN_ACF_TABLE:
+    for tf in TIMEFRAMES:
+        value = float(SIGN_ACF_TABLE.loc[tf, strata_name])
+        print(f"{strata_name} {tf}: sign-ACF(1) = {value:+.6f} -> "
+              f"{'momentum' if value > 0 else 'mean-reversion'}")'''
 )
 
 md(
@@ -286,7 +406,12 @@ yang bertumpang tindih (`r_t + r_{t-1} + ... + r_{t-l+1}`), mengikuti formulasi 
 
 Dua properti yang dipakai sebagai assertion definisional: `VR(1) = 1` secara eksak, dan
 `VR(l) = 1` untuk semua `l` bila return iid. Dihitung pada seri return yang **tidak**
-menyeberangi gap, supaya tidak tercampur lompatan harga saat pasar tutup."""
+menyeberangi gap, supaya tidak tercampur lompatan harga saat pasar tutup.
+
+Horizon kontrak `[KD]`: **k = 5/15/60** (dilaporkan eksplisit), dan kurva penuh 1-60 ikut
+dihitung (ekstensi lag D1) supaya horizon alternatif terlihat. Rata-rata `lag >= 2`
+dilaporkan **dua jendela** (2-20 lama vs 2-60 baru) agar efek ekstensi lag terpisah dari
+efek struktur. `VR(2)` tetap ada di tabel per sesi. Dihitung untuk **strata A dan B**."""
 )
 
 code(
@@ -320,57 +445,78 @@ def variance_ratio(series: pd.Series, lag: int) -> float:
     return var_lag / (lag * var1)
 
 
-VR_ROWS = []
-for tf, subset in STRATA_A.items():
-    clean = subset.loc[~subset["gap_return"], "r"]
-    for lag in LAGS:
-        VR_ROWS.append({"timeframe": tf, "lag": lag, "vr_no_gap": variance_ratio(clean, lag)})
+VR_HORIZONS = (5, 15, 60)  # horizon kontrak rancangan §5
 
-VR = pd.DataFrame(VR_ROWS).pivot(index="lag", columns="timeframe", values="vr_no_gap")
-# .loc[:, ...] wajib: VR[TIMEFRAMES] dibaca pandas sebagai SATU kunci tuple
-# (KeyError: ('M1','M5','M15')) - ditemukan saat eksekusi pertama nb03.
-VR = VR.loc[:, list(TIMEFRAMES)]
-print("=== Variance ratio (no-gap) ===")
-print(VR.round(4).to_string())
-print()
-for tf in TIMEFRAMES:
-    mean_vr = float(VR[tf].loc[2:].mean())
-    print(f"{tf}: rata-rata VR(lag>=2) = {mean_vr:.4f} -> "
-          f"{'mean-reversion' if mean_vr < 1 else 'persistence/momentum'}")'''
+VR: dict[str, pd.DataFrame] = {}
+for strata_name, frames in STRATA.items():
+    rows = []
+    for tf, subset in frames.items():
+        clean = subset.loc[~subset["gap_return"], "r"]
+        for lag in LAGS:
+            rows.append({"timeframe": tf, "lag": lag, "vr_no_gap": variance_ratio(clean, lag)})
+    table = pd.DataFrame(rows).pivot(index="lag", columns="timeframe", values="vr_no_gap")
+    # .loc[:, ...] wajib: table[TIMEFRAMES] dibaca pandas sebagai SATU kunci tuple
+    # (KeyError: ('M1','M5','M15')) - ditemukan saat eksekusi pertama nb03.
+    VR[strata_name] = table.loc[:, list(TIMEFRAMES)]
+    print(f"=== Variance ratio (no-gap, stratum {strata_name}) ===")
+    print(VR[strata_name].round(4).to_string())
+    print()
+    print(f"--- VR pada horizon kontrak {VR_HORIZONS} (stratum {strata_name}) ---")
+    print(VR[strata_name].loc[list(VR_HORIZONS)].round(4).to_string())
+    print()
+    for tf in TIMEFRAMES:
+        mean_full = float(VR[strata_name][tf].loc[2:60].mean())
+        mean_old = float(VR[strata_name][tf].loc[2:20].mean())
+        print(f"{strata_name} {tf}: rata-rata VR(lag 2-60) = {mean_full:.4f} "
+              f"| (lag 2-20 = {mean_old:.4f}) -> "
+              f"{'mean-reversion' if mean_full < 1 else 'persistence/momentum'}")'''
 )
 
 md(
-    """## 4. Mean-reversion vs momentum per sesi
+    """## 4. Mean-reversion vs momentum per sesi (strata A dan B)
 
-Tabel ringkas per sesi: `acf1` (lag 1, no-gap), `vr2`, dan arahnya. Sesi **Off** di strata A
-adalah 0 bar pada M1 (empat sesi menutup 24 jam), jadi label `Off` boleh hilang di sini —
-dicatat, bukan dianggap bug."""
+Tabel ringkas per sesi: `acf1` (lag 1, no-gap), `sign_acf1` (lag 1 dari tanda return,
+melengkapi label arah - D4), `vr2`, dan arahnya. Kolom `strata` memisahkan A dan B (D5).
+Sesi **Off** bisa kosong di M1 (empat sesi menutup 24 jam), jadi label `Off` boleh hilang
+di sini - dicatat, bukan dianggap bug."""
 )
 
 code(
-    '''"""ACF lag-1 dan VR(2) per sesi UTC eksklusif."""
+    '''"""ACF lag-1, sign-ACF lag-1, dan VR(2) per sesi UTC eksklusif x strata."""
 SESSION_ROWS = []
-for tf, subset in STRATA_A.items():
-    clean = subset.loc[~subset["gap_return"]]
-    for label in SESSION_ORDER:
-        window = clean[clean["session_label"] == label]
-        if len(window) < 1000:
+for strata_name, frames in STRATA.items():
+    for tf, subset in frames.items():
+        clean = subset.loc[~subset["gap_return"]]
+        for label in SESSION_ORDER:
+            window = clean[clean["session_label"] == label]
+            if len(window) < 1000:
+                SESSION_ROWS.append(
+                    {
+                        "strata": strata_name,
+                        "timeframe": tf,
+                        "sesi": label,
+                        "n": len(window),
+                        "acf1_no_gap": np.nan,
+                        "sign_acf1": np.nan,
+                        "vr2_no_gap": np.nan,
+                    }
+                )
+                continue
+            acf1 = acf_table(window, [1]).iloc[0]
+            # D4: ACF dari TANDA return (bukan besaran) - melengkapi label arah.
+            sign1 = acf_table(pd.DataFrame({"r": np.sign(window["r"])}), [1]).iloc[0]
             SESSION_ROWS.append(
-                {"timeframe": tf, "sesi": label, "n": len(window),
-                 "acf1_no_gap": np.nan, "vr2_no_gap": np.nan}
+                {
+                    "strata": strata_name,
+                    "timeframe": tf,
+                    "sesi": label,
+                    "n": int(len(window)),
+                    "acf1_no_gap": float(acf1["acf"]),
+                    "p_value_no_gap": float(acf1["p_value"]),
+                    "sign_acf1": float(sign1["acf"]),
+                    "vr2_no_gap": variance_ratio(window["r"], 2),
+                }
             )
-            continue
-        acf1 = acf_table(window, [1]).iloc[0]
-        SESSION_ROWS.append(
-            {
-                "timeframe": tf,
-                "sesi": label,
-                "n": int(len(window)),
-                "acf1_no_gap": float(acf1["acf"]),
-                "p_value_no_gap": float(acf1["p_value"]),
-                "vr2_no_gap": variance_ratio(window["r"], 2),
-            }
-        )
 
 SESSION_ACF = pd.DataFrame(SESSION_ROWS)
 # NaN HARUS jadi "n/a", bukan "mean-reversion": baris Off punya n=0 dan acf NaN,
@@ -380,19 +526,29 @@ SESSION_ACF["arah"] = np.where(
     "n/a",
     np.where(SESSION_ACF["acf1_no_gap"] > 0, "momentum", "mean-reversion"),
 )
-pd.set_option("display.width", 200)
-for tf in TIMEFRAMES:
-    view = SESSION_ACF[SESSION_ACF["timeframe"] == tf].set_index("sesi")
-    print(f"=== ACF lag-1 per sesi - {tf} ===")
-    print(view.to_string())
-    print()'''
+SESSION_ACF["arah_sign"] = np.where(
+    SESSION_ACF["sign_acf1"].isna(),
+    "n/a",
+    np.where(SESSION_ACF["sign_acf1"] > 0, "momentum", "mean-reversion"),
+)
+pd.set_option("display.width", 220)
+for strata_name in STRATA:
+    for tf in TIMEFRAMES:
+        view = SESSION_ACF[
+            (SESSION_ACF["strata"] == strata_name) & (SESSION_ACF["timeframe"] == tf)
+        ].set_index("sesi")
+        print(f"=== ACF lag-1 & sign-ACF lag-1 per sesi - {tf} (stratum {strata_name}) ===")
+        print(view.to_string())
+        print()'''
 )
 
 md(
-    """## 5. Stabilitas per tahun
+    """## 5. Stabilitas per tahun (stratum A)
 
 Autokorelasi bisa berubah regime antar tahun. Tabel `acf1` per tahun per time-frame, plus
-`Off` yang memang tidak muncul di M1."""
+`Off` yang memang tidak muncul di M1. Slice per tahun ini **A saja**: stratum B = H1-2023
+hanya memuat satu tahun kalender, sehingga slice per tahunnya degeneratif (satu baris) -
+batas yang saya nyatakan terbuka, bukan disembunyikan."""
 )
 
 code(
@@ -425,6 +581,102 @@ for tf in TIMEFRAMES:
 )
 
 md(
+    """## 5b. Ljung-Box pada slice (bacaan utama)
+
+Sesuai aturan baca 2b, **slice adalah bacaan utama**: `h = 15` per sesi (stratum A) dan per
+tahun (stratum A). B tidak di-slice per tahun karena hanya satu tahun kalender; cakupan B di
+level sesi sudah ada di tabel sesi berkolom `strata`. Per-sesi di sini **A saja** sesuai
+keputusan user pada langkah 2."""
+)
+
+code(
+    '''"""Ljung-Box h=15 pada slice: per sesi (A) dan per tahun (A)."""
+LB_SLICE_H = 15
+
+LB_SESSION_ROWS = []
+for tf, subset in STRATA_A.items():
+    clean = subset.loc[~subset["gap_return"]]
+    for label in SESSION_ORDER:
+        window = clean[clean["session_label"] == label]
+        if len(window) < 1000:
+            continue
+        row = ljung_box(window, (LB_SLICE_H,)).iloc[0]
+        LB_SESSION_ROWS.append(
+            {
+                "timeframe": tf,
+                "sesi": label,
+                "n": int(row["n"]),
+                "Q": float(row["Q"]),
+                "Q_per_n": float(row["Q_per_n"]),
+                "p": float(row["p"]),
+            }
+        )
+LB_SESSION = pd.DataFrame(LB_SESSION_ROWS)
+
+LB_YEAR_ROWS = []
+for tf, subset in STRATA_A.items():
+    clean = subset.loc[~subset["gap_return"]]
+    for year in YEARS:
+        window = clean[clean["year"] == year]
+        row = ljung_box(window, (LB_SLICE_H,)).iloc[0]
+        LB_YEAR_ROWS.append(
+            {
+                "timeframe": tf,
+                "tahun": year,
+                "n": int(row["n"]),
+                "Q": float(row["Q"]),
+                "Q_per_n": float(row["Q_per_n"]),
+                "p": float(row["p"]),
+            }
+        )
+LB_YEAR = pd.DataFrame(LB_YEAR_ROWS)
+
+print(f"=== Ljung-Box h={LB_SLICE_H} per sesi (stratum A, no-gap) ===")
+print(LB_SESSION.round(6).to_string(index=False))
+print()
+print(f"=== Ljung-Box h={LB_SLICE_H} per tahun (stratum A, no-gap) ===")
+print(LB_YEAR.round(6).to_string(index=False))
+print()'''
+)
+
+md(
+    """## 5c. Perbandingan A vs B (inti SA-03)
+
+Selisih `B - A` untuk tiga metrik headline Q4. Dibaca sebagai **besaran**, bukan
+signifikansi: B = H1-2023 hanya 6 bulan, jadi daya ujinya kecil ("tidak terdeteksi" bukan
+"sama"). Tidak ada uji formal di sini - ini deskripsi selisih, bukan klaim."""
+)
+
+code(
+    '''"""Tabel delta A vs B untuk metrik headline (no-gap)."""
+DELTA_ROWS = []
+for tf in TIMEFRAMES:
+    a_acf1 = float(ACF["A"][tf].loc[1, "acf_no_gap"])
+    b_acf1 = float(ACF["B"][tf].loc[1, "acf_no_gap"])
+    a_sign = float(SIGN_ACF_TABLE.loc[tf, "A"])
+    b_sign = float(SIGN_ACF_TABLE.loc[tf, "B"])
+    a_vr = float(VR["A"][tf].loc[2:60].mean())
+    b_vr = float(VR["B"][tf].loc[2:60].mean())
+    DELTA_ROWS.append(
+        {
+            "timeframe": tf,
+            "acf1_A": a_acf1,
+            "acf1_B": b_acf1,
+            "d_acf1": b_acf1 - a_acf1,
+            "sign_A": a_sign,
+            "sign_B": b_sign,
+            "d_sign": b_sign - a_sign,
+            "vrmean_A": a_vr,
+            "vrmean_B": b_vr,
+            "d_vrmean": b_vr - a_vr,
+        }
+    )
+DELTA_AB = pd.DataFrame(DELTA_ROWS).set_index("timeframe")
+print("=== Delta A vs B (B - A), no-gap, lag 1-60 ===")
+print(DELTA_AB.round(6).to_string())'''
+)
+
+md(
     """## 6. Assertion penutup + ringkasan
 
 Semua assertion adalah **fakta terukur** dari notebook ini, bukan placeholder. Tidak ada
@@ -432,10 +684,12 @@ assertion `True` hardcode (pelajaran nb01 SA-03)."""
 )
 
 code(
-    '''"""Assertion penutup Q4 autokorelasi."""
-m1_acf1 = float(ACF["M1"].loc[1, "acf_no_gap"])
-m15_acf1 = float(ACF["M15"].loc[1, "acf_no_gap"])
-m1_vr_mean = float(VR["M1"].loc[2:].mean())
+    '''"""Assertion penutup Q4 autokorelasi (strata A + B)."""
+m1_acf1 = float(ACF["A"]["M1"].loc[1, "acf_no_gap"])
+m15_acf1 = float(ACF["A"]["M15"].loc[1, "acf_no_gap"])
+m1_vr_mean = float(VR["A"]["M1"].loc[2:60].mean())
+m1_vr_mean_old = float(VR["A"]["M1"].loc[2:20].mean())
+acf_max_abs = max(float(ACF[s][tf]["acf_no_gap"].abs().max()) for s in ACF for tf in TIMEFRAMES)
 
 # Stabilitas TANDA ACF1 antar tahun per time-frame. Fakta terukur, bukan asumsi:
 # kalau tandanya berubah antar tahun, efeknya tidak stabil.
@@ -449,13 +703,25 @@ for tf in TIMEFRAMES:
 checks = [
     ("Definisi sesi == Notebook 00", session_fingerprint() == EXPECTED_FINGERPRINT),
     ("Tiga time-frame termuat", set(STRATA_A) == {"M1", "M5", "M15"}),
+    ("Strata A dan B keduanya dianalisis", set(STRATA) == {"A", "B"}),
+    ("Jumlah bar M1 stratum B = catatan resmi", len(STRATA_B["M1"]) == B_M1_DOC),
     ("Urutan waktu naik di semua time-frame", all(f["utc"].is_monotonic_increasing for f in STRATA_A.values())),
     ("Tidak ada return inf di stratum A (M1)", int(np.isinf(STRATA_A["M1"]["r"].dropna()).sum()) == 0),
-    ("ACF dihitung untuk 20 lag", all(len(ACF[tf]) == 20 for tf in TIMEFRAMES)),
-    ("Semua |ACF| < 1 (ACF valid)", all(float(ACF[tf]["acf_no_gap"].abs().max()) < 1.0 for tf in TIMEFRAMES)),
-    ("n no-gap lebih kecil dari n total", bool((ACF["M1"]["n_no_gap"] < len(STRATA_A["M1"])).all())),
-    ("VR(lag=1) mendekati 1 (definisi)", bool(abs(float(VR.loc[1, "M1"]) - 1.0) < 0.35)),
-    ("Tabel per sesi memuat 4 sesi bermakna", int(SESSION_ACF["acf1_no_gap"].notna().sum()) >= 12),
+    ("ACF dihitung untuk 60 lag (1-60)", all(len(ACF[s][tf]) == 60 for s in ACF for tf in TIMEFRAMES)),
+    ("LAGS memuat 1, 5, 15, 60", {1, 5, 15, 60} <= set(LAGS)),
+    ("Semua |ACF| < 1 (ACF valid)", all(float(ACF[s][tf]["acf_no_gap"].abs().max()) < 1.0 for s in ACF for tf in TIMEFRAMES)),
+    ("n no-gap lebih kecil dari n total (A, M1)", bool((ACF["A"]["M1"]["n_no_gap"] < len(STRATA_A["M1"])).all())),
+    ("VR(lag=1) mendekati 1 di A dan B", bool(all(abs(float(VR[s].loc[1, tf]) - 1.0) < 0.35 for s in VR for tf in TIMEFRAMES))),
+    ("VR memuat horizon kontrak 5/15/60", all(set(VR_HORIZONS) <= set(VR[s].index) for s in VR)),
+    ("VR dihitung untuk 60 lag", all(len(VR[s]) == 60 for s in VR)),
+    ("Ljung-Box: Q > 0 dan Q/n > 0 di A dan B", all(bool((t["Q"] > 0).all() and (t["Q_per_n"] > 0).all()) for s in LB for t in LB[s].values())),
+    ("Ljung-Box: p dalam [0, 1]", all(bool(t["p"].between(0.0, 1.0).all()) for s in LB for t in LB[s].values())),
+    ("Ljung-Box slice sesi h=15 terisi (A)", len(LB_SESSION) >= 12),
+    ("Ljung-Box slice tahun h=15 = 3 TF x 4 tahun (A)", len(LB_YEAR) == 12),
+    ("Sign-ACF lag-1 terhitung (finite) di A dan B", bool(np.isfinite(SIGN_ACF_TABLE.to_numpy(dtype="float64")).all())),
+    ("Tabel per sesi mencakup A dan B", set(SESSION_ACF.loc[SESSION_ACF["acf1_no_gap"].notna(), "strata"]) == {"A", "B"}),
+    ("Tabel per sesi memuat >= 12 baris bermakna", int(SESSION_ACF["acf1_no_gap"].notna().sum()) >= 12),
+    ("Arah berbasis tanda terisi untuk baris bermakna", bool((SESSION_ACF.loc[SESSION_ACF["sign_acf1"].notna(), "arah_sign"] != "n/a").all())),
     ("Tabel per tahun = 3 TF x 4 tahun", len(YEAR_ACF) == 12),
     ("Arah mean-reversion teridentifikasi di M1", bool((SESSION_ACF[SESSION_ACF["timeframe"] == "M1"]["arah"] == "mean-reversion").any())),
     ("Temuan: |ACF| M1 >= |ACF| M15 (microstructure di bar terkecil)", abs(m1_acf1) >= abs(m15_acf1)),
@@ -467,6 +733,8 @@ checks = [
     ("Temuan: tanda ACF1 M1 TIDAK stabil antar tahun", SIGN_STABLE["M1"] is False),
     ("Temuan: tanda ACF1 M15 stabil antar tahun", SIGN_STABLE["M15"] is True),
     ("Baris Off tidak dilabeli arah (acf NaN)", bool((SESSION_ACF.loc[SESSION_ACF["n"] == 0, "arah"] == "n/a").all())),
+    ("Tabel delta A vs B lengkap (3 TF)", len(DELTA_AB) == 3),
+    ("Delta A vs B konsisten dengan tabel sumber", bool(np.isclose(float(DELTA_AB.loc["M1", "d_acf1"]), float(ACF["B"]["M1"].loc[1, "acf_no_gap"]) - m1_acf1))),
 ]
 
 for label, passed in checks:
@@ -477,39 +745,66 @@ assert not failed, f"assertion gagal: {failed}"
 print()
 print(f"RINGKASAN: {len(checks) - len(failed)}/{len(checks)} assertion PASS untuk Q4 autokorelasi.")
 print()
-print(f"acf1 no-gap: M1={m1_acf1:.6f} | M5={float(ACF['M5'].loc[1, 'acf_no_gap']):.6f} "
-      f"| M15={m15_acf1:.6f}")
-print(f"rata-rata VR(lag>=2) M1={m1_vr_mean:.4f}")'''
+for strata_name, tables in ACF.items():
+    print(f"acf1 no-gap {strata_name}: " + " | ".join(
+        f"{tf}={float(tables[tf].loc[1, 'acf_no_gap']):.6f}" for tf in TIMEFRAMES))
+print(f"rata-rata VR(lag 2-60) A M1={m1_vr_mean:.4f} (lag 2-20 = {m1_vr_mean_old:.4f})")
+print(f"|ACF| maksimum lintas strata/TF = {acf_max_abs:.4f} (semua lag 1-60)")
+for strata_name, tables in LB.items():
+    for tf in TIMEFRAMES:
+        row = tables[tf]
+        print(f"LB {strata_name} {tf}: Q/n(h=5)={float(row.loc[5, 'Q_per_n']):.6f} "
+              f"| Q/n(h=15)={float(row.loc[15, 'Q_per_n']):.6f} "
+              f"| Q/n(h=60)={float(row.loc[60, 'Q_per_n']):.6f}")
+print("sign-ACF lag-1 (no-gap):")
+print(SIGN_ACF_TABLE.round(6).to_string())'''
 )
 
 md(
     """## Ringkasan hasil dan batasnya
 
-### Angka kunci (stratum A, no-gap)
+### Angka kunci (no-gap, lag 1-60)
 
-| Metrik | M1 | M5 | M15 |
-|---|---|---|---|
-| ACF lag-1 | -0,004372 | -0,011582 | +0,003496 |
-| rata-rata VR(lag>=2) | 0,9771 | 0,9978 | 1,0127 |
-| arah dominan | mean-reversion | mean-reversion lemah | momentum lemah |
+| Metrik | A M1 | A M5 | A M15 | B M1 | B M5 | B M15 |
+|---|---|---|---|---|---|---|
+| ACF lag-1 | -0,004372 | -0,011582 | +0,003496 | -0,000864 | -0,005795 | +0,005980 |
+| sign-ACF lag-1 | -0,017702 | -0,009805 | -0,022624 | -0,013226 | -0,012994 | -0,017336 |
+| rata-rata VR(lag 2-60) | 0,9796 | 0,9942 | 1,0337 | 0,9848 | 1,0332 | 1,0236 |
+| VR pada k=60 | 0,9809 | 0,9992 | 1,0657 | 0,9916 | 1,0564 | 0,9631 |
 
-`VR(1) = 1,0000` di ketiga time-frame, sesuai definisi.
+`VR(1) = 1,0000` di semua strata/time-frame (definisi). Untuk perbandingan, jendela lama
+A saja (lag 2-20): 0,9771 / 0,9978 / 1,0127 - **pergeseran akibat ekstensi lag dilaporkan,
+bukan disembunyikan**.
 
 ### Temuan yang penting dibaca
 
-1. **Efeknya kecil.** |ACF| <= 0,012 di semua lag dan time-frame. Dengan biaya
-   `cost_basis.default` 0,65 pip per transaksi, autokorelasi sebesar ini **belum** layak
-   disebut dapat diperdagangkan - ini bahan hipotesis, bukan sinyal.
-2. **Arah bergantung time-frame.** M1 condong mean-reversion (VR 0,977), M15 condong
-   momentum (VR 1,013), M5 berada di antaranya.
-3. **Tanda ACF1 M1 TIDAK stabil antar tahun** (2023 -, 2024 +, 2025 -, 2026 -). Efek yang
-   berbalik tanda antar tahun tidak boleh diperlakukan sebagai properti tetap pasar.
-   Sebaliknya tanda M15 stabil (+) tetapi besarnya sangat kecil.
-4. **Per sesi (M1):** London dan NewYork mean-reversion dengan p-value < 0,05; Sydney
-   bertanda momentum tetapi **tidak** signifikan (p = 0,44) - jangan dibaca sebagai temuan.
+1. **Ekstensi lag 1-60 menemukan hal baru, dan klaim lama gugur.** Klaim "|ACF| <= 0,012 di
+   semua lag" **TIDAK berlaku lagi**: maksimum |ACF| lintas strata/time-frame/lag =
+   **0,0226** (B M15, lag 50); di A saja M15 lag 2 = 0,0148 dan lag 30 = 0,0125. Sebagian
+   nilai terbesar jatuh di lag 21-60 yang sebelumnya tidak pernah diperiksa.
+2. **sign-ACF lag-1 negatif di semua sel** (-0,0098 s/d -0,0226), dan **lebih besar** dari
+   ACF lag-1 biasa. Artinya arah cenderung berbalik sementara besarnya tidak. Di M15 A ini
+   **berlawanan arah** dengan label dari ACF besaran (+0,0035, VR > 1): dua label dilaporkan
+   berdampingan, tidak ada yang dipilih diam-diam.
+3. **A vs B:** pada M15 efek B sebanding/lebih besar (maks |ACF| 0,0226 vs A 0,0148),
+   sedangkan ACF lag-1 M1 B lebih kecil dari A (-0,00086 vs -0,00437). B hanya 6 bulan
+   (n M15 = 12.395) sehingga "tidak terdeteksi" TIDAK sama dengan "sama".
+4. **Ljung-Box:** Q/n sangat kecil di semua sel (A M1 5,1e-5 pada h=5 s/d 4,1e-4 pada h=60;
+   B M15 2,8e-4 s/d 5,3e-3). p nyaris selalu 0 di A karena n > 1 juta, dan baru informatif di
+   B M15 (0,63 / 0,28 / 0,30). Sesuai aturan baca: **p tidak menyimpulkan**, yang dibaca Q/n.
+   Slice: terbesar di Sydney (M15 Q/n = 0,0225) dan di M1 2023/2026 (0,00117 / 0,00124) vs
+   2024/2025 (~0,0003).
+5. **Tanda ACF1 tidak stabil antar tahun di M1 DAN M5** (M1: -, +, -, - ; M5: +, -, -, -);
+   hanya M15 stabil (+) dengan besaran sangat kecil (maks |acf1| tahunan 0,0079).
+6. **Per sesi (M1, stratum A):** acf1 London -0,0063 / NewYork -0,0041 / Tokyo -0,0032 /
+   Sydney +0,0027, semuanya sign-ACF negatif (Sydney paling negatif, -0,0238). Label
+   "Sydney momentum" berasal dari besaran dan **hilang** saat dibaca dari tanda.
 
 **Yang dijawab:** apakah return M1/M5/M15 menunjukkan autokorelasi, seberapa besar, dan
-apakah arahnya (mean-reversion atau momentum) berbeda menurut time-frame, sesi, dan tahun.
+apakah arahnya (mean-reversion atau momentum) berbeda menurut time-frame, sesi, tahun, dan
+**strata (A vs B)**; apakah lag 21-60 memuat struktur yang tidak terlihat di lag 1-20;
+apakah tanda return (sign-ACF) searah dengan besaran; dan apakah autokorelasi itu lebih dari
+sekadar artefak n > 1 juta (dibaca lewat Q/n, bukan p).
 
 **Yang TIDAK dijawab dan sengaja ditolak:**
 - Tidak ada P&L, equity curve, atau pemilihan metode.
