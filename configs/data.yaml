@@ -57,11 +57,17 @@ data:
 # Spread dalam PIP (bukan point).
 spread:
   default: 1.5
-  # Spread per tahun, dipakai backtest. Diukur dari data M1 2023-2026:
-  # median semua tahun 0,6 pip, tapi p99 2023 = 8,5 pip (jauh lebih lebar
-  # dari 2024-2026 yang p99 = 1,2-1,7). Likuiditas 2023 lebih tipis, jadi
-  # default 1,5 akan terlalu optimis untuk tahun itu.
-  # Diukur 2026-10-05 dari data/raw/M1/.
+  # Spread per tahun. NILAI TIDAK DIUBAH - nilai lama dipertahankan sampai
+  # audit Klenz atas fragmen revisi selesai (keputusan Spark, 2026-10-06).
+  #
+  # PERINGATAN INTERPRETASI (revisi EDA-02):
+  # Nilai 3,0 untuk 2023 berasal dari p99 file 2023 UTUH, yang didominasi ekor
+  # STRATA B (H1-2023, regime SA-03). Angka itu BUKAN semesta yang
+  # diperdagangkan pada strategi. Pada strata A (H2-2023) spread mean hanya
+  # ~0,51 pip - justru tahun 2023 yang paling murah, bukan paling mahal.
+  # Lihat cost_basis.by_session / stress_bands di fragmen EDA-02 untuk angka
+  # biaya dasar (MEAN) dan stress band (p95/p99) terpisah per sesi/tahun.
+  # Sumber angka: data/processed/M1 2023-2026, stratum A.
   by_year:
     2023: 3.0
     2024: 1.5

@@ -37,3 +37,8 @@ pre-commit==3.8.0
 # === Notebook ===
 jupyter==1.1.0
 ipykernel==6.29.5
+
+# === EDA & Statistik (dipakai notebooks/ dan scripts/) ===
+scipy==1.17.1
+matplotlib==3.10.9
+nbformat==5.11.1

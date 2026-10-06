@@ -1,0 +1,61 @@
+_status: PROPOSAL REVISI - BELUM DITERAPKAN. Menunggu audit Klenz (user).
+_sumber: EDA-02, data/processed/M1 2023-2026, basis STRATA A (bukan campuran).
+_catatan: Nilai lama by_year[2023]=3,0 di config berasal dari p99 file 2023 UTUH,
+  yang didominasi ekor STRATA B (H1-2023, regime SA-03). Di strata A, 2023 justru
+  paling murah (mean 0,51 pip). 3,0 tidak mewakili semesta yang diperdagangkan.
+_perbaikan_vs_fragmen_lama: 'Versi lama fragmen memakai p95 dan face by_year[2023]=0,6.
+  Sekarang: biaya dasar dipindah ke cost_basis (MEAN), dan p95/p99 pindah ke stress_bands.
+  Nilai by_year LAMA (3,0) tidak diubah di config; config lama tetap utuh.'
+_sesi:
+  primer: DST-aware per zona IANA (Asia/Tokyo, Europe/London, America/New_York, Australia/Sydney)
+  jam_sesi:
+    Tokyo: 09:00-18:00 JST (= 00:00-09:00 UTC, tanpa DST)
+    London: 08:00-16:00 waktu lokal Europe/London
+    NewYork: 08:00-17:00 waktu lokal America/New_York
+    Sydney: 08:00-16:00 waktu lokal Australia/Sydney
+  label_eksklusif: London > NewYork > Tokyo > Sydney > Off
+  cross_tab_pembanding: 'UTC-tetap: Tokyo 00-09, London 08-16, NewYork 13-22, Sydney
+    21-06'
+  syarat_backtest: Backtest Lapisan 5 WAJIB memakai pelabelan PRIMER yang identik
+    (DST-aware IANA, prioritas eksklusif di atas). Cross-tab hanya untuk sensitivitas,
+    TIDAK boleh jadi label operasi.
+  hari_perdagangan: Tanggal broker (batas 21:00 UTC summer / 22:00 UTC winter)
+pip_size:
+  USDJPY: 0.01
+stress_multiplier: 2.0
+cost_basis:
+  _satuan: pip
+  _statistik: MEAN spread_pips strata A
+  default: 0.65
+  by_year:
+    '2023': 0.51
+    '2024': 0.7
+    '2025': 0.67
+    '2026': 0.62
+  by_session:
+    London: 0.61
+    NewYork: 0.69
+    Tokyo: 0.62
+    Sydney: 0.8
+stress_bands:
+  _satuan: pip
+  _catatan: p95 untuk stress test; p99 untuk batas ekor. Boleh dikalikan stress_multiplier.
+  p95:
+    default: 1.0
+    by_year:
+      '2023': 0.6
+      '2024': 1.2
+      '2025': 1.0
+      '2026': 0.7
+    by_session:
+      London: 0.8
+      NewYork: 1.2
+      Tokyo: 0.9
+      Sydney: 1.5
+  p99:
+    default: 1.6
+    by_year:
+      '2023': 1.1
+      '2024': 1.7
+      '2025': 1.7
+      '2026': 1.1

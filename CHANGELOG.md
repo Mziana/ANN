@@ -129,3 +129,16 @@ Semua tanggal memakai ISO-8601 (YYYY-MM-DD).
   itu bar pra-pembukaan yang tidak pernah ada. Sekarang tidak ada bar yang
   diinterpolasi sama sekali, sehingga masalah ini hilang. Jumlah bar M1 per bucket
   tetap terekspos lewat kolom `m1_bars` di hasil resample.
+
+## 2026-10-06 — Lapisan 2 EDA (dependensi notebook)
+
+### Added
+
+- `scipy==1.17.1` — statistik EDA (QQ-plot terhadap normal, uji Welch, bootstrap).
+- `matplotlib==3.10.9` — grafik EDA (QQ-plot per timeframe, figure laporan).
+- `nbformat==5.11.1` — menulis dan memvalidasi `.ipynb` (generator + `nbformat.validate`).
+
+Ketiganya dipakai notebook `notebooks/scalping/eda_*.ipynb`. Versi dipin sesuai
+RULES §13 (izin + pin + entri CHANGELOG). `numpy` sengaja ditahan di 1.26.4
+karena matplotlib 3.11+ menuntut numpy>=2 dan itu akan mengubah stack Lapisan 1
+yang sudah diaudit.
