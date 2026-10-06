@@ -82,8 +82,8 @@ CELLS.append(
         "if str(PROJECT_ROOT) not in sys.path:\n"
         "    sys.path.insert(0, str(PROJECT_ROOT))\n"
         "\n"
+        "from src.data.broker_time import BrokerSchedule, wall_clock_series  # noqa: E402\n"
         "from src.utils.config import load_config  # noqa: E402\n"
-        "from src.data.broker_time import BrokerSchedule, utc_series, wall_clock_series  # noqa: E402\n"
         "\n"
         'print("PROJECT_ROOT :", PROJECT_ROOT)\n'
         'print("python       :", sys.version.split()[0])\n'
@@ -678,6 +678,17 @@ def build() -> None:
 
 if __name__ == "__main__":
     build()
+    # Normalisasi format SEL NOTEBOOK sebelum eksekusi. Tanpa ini, format cell
+    # hasil builder akan drift dari `ruff format --check` setiap kali builder
+    # dijalankan ulang (persis kelas regresi SA-34: .ipynb diperbaiki manual,
+    # lalu hilang saat regenerasi). Builder adalah sumber kebenaran, jadi
+    # formatnya juga harus dihasilkan di sini.
+    subprocess.run(
+        [sys.executable, "-m", "ruff", "format", str(NB_PATH)],
+        cwd=PROJECT_ROOT,
+        check=True,
+    )
+
     result = subprocess.run(
         [
             sys.executable,

@@ -894,3 +894,76 @@ Rancangan EDA v3 Final (disetujui user, diaudit Klenz).
   Koreksi disimpan sebagai item terbuka di TASKS.md.
 - `reports/data_validation_2026-10-06.md` dihasilkan gate `validate_data`;
   tidak ikut commit chore deps (artefak gate).
+
+---
+
+## 2026-10-06 — Putusan Architect atas SA-03 + Langkah 3 (nb01, Q1 return)
+
+### PUTUSAN ARCHITECT (Spark) atas SA-03
+
+Coder membuktikan bucket D1 bergeser -1 hari kalender antara label UTC dan hari broker.
+Architect menjatuhkan putusan R1-R4:
+
+- **R1:** "hari-UTC" = label kalender murni dengan offset struktural -1 yang didokumentasikan.
+  DILARANG menggeser data agar "sepakat".
+- **R2:** "wajib sepakat" ditafsir ulang menjadi **sepakat-dengan-kesadaran-geser**. Hanya
+  divergensi MELEBIHI geseran struktural yang menjadi temuan (dilaporkan sebagai sensitivitas).
+- **R3:** Seluruh pekerjaan level-hari (Q6 primer, Q7) dikunci pada **tanggal-broker**.
+  Hari-UTC sekunder saja.
+- **R4:** Tanpa redesain, tanpa penundaan Langkah 1-3. Aturan dicatat di nb04/nb05 + laporan final.
+
+Alasan Architect: geseran deterministik + arah diketahui = masalah definisi, bukan kegagalan
+empiris; memaksa identitas akan menghasilkan kegagalan palsu abadi. Alternatif membuang
+sekunder hari-UTC DITOLAK.
+
+### LANGKAH 3 — nb01 (Q1 distribusi return) — GO Architect
+
+**File:** `notebooks/scalping/eda_01_returns.ipynb` (20 sel, 11 kode),
+`scripts/_build_eda01.py` (generator + eksekutor nbconvert),
+`reports/eda/2026-10-06/figures/FIG-01_qq_{M1,M5,M15}.png`.
+Belum di-commit (aturan: jangan commit EDA sebelum audit Klenz).
+
+**Hasil utama (tabel Q1, 3 TF x 3 strata):**
+- Ekses kurtosis **turun monoton** dari M1 ke M15: M1-A 195,5 -> M15-A 51,2.
+  ~~Ini bukti kuantitatif microstructure noise/bid-bounce di M1~~ **DICABUT (SA-07)**:
+  konversi pip yang benar menunjukkan 8 pergerakan terbesar M1 jatuh di 12:30 UTC (berita
+  ketenagakerjaan AS) dan 21-22 UTC (gap pembukaan sesi), bukan noise mikrostruktur.
+  Koreksi lengkap ada di `reports/eda/progress/laporan_tahap_3_returns.md` SA-07.
+- **Massa nol:** 5,83% bar M1 punya r persis 0 (2,01% M5; 1,01% M15) - temuan baru pada sesi
+  ini, tidak ada di nb00.
+- **Ekor:** max|r| M1 = **164,7 pip** (bukan 1,2 pip - konversi satuan keliru pada catatan
+  versi pertama; sudah dikoreksi). 1.824 return M1 adalah return lintas gap.
+- Sigma naik sesuai TF: M1 1,61e-4; M5 3,57e-4; M15 6,12e-4 (strata A).
+- Skew M1: A = -0,744; B = **+0,932**; C = -1,517 (pola, lihat SA di laporan).
+- Piksil >3sigma = 1,32% (M1-A), jauh di atas teoritis normal 0,27% -> ambang 3sigma BUKAN
+  "outlier langka". Dicatat eksplisit di notebook.
+
+**Self-audit adversarial 3x (wajib):**
+1. **Correctness** - return identik dengan/tanpa sort (NAIVE) == True; shift(1) backward
+   terverifikasi; hitung ulang independen sigma/skew/kurt cocok.
+2. **Validitas statistik** - mean A vs B Welch p=0,316 (TIDAK signifikan, jangan klaim drift);
+   skew B bootstrap CI95=[-3,0e-11; 5,6e-11] melintasi nol (tanda +, TIDAK kokoh).
+3. **Kepatuhan** - 0 P&L/equity di kode (hanya label markdown), 0 imputasi, 0 tulis config,
+   0 import terlarang, 0 dump mentah, 16/16 assertion PASS.
+
+**Bug yang ditemukan self-audit (bukan oleh user):** tabel Q1 awalnya tidak tercetak ke
+output cell (display() hilang saat nbconvert). Diperbaiki dengan print to_string(). Assertion
+duplikat juga dibersihkan; assertion "tidak ada P&L" yang tadinya hardcode True diganti
+pemeriksaan kolom nyata.
+
+### Catatan pola skew sign-flip (keputusan user 2026-10-06)
+
+Pola: skew return M1 berbalik tanda antara strata A (-0,744) dan strata B (+0,932).
+Pola serupa muncul di M5 (A -1,456 vs B +0,536) dan M15 (A -1,225 vs B +0,436).
+
+**Status: POLA DIAMATI, BELUM HIPOTESIS.** Bukan temuan, bukan klaim.
+
+Alasannya:
+- Tanda skew B **tidak kokoh**: bootstrap 300x atas mean(r^3) memberi CI95 = [-3,01e-11; 5,62e-11]
+  yang melintasi nol.
+- Mean return A vs B juga **tidak signifikan** (Welch p = 0,316), jadi tidak ada bukti drift
+  yang bisa menjelaskan pola.
+
+**Aturan lanjutan (user):** kalau pola ini muncul lagi di nb02-nb05, angkat ke Spark sebagai
+pola yang berulang. Jangan over-interpretasi; jangan jadikan hipotesis sebelum ada mekanisme
+dan ukuran yang bisa diuji.

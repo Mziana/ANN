@@ -32,7 +32,22 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
   `stress_multiplier`) **tidak diganti**; `by_year[2023]=3.0` tetap.
   **MASIH TERBUKA:** `cost_basis.default=0.65` vs `spread.default=1.5`
   (selisih 2,3x) — backtest wajib menyebut kode mana yang otoritas.
-  Berikutnya: **Langkah 5 — nb03** (Q4 autokorelasi).
+  **Juga terbuka:** blok `_sesi` dari fragmen **belum** diterapkan ke config;
+  definisi sesi masih hanya hidup di `notebooks/scalping/_eda_common.py`.
+  **Catatan tipe kunci:** `spread.by_year` = int, `cost_basis.by_year` = str
+  (consumer harus pakai `str(year)`).
+  **nb03 belum di-commit** (menunggu keputusan user).
+  **Langkah 5 SELESAI — nb03 `eda_03_autocorr.ipynb`** (Q4 autokorelasi, 17/17 assertion
+  PASS, 0 error, VALID, urutan eksekusi terbukti). Temuan: |ACF| ≤ 0,012 di semua TF
+  (efek kecil, di bawah biaya 0,65 pip); VR(1)=1,0000; M1 mean-reversion (VR 0,9771),
+  M15 momentum lemah (VR 1,0127); **tanda ACF1 M1 tidak stabil antar tahun**
+  (2023 −, 2024 +, 2025 −, 2026 −). **Koreksi penting:** klaim laporan 4b bahwa
+  "7 isu ruff diperbaiki di builder" **tidak benar** — perbaikan hanya di `.ipynb`,
+  sehingga regenerasi memunculkan kembali I001 (nb02) dan F401 `utc_series` (nb01).
+  Akar masalah kini diperbaiki di ketiga builder, dan setiap `build()` menjalankan
+  `ruff format` pada notebook hasil generator (idempoten).
+  Berikutnya: **Langkah 6 — nb04** (Q6 prior-day H/L + Q7 regime; dikunci pada
+  tanggal-broker sesuai putusan Architect R1–R4).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi

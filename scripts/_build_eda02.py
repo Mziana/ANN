@@ -81,8 +81,8 @@ PROJECT_ROOT = find_project_root(Path.cwd().resolve())
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.utils.config import load_config  # noqa: E402
 from src.data.broker_time import BrokerSchedule, wall_clock_series  # noqa: E402
+from src.utils.config import load_config  # noqa: E402
 
 sys.path.insert(0, str(PROJECT_ROOT / "notebooks/scalping"))
 from _eda_common import (  # noqa: E402
@@ -542,7 +542,14 @@ mean_by_session_full = dict(mean_by_session)
 mean_by_session_full["Off"] = None
 
 fragment = {
-    "_status": "PROPOSAL REVISI - BELUM DITERAPKAN. Menunggu audit Klenz (user).",
+    "_status": (
+        "DITERAPKAN ke configs/data.yaml pada 2026-10-06 sebagai sub-kunci BARU "
+        "spread.cost_basis dan spread.stress_bands. Blok spread lama TIDAK diganti. "
+        "Audit Klenz LULUS DENGAN CATATAN (MEDIUM-26/27/28, LOW-26, LOW-27.2/27.3). "
+        "LOW-27.1 ditutup sebagai no-op (ejaan sudah benar di byte tersimpan). "
+        "MASIH TERBUKA - cost_basis.default 0.65 vs spread.default 1.5, jadi backtest "
+        "wajib menyebut kode mana yang jadi otoritas."
+    ),
     "_sumber": "EDA-02, data/processed/M1 2023-2026, basis STRATA A (bukan campuran).",
     "_catatan": (
         "Nilai lama by_year[2023]=3,0 di config berasal dari p99 file 2023 UTUH, yang "
@@ -722,6 +729,17 @@ def build() -> None:
     with NB_PATH.open("w", encoding="utf-8") as handle:
         nbf.write(notebook, handle)
     print(f"notebook ditulis: {NB_PATH.relative_to(PROJECT_ROOT)} ({len(notebook.cells)} sel)")
+
+    # Normalisasi format SEL NOTEBOOK sebelum eksekusi. Tanpa ini, format cell
+    # hasil builder akan drift dari `ruff format --check` setiap kali builder
+    # dijalankan ulang (persis kelas regresi SA-34: .ipynb diperbaiki manual,
+    # lalu hilang saat regenerasi). Builder adalah sumber kebenaran, jadi
+    # formatnya juga harus dihasilkan di sini.
+    subprocess.run(
+        [sys.executable, "-m", "ruff", "format", str(NB_PATH)],
+        cwd=PROJECT_ROOT,
+        check=True,
+    )
 
     result = subprocess.run(
         [
