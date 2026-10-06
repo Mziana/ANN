@@ -92,6 +92,69 @@ spread:
     cpi: 3.0
     nfp: 4.0
     boj: 4.0
+
+  # ==================================================================
+  # APLIKASI FRAGMEN EDA-02 (disetujui Klenz, 2026-10-06)
+  # Sumber angka: reports/eda/2026-10-06/spread_fragment.yaml
+  # Angka disalin VERBATIM dari fragmen; tidak ada yang dihitung ulang.
+  #
+  # SEMANTIKA: blok ini MENAMBAH dua sub-kunci baru. Blok spread lama
+  # (default, by_year, stress_multiplier, warn/error_multiplier,
+  # by_session, by_news, pip_size) TIDAK DIGANTI dan tetap berdsiri.
+  # Kode yang sudah membaca spread.default / spread.by_year tetap
+  # memakai angka lama sampai ada keputusan buckling eksplisit.
+  #
+  # PERHATIKAN KONFLIK YANG MASIH TERBUKA (bukan bugs, tapi belum diputuskan):
+  #   cost_basis.default = 0,65 (MEAN, strata A)
+  #   spread.default    = 1,5  (nilai lama, belum diganti)
+  # Selisih 2,3x. Backtest WAJIB menyebut kode mana yang jadi otoritas;
+  # jangan membaca spread.default lalu mengira itu biaya dasar.
+  #
+  # KUNCI TAHUN = STRING ("2023" ditulis dengan kutip agar tidak jadi int).
+  # Kode pemakai wajib akses dengan str(year), bukan int.
+  # ==================================================================
+
+  # Biaya dasar = MEAN spread strata A (bukan p95, bukan p99).
+  # Dipakai sebagai biaya optimistic dalam backtest.
+  cost_basis:
+    _satuan: pip
+    _statistik: MEAN spread_pips strata A
+    default: 0.65
+    by_year:
+      '2023': 0.51
+      '2024': 0.7
+      '2025': 0.67
+      '2026': 0.62
+    by_session:
+      London: 0.61
+      NewYork: 0.69
+      Tokyo: 0.62
+      Sydney: 0.8
+
+  # Stress band = ekor spread (p95 untuk stress test, p99 untuk batas ekor).
+  # Boleh dikalikan stress_multiplier (tetap 2.0 di bawah).
+  stress_bands:
+    _satuan: pip
+    _catatan: p95 untuk stress test; p99 untuk batas ekor. Boleh dikalikan stress_multiplier.
+    p95:
+      default: 1.0
+      by_year:
+        '2023': 0.6
+        '2024': 1.2
+        '2025': 1.0
+        '2026': 0.7
+      by_session:
+        London: 0.8
+        NewYork: 1.2
+        Tokyo: 0.9
+        Sydney: 1.5
+    p99:
+      default: 1.6
+      by_year:
+        '2023': 1.1
+        '2024': 1.7
+        '2025': 1.7
+        '2026': 1.1
   pip_size:
     USDJPY: 0.01
     default: 0.0001

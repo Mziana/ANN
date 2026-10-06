@@ -15,10 +15,24 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Yang Sedang Dikerjakan
 
-- **Lapisan 2 (EDA) dimulai (2026-10-06).** Langkah 0 (reuse-check) dan
-  Langkah 1 (pin `tzdata==2026.5` + `MetaTrader5==5.0.6231`) selesai.
-  Venv kanonik = `venv/`; `.venv/` = env bantu uv (tidak dipakai gate).
-  Berikutnya: notebook 00 (setup + audit strata A/B/C).
+- **Lapisan 2 (EDA) berjalan (2026-10-06).** Langkah 0 (reuse-check), Langkah 1
+  (pin `tzdata==2026.5` + `MetaTrader5==5.0.6231`, commit `9a60995`), Langkah 2
+  (nb00 setup + audit strata 11/11 PASS), dan **Langkah 3 (nb01, Q1 distribusi return,
+  16/16 assertion PASS)** selesai. Venv kanonik = `venv/`; `.venv/` = env bantu uv
+  (JANGAN dipakai gate/notebook).
+  **Putusan Architect atas SA-03 (R1–R4) dicatat di nb01 dan SESSION_LOG**: kerja
+  level-hari (Q6/Q7) dikunci pada tanggal-broker; hari-UTC hanya sekunder.
+  Berikutnya: **Langkah 4 — nb02** (Q2 volatilitas per jam broker + Q3 per sesi UTC +
+  pengukuran spread → fragmen YAML) **SELESAI** (20/20 assertion PASS) dan
+  **Langkah 4b SELESAI**: fragmen revisi spread sudah diaudit Klenz
+  (LULUS DENGAN CATATAN), 5 fix terpasang, LOW-27.1 ditutup sebagai no-op,
+  lalu **fragmen sudah DITERAPKAN ke `configs/data.yaml`** sebagai sub-kunci baru
+  `spread.cost_basis` (MEAN) dan `spread.stress_bands` (p95/p99). Blok spread
+  lama (`default`, `by_year`, `by_session`, `by_news`, `pip_size`,
+  `stress_multiplier`) **tidak diganti**; `by_year[2023]=3.0` tetap.
+  **MASIH TERBUKA:** `cost_basis.default=0.65` vs `spread.default=1.5`
+  (selisih 2,3x) — backtest wajib menyebut kode mana yang otoritas.
+  Berikutnya: **Langkah 5 — nb03** (Q4 autokorelasi).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi
@@ -32,7 +46,7 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 - **Pembersihan data SELESAI**: `data/processed/M1/*.parquet`, 1.347.847 bar
   (tanpa interpolasi — D1 2026-10-05).
 - **Resample SELESAI**: M5/M15/M30/H1/H4/D1 di `data/processed/<TF>/`.
-- Berikutnya: `src/features/build_features.py`.
+- Berikutnya (Lapisan 2): `src/features/build_features.py` setelah EDA lulus audit.
 
 ## Yang Sudah Selesai
 
@@ -118,12 +132,18 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Langkah Berikutnya
 
-1. **Lapisan 2 EDA** — `notebooks/scalping/eda_00_setup.ipynb` (audit strata
-   A/B/C, tabel sesi winter/summer, preregistrasi placebo, Kontrak 00) →
-   laporan mini → STOP untuk review user.
-2. Notebook 01–05 sesuai Rancangan EDA v3 Final, lalu audit adversarial Klenz
-   dan penguncian hipotesis.
-3. Pemilihan metode strategi — setelah EDA lulus audit (tugas terpisah).
+1. **Lapisan 2 EDA — Langkah 4:** tulis `notebooks/scalping/eda_02_volatility.ipynb`
+   (Q2 volatilitas per jam dinding broker + Q3 per sesi UTC + pengukuran spread
+   p50/p95/p99/maks dan %>3 pip per sesi × jam × tahun) → **fragmen YAML yang BELUM
+   diterapkan** ke `configs/data.yaml` → laporan mini → STOP untuk review user.
+2. **Langkah 4b (terpisah):** review fragmen spread (fragmen + diff vs config +
+   dampak hilir) → putusan user: terapkan / tunda / tolak.
+3. Notebook 03–05 sesuai Rancangan EDA v3 Final, lalu audit adversarial Klenz dan
+   penguncian hipotesis.
+4. Pemilihan metode strategi — setelah EDA lulus audit (tugas terpisah).
+
+**Status terperinci tiap tahap:** `reports/eda/progress/laporan_tahap_*.md`
+(tahap 0 reuse-check, 1 pin deps, 2 nb00, 3 nb01).
 
 ## Venv — satu kanonik (2026-10-06)
 

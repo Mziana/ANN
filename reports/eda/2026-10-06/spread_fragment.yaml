@@ -1,4 +1,10 @@
-_status: PROPOSAL REVISI - BELUM DITERAPKAN. Menunggu audit Klenz (user).
+_status: >-
+  DITERAPKAN ke configs/data.yaml pada 2026-10-06 sebagai sub-kunci BARU
+  spread.cost_basis dan spread.stress_bands. Blok spread lama TIDAK diganti.
+  Audit Klenz LULUS DENGAN CATATAN (MEDIUM-26/27/28, LOW-26, LOW-27.2/27.3).
+  LOW-27.1 ditutup sebagai no-op (ejaan sudah benar di byte tersimpan).
+  MASIH TERBUKA - cost_basis.default 0.65 vs spread.default 1.5, jadi backtest
+  wajib menyebut kode mana yang jadi otoritas.
 _sumber: EDA-02, data/processed/M1 2023-2026, basis STRATA A (bukan campuran).
 _catatan: Nilai lama by_year[2023]=3,0 di config berasal dari p99 file 2023 UTUH,
   yang didominasi ekor STRATA B (H1-2023, regime SA-03). Di strata A, 2023 justru
