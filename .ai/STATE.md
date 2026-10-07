@@ -1,7 +1,7 @@
 # STATE.md — Status Saat Ini
 
 **Update terakhir:** 2026-10-07
-**Fase:** Lapisan 2 (EDA) — dimulai; Lapisan 0–1 selesai dan ter-commit
+**Fase:** Fondasi fitur B1 SELESAI + audit LULUS bersyarat (2026-10-07); H1–H5 TERKUNCI; Lapisan 0–1 selesai dan ter-commit; berikutnya B2
 **Progress keseluruhan:** ~60%
 
 ## Ringkasan Eksekutif
@@ -138,7 +138,25 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
     FIG-04..07 identik) + koreksi frasa provenance M1 ×4 dokumen. Re-audit:
     F-NL/F-NL2/M1 TERVERIFIKASI TUTUP, tanpa temuan baru. Batch C mutakhir:
     **0 MEDIUM terbuka, 4 LOW terbuka** (B8-01/B10-01 dikecualikan, L2-01/L2-02
-    catatan).
+     catatan).
+- **Penguncian hipotesis H1–H5 SELESAI (2026-10-07, commit `0107a56`):**
+  review redaksi per hipotesis oleh user (H1 sempat ditahan untuk pertanyaan
+  reversal-day ke arsitek — putusan opsi iii: kunci + catat risiko, klausul
+  anti-penyelamatan); arsitek putuskan nasib H1–H5 (H1 KUATKAN, H2–H5 TERIMA
+  bersyarat S1–S8, H6+ DITOLAK, vonis H3 TERBUKA sampai S4). Dokumen:
+  `reports/governance/2026-10-07/hipotesis_lock_v1.md` (redaksi beku) +
+  `putusan-arsitek-H1-H5.md` (lampiran putusan).
+- **Fondasi fitur B1 SELESAI + rantai audit TERTUTUP (2026-10-07):**
+  `src/features/build_features.py` 400/400 baris + 37 test, parquet
+  `07402f40…` (90.041×11) identik objek audit; audit fondasi 0 HIGH/1 MEDIUM/3 LOW
+  → putusan arsitek B1 (D0 + 4 butir, tersimpan) → F-1 diputus arsitek
+  (karantina-presisi sisi konsumen B2, larangan dipertahankan) → LOW F-2/F-3/F-4
+  diperbaiki → re-audit (F-3 bersih; F-2/F-4 TERTUTUP-bersyarat) → micro-batch
+  R1/R2/R3 → konfirmasi auditor 3×YA. Residual berdiri: #4 (nol test `main()`),
+  #5 (`return 0` hardcoded), #7 (headroom nol → split B2 wajib), materialitas
+  H1/H5 F-2 berlabel BELUM DIUJI. Berikutnya: B2 (label + protokol H1/H2/H3 —
+  wajib buka dengan rencana split; H4/H5 dilarang vonis final sebelum
+  eksklusi + sensitivitas dua varian tercatat).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi
@@ -209,7 +227,9 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 - [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — berikutnya
 - [ ] **Akhir Milestone 1**: pecah `validate_data.py` (543 baris) jadi check vs
       render — batas keras dari user, bukan opsional lagi
-- [ ] Modul `src/features/`: build_features.py, build_labels.py
+- [x] Modul `src/features/`: build_features.py SELESAI (400/400, 37 test,
+      audit TERTUTUP-bersyarat 2026-10-07)
+- [ ] Modul `src/features/`: build_labels.py (B2 — wajib rencana split dulu)
 - [ ] Modul `src/models/`, `src/backtest/`
 - [ ] EDA (distribusi return, volatilitas per sesi, regime)
 - [ ] Pemilihan metode strategi (menunggu EDA)

@@ -1088,10 +1088,62 @@ M1, commit batch.
 dikecualikan, L2-01/L2-02 catatan).
 
 **Belum:**
-- Penguncian hipotesis (tugas setelah EDA lulus audit).
 - Sisa worktree di luar scope batch (rename laporan tahap, configs, src,
   tests, nb00/nb04) tetap uncommitted untuk pemiliknya.
+
+---
+
+## Sesi 2026-10-07 — Penguncian hipotesis H1–H5
+
+**Fokus:** Review redaksi H1→H5 oleh user, putusan arsitek, dokumen lock, commit.
+
+**Selesai:**
+- Review H1→H5 satu per satu (terjemahan rinci per hipotesis); H1 sempat
+  ditahan untuk pertanyaan reversal-day/usia-tren + intervensi yen ke arsitek
+  → putusan opsi (iii): kunci verbatim + catat risiko 3 kalimat + klausul
+  anti-penyelamatan + izin eksplorasi split-usia.
+- Klarifikasi rantai 4 tangan (arsitek rancang §11/Q1–Q7 → coder sintesis
+  tahap_12 → auditor koreksi B4/B6/L3 → user kunci); H1–H5 BUKAN ide asisten.
+- Putusan arsitek atas mandat lock: H1 KUATKAN, H2–H5 TERIMA bersyarat S1–S8
+  (S2 pra-registrasi strategi H2; S3–S4 AUC kalibrasi + vonis H3 TERBUKA s/d
+  uji drawdown; S5 dua "6 jam" H4 terpisah + cost_basis tunggal; S6
+  multiplicity H5), H6+ DITOLAK (batas 3–5, sisa pola terdisposisi, tanpa
+  usulan berambang).
+- Dokumen `reports/governance/2026-10-07/hipotesis_lock_v1.md` (beku) +
+  `putusan-arsitek-H1-H5.md` (verbatim putusan); commit `0107a56` (2 file,
+  semua hook hijau).
+
+**Langkah berikutnya:**
+- Lapisan 3 (uji walk-forward H1–H5, biaya penuh) — belum dimulai, menunggu
+  perintah user. Milestone 1 (pecah `validate_data.py`) tetap antre.
 
 **Langkah berikutnya:**
 - Putusan user: penguncian hipotesis, lalu Milestone 1 (pecah
   `validate_data.py`) / fitur / model / backtest.
+
+---
+
+## Sesi 2026-10-07 — Fondasi fitur B1 + rantai audit TERTUTUP
+
+**Fokus:** Arsip audit, putusan B1/F-1, batch LOW, re-audit, micro-batch R1/R2/R3, konfirmasi, commit.
+
+**Selesai:**
+- Audit fondasi B1 (0 HIGH/1 MEDIUM/3 LOW; 17 probe independen) diarsipkan
+  (`audit-fondasi-B1.md`; 3 sisipan Han → placeholder `[HAN U+...]` +
+  catatan arsiparis agar lolos gate).
+- Putusan arsitek B1 (D0 + 4 butir) + putusan F-1 (karantina-presisi sisi
+  konsumen B2, larangan `data.yaml` dipertahankan, H1/H2/H3 tanpa gate,
+  H4/H5 wajib eksklusi + sensitivitas dua varian) ditulis + diverifikasi
+  sendiri oleh arsitek (doktrin tulis-sendiri).
+- Batch F-2/F-3/F-4 → re-audit (F-3 bersih; F-2/F-4 TERTUTUP-bersyarat +
+  7 residual) → micro-batch R1 (swap label baris 251), R2 (label BELUM DIUJI
+  + p95/maks), R3 (test imbalance + bukti mutasi) → konfirmasi auditor 3×YA
+  (R1 skenario baru, R3 mutasi sahih dengan bukti import).
+- Koreksi catatan: klaim coder "R4/R5/R7 tidak ada" SALAH — residual #4/#5/#7
+  (+ materialitas H1/H5 BELUM DIUJI; ex-#6 p95/maks TERTUTUP via R2) tetap berdiri.
+- Parquet `07402f40…` identik objek audit dari awal sampai akhir rantai.
+
+**Langkah berikutnya:**
+- B2 (`build_labels.py` + protokol H1/H2/H3): wajib rencana split dulu
+  (400/400, headroom nol); redaksi karantina H4/H5 dibakukan di prompt;
+  H4/H5 dilarang vonis final sebelum eksklusi + dua varian tercatat.

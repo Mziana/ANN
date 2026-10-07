@@ -199,4 +199,15 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
       (81.851 B, 0 CR, 68 assertion, FIG-04..07 identik) + fix frasa provenance
       M1 ×4 dokumen; re-audit F-NL/F-NL2/M1 TERVERIFIKASI TUTUP tanpa temuan
       baru; commit `43e2a07`; Batch C mutakhir 0 MEDIUM + 4 LOW terbuka
-      (B8-01/B10-01 dikecualikan, L2-01/L2-02 catatan)
+       (B8-01/B10-01 dikecualikan, L2-01/L2-02 catatan)
+- [x] Penguncian hipotesis H1–H5 (2026-10-07): review user H1→H5 + putusan
+      arsitek (H1 KUATKAN, H2–H5 TERIMA S1–S8, H6+ DITOLAK, H3 vonis TERBUKA
+      s/d S4); dokumen `hipotesis_lock_v1.md` + `putusan-arsitek-H1-H5.md`;
+      commit `0107a56`
+- [x] Fondasi fitur B1 + rantai audit TERTUTUP (2026-10-07): `build_features.py`
+      400/400 + 37 test, parquet `07402f40…` tak berubah; audit 0 HIGH/1 MEDIUM/
+      3 LOW → putusan B1 (D0+4 butir) + putusan F-1 (karantina konsumen B2)
+      tersimpan; F-2/F-3/F-4 → re-audit → micro-batch R1/R2/R3 → konfirmasi
+      3×YA; residual #4/#5/#7 + materialitas H1/H5 (BELUM DIUJI) berdiri
+- [ ] B2: `build_labels.py` + protokol H1/H2/H3 (wajib rencana split dulu;
+      H4/H5 dilarang vonis final sebelum eksklusi+sensitivitas tercatat)
