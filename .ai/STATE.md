@@ -1,6 +1,6 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-06
+**Update terakhir:** 2026-10-07
 **Fase:** Lapisan 2 (EDA) — dimulai; Lapisan 0–1 selesai dan ter-commit
 **Progress keseluruhan:** ~60%
 
@@ -81,6 +81,64 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
   **Backlog tercatat (Klenz):** (a) **T-01 "massa nol"** (5,83% bar M1 ber-return persis 0, nb01)
   menunggu **ratifikasi via laporan EDA final** `report.md` (tugas nb05); (b) **ratifikasi user atas
   improvisasi mikro nb01** (`16/16`→`23/23`) dicatat resmi di STATE + SESSION_LOG.
+- **Audit adversarial nb05 berjalan (2026-10-06 s/d 2026-10-07).** Dokumen:
+  `reports/governance/2026-10-06/audit/eda_nb05_audit_v1.md`. Objek dikunci ke
+  `_build_eda05.py`, `eda_05_regimes.ipynb`, `report.md`, `laporan_tahap_11_regime.md`,
+  `laporan_tahap_12_sintesis.md` (materi audit lama tidak dibuka sebagai bukti).
+  **Batch A (Langkah 1-3: replica, insiden ACF, look-ahead) — selesai.**
+  **Batch B (Langkah 4-6: H1-H5, trace `report.md`, 8 item BELUM DIVERIFIKASI)
+  — selesai 2026-10-07, verdict GAGAL: 13 temuan baru (12 B4 + B6-04), 1 HIGH.**
+  **RE-AUDIT perbaikan (putaran 2026-10-07) — selesai, verdict LULUS DENGAN SISA
+  1 LOW:** 13 temuan lama **tertutup semua** (B4-01…B4-12, B6-04) plus L3-06 ditutup
+  juga; notebook dijalankan penuh (19 sel kode, 67/67 assertion lulus, tanpa error).
+  - **Verdict per langkah:** LANGKAH 4 **LULUS** · LANGKAH 5 **LULUS DENGAN CATATAN** ·
+    LANGKAH 6 **LULUS DENGAN CATATAN**. Hash audit final `b802ee1959eb…`
+    (`git hash-object`, 128.118 byte / 2.105 baris).
+  - **B7-01 (LOW, temuan baru) — jumlah assertion diklaim 68, aktual 67.** Builder dan
+    notebook identik 67 `ast.Assert` (hitung AST, bukan regex); `report.md:15` dan
+    `tahap_11:4,106` menyebut 68, dan `tahap_11:5` merinci 10 item meski menulis "+9".
+    Dampak nol pada hasil analitik; hanya provenance yang meleset satu.
+  - **Angka 78,27% vs 77,17% diputuskan BUKAN temuan:** 78,2745 = massa |r| London+NY
+    berbobot Σ|r|; 77,1700 = rata-rata 6 jam tanpa bobot. Selisih 1,1045 pp murni
+    efek pembobotan; angka baru lebih tepat untuk klaim konsentrasi volatilitas.
+  - **Koreksi metadata dokumen audit:** judul kolom hash lama `sha256 (12)` sebenarnya
+    `git hash-object` (SHA-1) — sudah dibetulkan, ini koreksi label bukan temuan.
+  - **B4-04 (HIGH)** — H5 memakai proksi spread mean-D1 harian yang hampir datar
+    (rentang 0,0086 pip antar sesi vs 0,1883 pip spread per-bar sebenarnya);
+    kanon `eda_design_v3.1.md:64` M4 menetapkan `spread_p95`. Akibatnya
+    `flag_biaya_mendominasi = []` palsu — dengan p95, NewYork (0,9488) dan
+    Sydney (0,7975) ter-flag. Pembela di `_build_eda05.py:543` ("spread per bar
+    tidak ada di skema") **tidak berlaku**: M1 sudah punya `spread_pips` per bar.
+  - **B4-03 (MEDIUM)** — assertion `share_off_top6 < 0.5` (`:776`) meloloskan 2 jam
+    Off, sedangkan M2 kanon memicu revisi batas pada >=2 jam Off.
+  - **B4-01, B4-02, B4-05** — metrik tidak mengukur klaimnya (bucket "range"
+    sebenarnya bucket volatilitas TERENDAH; `share_Off_di_top6` tidak menguji
+    London/NY; tidak ada sesi pun yang punya biaya rendah relatif pergerakan).
+  - **B4-06, B4-07** — ambang H2 ">=3 dari 4 tahun OOS" tidak dapat dieksekusi pada
+    span 3,75 tahun; kata "terukur" tidak didukung uji signifikansi.
+  - **B4-12 (MEDIUM)** — M3 (DST-aware vs cross-tab) tidak dijalankan/dilaporkan;
+    hitung ulang menunjukkan SETUJU, jadi dampak angka nol.
+  - **B6-04 (MEDIUM)** — `report.md:32` salah label: kurtosis mikrostruktur sudah
+    diuji dan **ditolak**, jadi statusnya `TIDAK DIDUKUNG`, bukan BELUM DIVERIFIKASI.
+  - **Angka H1-H5 sendiri seluruhnya benar** (~20 baris `report.md` bersumber
+    nb05 diverifikasi ulang tanpa selisih); angka Q1-Q6 bersumber nb00-nb04
+    **di luar objek** -> tetap BELUM DIVERIFIKASI.
+  - ~~**2 pertanyaan terbuka untuk Coder/Architect**~~ — **SUDAH dijawab initiator
+    (2026-10-07): Q1-Q6 + kalender libur TETAP DI LUAR OBJEK sampai user putuskan.**
+    Jadi nb01-nb04 tidak dibuka untuk trace pasif dan kalender libur eksternal tidak
+    dipakai; item kalender libur statusnya tidak berubah (tetap partly BELUM). Jangan
+    dipertanyakan ulang tanpa perintah baru dari user.
+  - **Langkah 7-10 audit (Batch C: registry FIG-01..07, temuan jujur coder, 4-5 bug
+    riwayat, konvensi RULES.md) BELUM dijalankan** — hanya atas perintah eksplisit.
+  - Catatan tooling: audit wajib pakai `venv/Scripts/python.exe` (scipy 1,17,1);
+    `.venv/` tidak punya scipy.
+  - **Batch newline + M1 SELESAI (2026-10-07, ikut commit batch ini):** F-NL
+    (`newline="\n"` ×5 builder) + F-NL2 (pasca-proses CRLF→LF sesudah nbconvert,
+    putusan arsitek Q1–Q4) + regen nb05 saja (81.851 byte, 0 CR, 68 assertion,
+    FIG-04..07 identik) + koreksi frasa provenance M1 ×4 dokumen. Re-audit:
+    F-NL/F-NL2/M1 TERVERIFIKASI TUTUP, tanpa temuan baru. Batch C mutakhir:
+    **0 MEDIUM terbuka, 4 LOW terbuka** (B8-01/B10-01 dikecualikan, L2-01/L2-02
+    catatan).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi

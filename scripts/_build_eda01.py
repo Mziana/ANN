@@ -674,7 +674,7 @@ def build() -> None:
         "language_info": {"name": "python", "version": "3.12"},
     }
     NB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with NB_PATH.open("w", encoding="utf-8") as handle:
+    with NB_PATH.open("w", encoding="utf-8", newline="\n") as handle:
         nbf.write(notebook, handle)
     print(f"notebook ditulis: {NB_PATH.relative_to(PROJECT_ROOT)} ({len(notebook.cells)} sel)")
 
@@ -707,5 +707,12 @@ if __name__ == "__main__":
         ],
         cwd=PROJECT_ROOT,
     )
+    # Pasca-proses Q2 (putusan arsitek 2026-10-07): normalisasi EOL notebook
+    # sesudah nbconvert --inplace (penulis Windows menghasilkan CRLF).
+    # Baca byte -> CRLF->LF -> tulis dengan newline="\n"; idempoten pada file LF.
+    _nb_bytes = NB_PATH.read_bytes().replace(b"\r\n", b"\n")
+    with NB_PATH.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(_nb_bytes.decode("utf-8"))
+
     print(f"nbconvert exit={result.returncode}")
     sys.exit(result.returncode)
