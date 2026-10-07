@@ -1,6 +1,6 @@
 # PROGRESS.md — Milestone
 
-**Update terakhir:** 2026-10-05
+**Update terakhir:** 2026-10-07
 
 ## Milestone 0: Setup Fondasi — SELESAI (100%)
 
@@ -91,3 +91,14 @@ Regresi: 103 test hijau. Gate `pre-commit run --all-files` 12/12.
 - [x] 8 temuan diperbaiki, 5 dibatalkan atas bukti data
 - [x] Validasi data nyata: exit 0, 2023 kini WARN karena spread p99 8,50 pip
 - [x] 120 test hijau, pre-commit 12/12
+
+### Update 2026-10-07 (batch newline + M1 + commit)
+
+- [x] F-NL + F-NL2 ×5 builder, regen nb05 (81.851 B, 0 CR, 68/68 assertion),
+      FIG-04..07 hash identik pin, diff ternormalisasi kosong + 9 baris chunking
+      terdisposisi
+- [x] Re-audit F-NL/F-NL2 TERVERIFIKASI TUTUP; temuan baru M1 (MEDIUM,
+      provenance "era CRLF" salah kausal) diperbaiki ×4 dokumen + re-audit
+      TERVERIFIKASI TUTUP
+- [x] Commit `43e2a07` (37 file, semua hook hijau); Batch C: 0 MEDIUM + 4 LOW
+      terbuka (B8-01/B10-01 dikecualikan, L2-01/L2-02 catatan)

@@ -1061,3 +1061,37 @@ koreksi mendarat.
   passed · ruff format --check bersih · pytest 157 passed · validate_data 0 error 4 tahun ·
   check_foreign_chars OK.
 - **Pagar nb05 terbuka**: dengan Commit B mendarat, nb05 boleh mengonsumsi nb02–nb04.
+
+---
+
+## Sesi 2026-10-07 — Batch C fix + batch newline + M1 + commit
+
+**Fokus:** Tutup temuan Batch C (F-B804/F-B802/F-B901, B9-02/B9-03), batch
+determinisme newline (F-NL/F-NL2 + regen nb05, putusan arsitek Q1–Q4), temuan
+M1, commit batch.
+
+**Selesai:**
+- Prompt fix Batch C + verifikasi coder 7/7 hash; re-audit Batch C (R10/A1–A3,
+  konfirmasi A3 = CATATAN); fix B9-02/B9-03 Opsi-1 + re-audit LOLUS.
+- F-NL (`newline="\n"` ×5 builder) + F-NL2 (pasca-proses CRLF→LF sesudah
+  nbconvert, putusan arsitek Q1 deterministik ternormalisasi / Q2 lokus builder /
+  Q3 checklist 8 item / Q4 regen nb05 saja) + regen nb05 (81.851 B, 0 CR,
+  68/68 assertion, FIG-04..07 identik pin, nb01–nb04 tak tersentuh).
+- Re-audit F-NL/F-NL2: TERVERIFIKASI TUTUP + 1 MEDIUM baru M1 (frasa "era CRLF"
+  salah kausal ×4 dokumen); fix M1 coder + verifikasi asisten 8/8 +
+  re-audit M1 TERVERIFIKASI TUTUP (2 disposisi: kalimat sisa B9-02 sah,
+  blob penuh sah). Tanpa temuan baru.
+- Commit `43e2a07` (37 file, scope batch saja; hook sempat tolak 2× —
+  STATE-date + Cyrillic di prompt asisten — diperbaiki lalu lolos semua).
+
+**Status Batch C mutakhir:** 0 MEDIUM terbuka, 4 LOW terbuka (B8-01/B10-01
+dikecualikan, L2-01/L2-02 catatan).
+
+**Belum:**
+- Penguncian hipotesis (tugas setelah EDA lulus audit).
+- Sisa worktree di luar scope batch (rename laporan tahap, configs, src,
+  tests, nb00/nb04) tetap uncommitted untuk pemiliknya.
+
+**Langkah berikutnya:**
+- Putusan user: penguncian hipotesis, lalu Milestone 1 (pecah
+  `validate_data.py`) / fitur / model / backtest.

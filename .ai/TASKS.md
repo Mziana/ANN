@@ -1,6 +1,6 @@
 # TASKS.md — Task Board
 
-**Update terakhir:** 2026-10-05
+**Update terakhir:** 2026-10-07
 
 ## In Progress
 
@@ -194,3 +194,9 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
       requirements di commit yang sama.**
 - [ ] Arsip: entri SESSION_LOG 2026-10-05 menyebut hash `1147eef`; hash final
       `a63d117`. Koreksi disimpan sebagai item terbuka.
+- [x] Batch newline + M1 + commit (2026-10-07): F-NL (`newline="\n"` ×5 builder)
+      + F-NL2 (pasca-proses CRLF→LF, putusan arsitek Q1–Q4) + regen nb05 saja
+      (81.851 B, 0 CR, 68 assertion, FIG-04..07 identik) + fix frasa provenance
+      M1 ×4 dokumen; re-audit F-NL/F-NL2/M1 TERVERIFIKASI TUTUP tanpa temuan
+      baru; commit `43e2a07`; Batch C mutakhir 0 MEDIUM + 4 LOW terbuka
+      (B8-01/B10-01 dikecualikan, L2-01/L2-02 catatan)
