@@ -1,6 +1,16 @@
 # Proyek: USDJPY Trading Bot
-# Python: 3.11+
+# Python: 3.11 s.d. 3.12 (JANGAN 3.13 — torch==2.4.0 & numpy==1.26.4 tidak
+# punya wheel untuk 3.13, instalasi akan gagal).
 # Update: 2026-10-06
+#
+# === PERSIAPAN PERANGKAT BARU (baca sebelum pip install) ===
+# 1. OS wajib Windows (MetaTrader5 hanya tersedia di Windows; di Linux/Mac
+#    instalasi file ini GAGAL di baris MetaTrader5).
+# 2. Instal terminal MetaTrader5 + login akun broker DAHULU — pengambilan data
+#    (src/data/fetch_data.py) butuh terminal MT5 yang aktif & login.
+# 3. Buat venv, lalu: pip install -r requirements.txt
+# 4. torch + scikit-learn BELUM dipakai tahap EDA (fase model nanti); boleh
+#    di-skip bila hanya menjalankan EDA/backtest ringan untuk hemat ~2GB.
 
 # === Data ===
 pandas==2.2.3

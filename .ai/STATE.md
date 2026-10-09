@@ -1,7 +1,23 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-07
-**Fase:** Fondasi fitur B1 SELESAI + audit LULUS bersyarat (2026-10-07); H1–H5 TERKUNCI; Lapisan 0–1 selesai dan ter-commit; berikutnya B2
+**Update terakhir:** 2026-10-09
+**Fase:** Fase 1 TERTUTUP + Lapisan 3-H3 TERTUTUP (2026-10-08, putusan
+arsitek 4 butir, C8 `478fc831`); H3 GUGUR via S4b (filter dilarang, S4 MOOT);
+H1–H2/H4–H5 TERKUNCI tapi BELUM divonis; jalur vonis dipilih 2026-10-08
+(desain dua-batch: Batch-1 H1+H2, Batch-2 H4+H5); spec Batch-1 MASUK
+2026-10-08 (`spesifikasi-lapisan3-H1H2.md`, hash `fc29f6fa`, gerbang LOLOS,
+Q1 real-time = vonis H1, Q2 ratifikasi H2); eksekusi coder Batch-1 SELESAI
+2026-10-09 (`coder/hasil-lapisan3-H1H2.md`, hash `1550209f`, gerbang LOLOS;
+S1 9/9 bit-exact; S-H1/S-H2 = GUGUR keluaran formula, BUKAN vonis);
+eksekusi coder Batch-2 SELESAI 2026-10-09 (`coder/hasil-lapisan3-H4H5.md`,
+hash `f06a8e27`, gerbang LOLOS; S-H4 = TAHAN / S-H5 = GUGUR keluaran formula,
+BUKAN vonis; DEV-B2-1..4 terbuka); re-audit auditor SELESAI 2026-10-09
+(`Audit/reaudit-lapisan3-H4H5.md`, 707 baris, blob `8a4d2109`, gerbang LOLOS;
+verdict LULUS DENGAN TEMUAN — angka penentu bit-exact, 2 MEDIUM non-penentu,
+S-B 13+1 VIOLATED, 4 eskalasi); putusan arsitek H4/H5 MASUK 2026-10-09
+(`arsitek/putusan-lapisan3-H4H5.md`, 410 baris, blob `e02a203b`, gerbang LOLOS;
+vonis resmi H4 TAHAN + H5 GUGUR FINAL; Batch-2 TERTUTUP); Lapisan 0–1 selesai dan ter-commit;
+B2 SELESAI; menunggu arah user fase berikut
 **Progress keseluruhan:** ~60%
 
 ## Ringkasan Eksekutif
@@ -153,10 +169,11 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
   (karantina-presisi sisi konsumen B2, larangan dipertahankan) → LOW F-2/F-3/F-4
   diperbaiki → re-audit (F-3 bersih; F-2/F-4 TERTUTUP-bersyarat) → micro-batch
   R1/R2/R3 → konfirmasi auditor 3×YA. Residual berdiri: #4 (nol test `main()`),
-  #5 (`return 0` hardcoded), #7 (headroom nol → split B2 wajib), materialitas
-  H1/H5 F-2 berlabel BELUM DIUJI. Berikutnya: B2 (label + protokol H1/H2/H3 —
-  wajib buka dengan rencana split; H4/H5 dilarang vonis final sebelum
-  eksklusi + sensitivitas dua varian tercatat).
+  #5 (`return 0` hardcoded),   #7 (headroom nol → split B2 wajib), materialitas
+  H1/H5 F-2 berlabel BELUM DIUJI. **B2 SELESAI 2026-10-08** (`build_labels.py`
+  399 baris + 60 test, D4 974 hari-broker `47d15c41…`, re-audit keempat LULUS
+  5/5 + regresi 13/13 — Fase 1 TERTUTUP). Berikutnya: **Lapisan 3-H3**
+  (materialitas gap 234 hari + sensitivitas TAU).
 - **Data 2023-2026 ter-fetch**: 1.347.847 bar M1 total (4 file di `data/raw/M1/`).
 - **R1 DIPERBAIKI (2026-10-05): kolom `time` sekarang UTC sejati.** MT5
   mengodekan jam dinding broker seolah-olah epoch UTC. Fungsi

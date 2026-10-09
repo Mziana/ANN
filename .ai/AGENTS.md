@@ -85,6 +85,10 @@ Baca berurutan:
 5. `.ai/RULES.md`
 6. `.ai/CONTEXT.md`
 7. Entry terakhir `.ai/SESSION_LOG.md`
+8. Jika berperan sebagai ASISTEN (penerjemah + penjaga alur), lanjutkan:
+   `.ai/ASSISTANT_RULES.md`, `.ai/assistant/README.md`,
+   `.ai/assistant/REPORT_EXPLAINER.md` (wajib sebelum menjelaskan laporan
+   apa pun).
 
 Tulis konfirmasi:
 Session Start â€” Pre-Flight
@@ -328,6 +332,24 @@ Update `.ai/CONTEXT.md` saat: milestone, arah berubah, strategi baru, stack beru
 Soft limit: fungsi 50, file 400, CC 10.
 Boleh dilanggar dengan `# LENGTH_EXCEPTION: <alasan>`.
 File aturan (.md) dan data statis boleh panjang.
+
+### Â§15.1 Pengecualian file generator
+
+File generator (mis. `scripts/_build_eda*.py` yang membangkitkan notebook
+via string template) DIKECUALIKAN dari batas 400 baris â€” sebagian besar
+isinya template, bukan logika. Syarat pengganti (wajib keempatnya, tanpanya
+pengecualian gugur):
+1. Referensi baris stabil (tidak ada rewrite/format ulang massal tanpa
+   alasan; diff antar revisi kecil dan terlacak).
+2. Diff kecil per batch (satu putaran kerja = sedikit baris berubah).
+3. Output bisa dihitung ulang (deterministik: seed tetap, rerun
+   menghasilkan angka sama).
+4. Assertion mesin (klaim angka penting dikunci `assert`, bukan hanya
+   tertulis di dokumen).
+
+Alasan titik buta: kode di dalam string template tidak terlihat oleh
+analisis statis (ruff/linter lolos walau logika di dalamnya bermasalah) â€”
+maka keempat syarat di atas adalah pengganti mesin penjaganya.
 
 ---
 

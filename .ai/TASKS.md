@@ -209,5 +209,184 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
       3 LOW → putusan B1 (D0+4 butir) + putusan F-1 (karantina konsumen B2)
       tersimpan; F-2/F-3/F-4 → re-audit → micro-batch R1/R2/R3 → konfirmasi
       3×YA; residual #4/#5/#7 + materialitas H1/H5 (BELUM DIUJI) berdiri
-- [ ] B2: `build_labels.py` + protokol H1/H2/H3 (wajib rencana split dulu;
-      H4/H5 dilarang vonis final sebelum eksklusi+sensitivitas tercatat)
+- [x] B2: `build_labels.py` + protokol H1/H2/H3 — SELESAI 2026-10-08
+      (D1 399 baris + 60 test, D4 974 hari-broker, re-audit keempat LULUS 5/5,
+      regresi 13/13, Fase 1 tertutup; H4/H5 tetap dilarang vonis final sebelum
+      eksklusi+sensitivitas tercatat)
+- [x] Lapisan 3-H3: spec arsitek SELESAI 2026-10-08
+      (`arsitek/spesifikasi-lapisan3-H3.md`, hash `dacd0708`, gerbang lolos)
+- [x] Lapisan 3-H3: eksekusi coder SELESAI 2026-10-08
+      (`coder/hasil-lapisan3-H3.md` 1051 baris, C8 `c5cb5177`, gerbang lolos;
+      Uji-1 IMMATERIAL, Uji-2 TIDAK STABIL → konsekuensi spec S4b)
+- [x] Lapisan 3-H3: re-audit auditor SELESAI 2026-10-08
+      (`Audit/reaudit-lapisan3-H3.md`, LULUS DENGAN CATATAN; F-1/F-2 MEDIUM
+      + F-3/F-4/F-5 LOW; C2 LULUS substansi/GAGAL pola; S4b tetap kutipan)
+- [x] Lapisan 3-H3: TERTUTUP 2026-10-08
+      (`arsitek/putusan-lapisan3-H3.md`, C8 `478fc831`; P-1 S0 diterima +
+      rule exact-comparison; P-2 M2 dikunci + rule paired/CI; P-3 pola C2
+      dipensiunkan; P-4 S4b AKTIF = H3 GUGUR, filter dilarang, S4 MOOT)
+- [x] Jalur H1/H2/H4/H5: dipilih user 2026-10-08; desain dua-batch
+      (Batch-1 H1+H2 verdict-ready, Batch-2 H4+H5); draf prompt spec Batch-1
+      tersimpan (`prompts/2026-10-08_spec-batch1-H1H2-arsitek.md`)
+- [x] Spec arsitek Batch-1 MASUK + gerbang LOLOS 2026-10-08
+      (`arsitek/spesifikasi-lapisan3-H1H2.md`, hash `fc29f6fa`, 369 baris;
+      blob S0 lock/putusan/protokol cocok 40-hex; Q1 real-time = vonis,
+      Q2 ratifikasi + pin (a)–(f); S1 gate exact-match [O8])
+- [x] Eksekusi coder Batch-1 SELESAI + gerbang LOLOS 2026-10-09
+      (`coder/hasil-lapisan3-H1H2.md`, 1175 baris, hash `1550209f`,
+      C8 `522c221c`; S1 9/9 bit-exact; S-H1 = GUGUR formula, S-H2 = GUGUR
+      formula; fokus re-audit: DEV-B1 burn-in, DEV-B3 exit 140/140 sinyal)
+- [x] Re-audit Batch-1 SELESAI + gerbang LOLOS 2026-10-09
+      (`Audit/reaudit-lapisan3-H1H2.md`, 511 baris, hash `e4143132`,
+      verdict LULUS; S1/VR/S-H2 hitung-ulang bit-exact; DEV-B1 selesai
+      tanpa re-run; DEV-B3 bukan bug; porcelain 98 = 97 + berkas saya)
+- [x] Batch-1 TERTUTUP 2026-10-09 (`arsitek/putusan-lapisan3-H1H2.md`,
+      hash `ca4e0b70`, gerbang LOLOS; vonis resmi H1 GUGUR + H2 GUGUR FINAL;
+      burn-in kanonik 60 POSISI; R-B1…R-B4; H4/H5 untouched)
+- [x] Desain Batch-2 SELESAI 2026-10-09 (walk-forward expanding tahunan
+      kanonik; grid H5 4 sel + Holm; separasi S5; pin biaya/placebo/strategi
+      sebagai Q1–Q5 arsitek)
+- [x] Draf prompt spec Batch-2 tersimpan
+      (`prompts/2026-10-09_spec-batch2-H4H5-arsitek.md`) — menunggu user
+      paste ke arsitek
+- [x] Spec arsitek Batch-2 MASUK + gerbang LOLOS 2026-10-09
+      (`arsitek/spesifikasi-lapisan3-H4H5.md`, hash `4a46b815`, 461 baris;
+      S0 + Q1–Q5 diputus + S-C C1–C9 + S-B 14 larangan; deviasi arsitek
+      Q1 pool-tunggal/2026-dibuang-penuh, Q2 Holm, Q3 by_session,
+      Q4 long-only, Q5 blok-tahunan — tercatat beralasan)
+- [x] Draf prompt eksekusi coder Batch-2 tersimpan
+      (`prompts/2026-10-09_eksekusi-batch2-H4H5-coder.md`) — menunggu user
+      paste ke coder
+- [x] Eksekusi coder Batch-2 SELESAI + gerbang LOLOS 2026-10-09
+      (`coder/hasil-lapisan3-H4H5.md`, 1299 baris, hash `f06a8e27`,
+      C8 `9cef2998`; S-H4 = TAHAN / S-H5 = GUGUR formula; DEV-B2-1..4 terbuka)
+- [x] Re-audit Batch-2 SELESAI + gerbang LOLOS 2026-10-09
+      (`Audit/reaudit-lapisan3-H4H5.md`, 707 baris, blob `8a4d2109`;
+      LULUS DENGAN TEMUAN — 2 MEDIUM non-penentu + 4 LOW, 4 eskalasi)
+- [x] Draf prompt putusan arsitek H4/H5 tersimpan
+      (`prompts/2026-10-09_putusan-H4H5-arsitek.md`) — menunggu user
+      paste ke arsitek
+- [x] Batch-2 TERTUTUP 2026-10-09 (`arsitek/putusan-lapisan3-H4H5.md`,
+      410 baris, blob `e02a203b`, C8 `5bfa76a2`, gerbang LOLOS;
+      vonis resmi H4 TAHAN + H5 GUGUR FINAL; S-V per huruf;
+      EKS-1–EKS-4 + T1–T6 diputus semua; P-5 kunci dua arah)
+- [x] Brief telaah fondasi opsi B DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_telaah-fondasi-B-arsitek.md`;
+      U-1 karantina F-1 + U-2 dekomposisi biaya + U-3 regime deskriptif;
+      diagnostik, BUKAN vonis ulang; H6+ tetap DITOLAK) — SUDAH dipaste,
+      protokol MASUK (lihat entri berikut)
+- [x] Rekomendasi T6 DIEKSEKUSI 2026-10-09 (atas perintah user): `git add`
+      `src/features/build_labels.py` (399 baris) +
+      `tests/test_build_labels.py` (713 baris) — staged file baru (A),
+      BELUM commit; blind spot C2 tertutup; baseline staged kini 2 file
+- [x] Protokol telaah fondasi B MASUK + gerbang LOLOS 2026-10-09
+      (`arsitek/protokol-telaah-fondasi-B.md`, 218 baris, blob `ed436fdd`,
+      C8-pengganti; S0+U-1–U-3+R-1–R-4+STOP lengkap; sitiran sh4:369-375
+      TERVERIFIKASI dari `%TEMP%` harness; vonis tak tersentuh; H6 nihil) —
+      SUDAH dieksekusi coder (lihat entri berikut)
+- [x] Brief eksekusi coder fondasi-B DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_eksekusi-fondasi-B-coder.md`;
+      substansi arsitek verbatim U-1(b)/U-2/U-3/R-4 + 4 usulan asisten
+      yang disetujui via paste) — SUDAH dipaste, laporan MASUK
+- [x] Laporan coder fondasi-B MASUK + gerbang LOLOS 2026-10-09
+      (`coder/hasil-telaah-fondasi-B.md`, 416 baris, blob `0284f5f0`;
+      R-4 terverifikasi independen via hash-ulang `%TEMP%`; headline
+      cocok; atribusi staged=2 diluruskan = T6 asisten-atas-perintah-user;
+      vonis tak tersentuh) — menunggu arsitek baca via R-1–R-4
+- [x] Brief disposisi fondasi-B FINAL disetujui user 2026-10-09
+      (`assistant/prompts/2026-10-09_disposisi-fondasi-B-arsitek.md`) —
+      SUDAH dipaste, disposisi MASUK (lihat entri berikut)
+- [x] Fondasi-B TERTUTUP 2026-10-09 (`arsitek/disposisi-fondasi-B.md`,
+      75 baris / 2881 B, blob `7d125022`, gerbang LOLOS;
+      D-1/D-2/D-3 DISAHKAN, D-4 SELESAI; R-2 DIBUKA, filter tetap DILARANG)
+- [x] Spec pra-registrasi H4b-stabilitas MASUK + gerbang LOLOS 2026-10-09
+      (`arsitek/spesifikasi-H4b-stabilitas.md`, 108 baris, blob `0437b563`;
+      lock dua-arah + anti-intip + guard P-5; tindak lanjut R-2 yang sah,
+      bukan H6) — menunggu perintah "jalankan ronde coder H4b"
+- [x] Brief eksekusi coder H4b DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_eksekusi-H4b-coder.md`;
+      substansi spec verbatim + 3 usulan asisten menunggu konfirmasi
+      via paste) — menunggu user paste ke coder
+- [x] Laporan coder H4b MASUK + gerbang LOLOS 2026-10-09
+      (`coder/hasil-H4b-stabilitas.md`, 259 baris, blob `6410b180`;
+      vonis mekanis GUGUR(H4b), tepat satu; R-4 terverifikasi independen;
+      branch codex/ANN tanpa divergensi; atribusi staged diluruskan) —
+      SELESAI dieksekusi; berikut auditor independen
+- [x] Brief reaudit H4b DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_reaudit-H4b-auditor.md`;
+      A1–A7: replikasi nol + anti-intip + Off/lock + scope + karantina/
+      cross-validasi + determinisme + integritas; 3 usulan asisten
+      disetujui via paste) — SUDAH dipaste, laporan MASUK (lihat entri berikut)
+- [x] Reaudit H4b SELESAI + gerbang LOLOS DENGAN CATATAN 2026-10-09
+      (`Audit/reaudit-H4b-stabilitas.md`, 18199 B / 476 baris aktual,
+      sha `3560bc05…`, blob `e3530477…`, TANPA self-hash; verdict LULUS
+      DENGAN CATATAN — A1 COCOK / A2 COCOK+LOW-1 / A3 COCOK+ESK-1 /
+      A4 COCOK / A5 SAH / A6 COCOK / A7 COCOK+LOW-2, 0 MEDIUM/HIGH;
+      S0 8/8 cocok; staged=2 tak berubah; HEAD `e0b2b9f9` utuh) —
+      berikut putusan arsitek H4b (ESK-1: kriteria (a) tak operatif)
+- [x] Prompt onboarding CTO DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_onboarding-CTO.md`) — menunggu user pakai
+- [x] Brief putusan H4b FINAL disetujui user 2026-10-09
+      (`assistant/prompts/2026-10-09_putusan-H4b-arsitek.md`) —
+      SUDAH dipaste, putusan MASUK (lihat entri berikut)
+- [x] H4b TERTUTUP 2026-10-09 (`arsitek/putusan-H4b-stabilitas.md`,
+      119 baris / 5326 B, blob `fe11383b`, gerbang LOLOS;
+      vonis resmi H4b: GUGUR; ESK-1 BEKUKAN+CATAT; LOW-1/LOW-2 tetap LOW;
+      H4 TAHAN Batch-2 + H1/H2/H3/H5 untouched; H6+ DITOLAK)
+- [x] Brief desain R-2 FINAL disetujui user 2026-10-09
+      (`assistant/prompts/2026-10-09_desain-R2-arsitek.md`;
+      S1 verbatim D-2/P-5/V-4/EKS-3 + S2 4 bahan + S0 8-hash + S-V(a)–(d)
+      + S3/S4 + U-1–U-5 digabung) — SUDAH dipaste, spec MASUK
+- [x] Spec R-2 MASUK + gerbang LOLOS 2026-10-09
+      (`arsitek/spesifikasi-R2-stratifikasi.md`, 141 baris / 6849 B,
+      blob `c04199ce`, TANPA self-hash; gate
+      `assistant/verifications/2026-10-09_gerbang-spec-R2.md`,
+      blob `3e8cd57a`; S0 8/8 + HEAD `e0b2b9f9` + staged 2 T6 COCOK)
+- [x] Brief eksekusi coder R-2 FINAL disetujui user 2026-10-09, DITULIS ULANG
+      atas perintah user (patuh AGENTS.md penuh + PROMPT_DISIPLIN Aturan 1-2:
+      S-0 kontrak/S5/S20/S21/S26 + tiap syarat berpasangan perintah mentah +
+      path penuh + resep sh4.py terverifikasi ada)
+      (`assistant/prompts/2026-10-09_eksekusi-R2-coder.md`,
+      blob `928a86d1`, 8413 B, ASCII/LF) —
+      SUDAH dipaste, laporan MASUK (lihat entri berikut)
+- [x] Laporan coder R-2 MASUK + gerbang LOLOS 2026-10-09
+      (`coder/hasil-R2-stratifikasi.md`, 9811 B / 226 baris, blob `c2f79913`,
+      TANPA self-hash; artefak `r2_hasil.json` sha `4664B4D8...E64A4`
+      run1=run2=induk; angka JSON-di-disk == JSON-di-laporan == S-V(b) spec;
+      vonis mekanis tepat satu GUGUR(R-2) tahun_gugur [2025]; gate
+      `assistant/verifications/2026-10-09_gerbang-hasil-R2.md`,
+      blob `381a5967`; HEAD `e0b2b9f9` + staged 2 T6 utuh) —
+      berikut brief re-audit independen (lihat entri berikut)
+- [x] Brief re-audit R-2 DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_reaudit-R2-auditor.md`,
+      blob `a8cc3e19`, 9707 B, ASCII/LF; A1-A7 adaptasi R-2 + larangan 1-12
+      + U-1–U-3 digabung sah) —
+      SUDAH dipaste, laporan MASUK (lihat entri berikut)
+- [x] Re-audit R-2 SELESAI + gerbang LOLOS 2026-10-09
+      (`Audit/reaudit-R2-stratifikasi.md`, 27235 B / 600 baris logis
+      (LF 599, tailLF False) / ASCII/LF, sha `25E3C0E9…`,
+      blob `24a929c7…`, TANPA self-hash; PUTUSAN AUDIT: GAGAL atas
+      T-1 HIGH tunggal — gate lock jam spec :92-93 tak menggigit
+      (`r2.py:86` konstanta-vs-literal; S1b top-6 data-uji + S2 range(24)
+      lolos rc=0); A1 COCOK 26/26 + A6 byte-identik 3 JSON (angka penentu
+      + verdict mekanis GUGUR(R-2) BENAR, dampak T-1 NOL); T-2/T-3/T-4 LOW;
+      S0 + HEAD `e0b2b9f9` + staged 2 T6 COCOK; gate
+      `assistant/verifications/2026-10-09_gerbang-reaudit-R2.md`) —
+      berikut putusan arsitek R-2 (nasib gate + klarifikasi spec)
+- [x] Brief putusan R-2 DISUSUN 2026-10-09
+      (`assistant/prompts/2026-10-09_putusan-R2-arsitek.md`,
+      blob `65c32a6c`, 9928 B / 173 baris, ASCII/LF/tailLF;
+      S-2d 10-hash + S-V(a)-(e) + V-1 vonis resmi + V-2 disposisi T-1 HIGH
+      dua opsi + V-3 T-2/T-3/T-4 + V-4 anti-merambat) —
+      SUDAH dipaste, putusan MASUK (lihat entri berikut)
+- [x] R-2 TERTUTUP 2026-10-09 (`arsitek/putusan-R2-stratifikasi.md`,
+      143 baris / 7697 B, blob `c92733fd`, sha `81F40E0B…`,
+      TANPA self-hash, ASCII/LF/tailLF; gerbang LOLOS
+      `assistant/verifications/2026-10-09_gerbang-putusan-R2.md`;
+      vonis resmi GUGUR(R-2); V-2 opsi (ii) TERIMA DENGAN CATATAN
+      (pola assert-konstanta PENSIUN, pengganti mengikat +
+      S1b/S2 wajib rc non-0); V-3 T-2/T-3/T-4 TUTUP catatan +
+      klarifikasi T-3 mengikat; V-4 anti-merambat penuh;
+      H4 Batch-2/H1-H3/H5/H4b/fondasi-B untouched; H6 DITOLAK)
+- [ ] Compaction agresif (15–20%): diagnosis + opsi solusi diajukan,
+      menunggu keputusan user (opsi A sentuh config global)

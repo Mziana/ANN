@@ -1147,3 +1147,565 @@ dikecualikan, L2-01/L2-02 catatan).
 - B2 (`build_labels.py` + protokol H1/H2/H3): wajib rencana split dulu
   (400/400, headroom nol); redaksi karantina H4/H5 dibakukan di prompt;
   H4/H5 dilarang vonis final sebelum eksklusi + dua varian tercatat.
+
+---
+
+## Sesi 2026-10-08 — Re-audit kedua GAGAL + adjudikasi sempit + pengingat README
+
+**Fokus:** Arsip verbatim re-audit kedua, adjudikasi 3 butir ke arsitek, pengingat operasional README.
+
+**Selesai:**
+- Re-audit kedua (2026-10-08) vonis GAGAL: #14–#19 tak satu pun tertutup penuh;
+  temuan baru #20–#36 (3 BLOCKER: #20 D4 tanpa row key, #21 200 bar hantu
+  UTC-vs-broker-day; assert paritas terbukti tautologi — sabotase 1.0/88.79
+  NO RAISE). Diterjemahkan ke bahasa manusia untuk user.
+- Arsip verbatim: `reports/governance/2026-10-07/Audit/reaudit-kedua-fix-D1-D5.md`
+  (367 baris, hash `1f99203711e92afa77166de9d6a0184a44463e19`, untracked) —
+  sumber audit tunggal bagi arsitek dan coder. Lanjutannya: adjudikasi
+  sempit A (#23: 479 vs 234), B (desain guard final), C (penegasan grain
+  hari-broker) — prompt sudah disusun, user kirim sendiri.
+- Pengingat operasional di `.ai/assistant/README.md`: setiap prompt wajib
+  memuat perintah tulis .md; bila peran lupa, Asisten yang menuliskan
+  (verbatim); Asisten wajib update penjurnalan setiap ada perubahan/keputusan.
+- Verifikasi: `prompts/` 39 file, `verifications/` 20, `reviews/` 10,
+  `notes/` 4 — semua folder hidup dan digunakan.
+
+**Langkah berikutnya:**
+- Tunggu putusan adjudikasi arsitek (A+B+C), lalu prompt fix batch ketiga
+  coder (14 syarat §7 re-audit kedua), lalu re-audit ketiga.
+
+**Update 2026-10-08 — adjudikasi arsitek DITERIMA + terverifikasi:**
+- File: `reports/governance/2026-10-07/arsitek/putusan-adjudikasi-reaudit-kedua.md`
+  (180 baris, blob `295303a4…` cocok, untracked, tanpa stage/commit).
+- A (#23) → opsi (c) rumuskan ulang: tolak (b) 479 (artefak grain-campur,
+  mengesahkannya = kontrakkan bug #21) dan tolak (a) (rumus Q3(a) tidak
+  rusak); akar selisih = 234 dari edge-rule BATAS SESI (B1: 597 bucket) vs
+  Q3(a) edge-rule BATAS HARI; aturan "tepat 234, selisih=gagal" DICABUT —
+  diganti recount independen single-grain + rekonsiliasi bucket-per-bucket
+  vs 597 B1; 234 tetap referensi orde, status BELUM DIUJI.
+- B (Lubang 1) → guard PROVENANS bukan nilai: hapus klausus tautologi
+  :169-172 + larang kembali; smoke-bounds boleh tinggal berlabel jujur;
+  guard pengganti = allclose vs kolom ATR store (toleransi eksplisit);
+  sabotase 1.0/88.79/close-avg HARUS meledak; docstring :138-141 + klaim
+  D5 :147/:197 dicabut sampai terbukti.
+- C (#21/#22) → YA grain tunggal broker-day kanonik store; hapus
+  `_daily_from_m15` (sekaligus tutup #29); terima = 974 baris, tanpa None,
+  mask bool murni, NaN norm hanya warmup; fides London dipertahankan.
+- TIDAK diputus: #20, #24/Lubang 2, #25–#36 (terbuka ronde berikut).
+- Berikutnya: prompt fix batch ketiga coder memuat A+B+C + sisa §7.
+
+**Update 2026-10-08 — batch-3 coder MASUK + gerbang pra-audit LOLOS:**
+- Klaim coder: D4 974 baris, gap recount 597/234 (479 = hari-UTC hantu),
+  guard provenans 9 sabotase RAISED, Q1(a) TAU_2023=2.5951…e-05/AUC=0.8174/
+  n_B=111/n_A=129, 54 test (mutasi merah, fixture sensitif), D1 400/400,
+  full suite 248, staged=0, D4 byte-reprodusibel, 7 subdir dibersihkan.
+- Gerbang pra-audit (`.ai/assistant/verifications/2026-10-08_pra-audit-batch3.md`):
+  5 hash klaim + 2 sha256 D4 + HEAD + 2 hash lama SEMUA COCOK; D4 independen:
+  974 baris, index date_broker 974 unik, label 330/324/320 tanpa None, mask
+  bool (True 19), norm NaN 14, gap sum 234, rv hidup 955.
+- 2 catatan: "D1 tepat 400" vs fakta 322 (jinak, di bawah pagu — delta
+  klaim-vs-fakta ke-4); row-key via index + file-uji 474 baris + verifikasi
+  angka kalibrasi/rekonsiliasi = wewenang re-audit 3.
+- Keputusan: LOLOS → susun prompt re-audit ketiga.
+
+**Update 2026-10-08 — re-audit ketiga GAGAL (13/14) + koreksi gerbang saya:**
+- File: `Audit/reaudit-ketiga-batch3-D1-D5.md` (604 baris, 29345 byte persis
+  klaim; hash `673ffb15…`; untracked; HEAD `e0b2b9f`; staged 0).
+- TERTUTUP: A (234 terkunci, 597=578+19, 479 ditolak), C + #20 (index
+  date_broker fungsional merge 1:1), Q1(a) bit-perfect (TAU/AUC 3 metode/n),
+  #21/#22/#24–#36 (16/17). TERBUKA: syarat 5/Lubang 1 — guard = allclose(X,X)
+  di produksi (`main()` L383 oper kolom yang sama); 7/9 sabotase LOLOS
+  termasuk 1.0/88.79/close-avg; suite hijau karena fixture snapshot referensi
+  sebelum sabotase (kondisi tak pernah terjadi di produksi).
+- Baru: [MED] klaim ruff format exit=0 SALAH (rc=1, 10 file, L149 tulisan
+  batch-3 sendiri); [MED] RV_WINDOW_DAYS tak terikat kalibrasi (mutasi 20→10
+  lolos); [LOW] D4 disk toolchain pyarrow 17 vs 25 (nilai identik, byte beda);
+  [LOW] fixture N=60 hanya 32 bar. Rambu §11 = 5 butir batch-4.
+- Kredibilitas auditor NAIK: koreksi diri CJK + salah-baca git status +
+  Youden-prepend + test row-key (semua dikoreksi transparan, bukan disembunyikan).
+- KOREKSI GERBANG SAYA: "D1 322 vs klaim 400" adalah SALAH UKUR saya
+  (artefak Get-Content); python: 400 baris fisik persis — klaim coder BENAR,
+  delta #4 DICABUT. Byte (29345) otoritatif atas hitung-baris bila metode beda.
+- PROMPT_DISIPLIN + butir 9–12 (referensi sumber-terpisah, klaim gate rc+cakupan,
+  toolchain parquet, kunci konstanta kalibrasi).
+
+**Update 2026-10-08 — batch-4 MASUK + gerbang LOLOS nol catatan:**
+- Klaim: 5/5 §11 tertutup; main() L377-378 baca referensi store terpisah;
+  9/9 sabotase produksi RAISED (10/10 cocok vs 3/10); mutasi reference_sama_frame
+  3 merah; format L149 + rc/cakupan eksplisit; RV_WINDOW diikat hitung-ulang
+  (mutasi 20→10 merah); D4 rebuild identik disk + nilai 6/6 & 10/10; fixture 70 bar.
+- Gerbang (verifications/2026-10-08_pra-audit-batch4.md): 4 hash + HEAD + staged 0
+  + 2 hash lama COCOK; D1 399 / D2 713 / B4 280 (python); 60 + 254 collect ✅;
+  main() nol daily[ + reference dari store ✅; ruff check+format 2 file ✅;
+  D4 disk 47D15C41 tak berubah ✅. Diteruskan ke re-audit keempat (sempit).
+
+**Update 2026-10-08 — doktrin anti-reset (keputusan user):**
+- Baru: `.ai/assistant/PROMPT_DISIPLIN.md` — 3 aturan mengikat penyusunan
+  prompt (1: tiap syarat + perintah mentah yang outputnya ditempel; 2: larangan
+  bentuk-spesifik butir 1–8 dari pelajaran re-audit 1+2 + adjudikasi, wajib
+  ditambah tiap ada pola lolos-celah baru; 3: gerbang pra-audit Asisten
+  sebelum prompt lanjutan) + pemicu otomatis saat baca README/susun prompt.
+- `README.md` Pengingat Operasional ditambah pointer wajib ke file tsb.
+- Latar: analisis 60% model / 25% instruksi / 15% proses; batas jujur = bila
+  pola Keranjang 1 terulang ke-4 kalinya, yang diganti model codernya.
+
+**Update 2026-10-08 — re-audit keempat LULUS 5/5, Fase 1 tertutup:**
+- File: `Audit/reaudit-keempat-batch4-D1-D5.md` (736 baris; hash `23867354...`;
+  untracked; HEAD `e0b2b9f`; staged 0; status 92 entri = 91+1 file baru, konsisten).
+- 5/5 TERBUKTI: (1) guard provenans baca store terpisah, 9/9 sabotase produksi
+  RAISED termasuk 1.0/88.79/close-avg + kontrol sumber-membedakan + mutasi
+  reference_sama_frame 3 merah; (2) format rc=0 file batch-4, 9 file rc=1 di luar
+  scope; (3) RV_WINDOW terikat data (TAU bit-identik, mutasi 20->10 merah);
+  (4) D4 6/6+10/10 nilai identik lintas toolchain; (5) fixture N=60 (0.64 vs 0.74).
+- Regresi: 13/13 tetap tertutup; 254 passed dua toolchain; kalibrasi dihitung
+  ulang pasca D1 400->399 (TAU bit-identik); rekonsiliasi 597=578+19 tertutup;
+  3 hash beku identik; write-index merah (row key #20 terkunci).
+- CATATAN JUJUR: D1/D2 berubah sesudah gerbang saya (D1 90e44a82->2561efd5,
+  D2 53468d95->dc07a7e6; baris/test tetap 399/713/60). Auditor memverifikasi
+  file final + bukti read-only pasca-uji; saya cocokkan ulang hash vs disk =
+  identik. Pelajaran: gerbang saya benar struktur, tapi angka prose (T-1/T-4:
+  189 vs 191, penjelasan .md/.ipynb) lolos dari gerbang saya dan ditangkap
+  auditor — gerbang prose perlu dibaca juga, bukan cuma hash.
+- Temuan baru T-1..T-5 semua LOW/INFO (angka basi, Index.equals True,
+  prose D3 kurang shift(-1), penjelasan cakupan ruff, pointer S4 stale
+  protokol:170-174 yang benar 188-213). BELUM DIUJI tetap: materialitas gap 234
+  hari (H1/H5) + sensitivitas TAU = prasyarat Lapisan 3-H3, bukan temuan.
+- Verdict: LULUS; Fase 1 BOLEH naik ke Lapisan 3. Berikutnya: spesifikasi
+  arsitek Lapisan 3 (uji materialitas gap + sensitivitas TAU).
+
+**Koreksi 2026-10-08 — ruang lingkup PROMPT_DISIPLIN (atas pertanyaan user):**
+- User benar: file itu doktrin internal Asisten, BUKAN bacaan arsitek.
+  Brief arsitek Lapisan 3 yang saya susun salah karena memuat pointer ke sana.
+- Perbaikan: header PROMPT_DISIPLIN ditambah blok RUANG LINGKUP — file khusus
+  Asisten; brief tiap peran harus mandiri dengan klausul relevan disalin
+  eksplisit, dilarang lempar pointer. Prompt Lapisan 3 diterbitkan ulang
+  dengan batasan di-inline (di bawah).
+
+**Klarifikasi lanjutan 2026-10-08 (atas perintah user): arsitek WAJIB baca AGENTS.md.**
+- Beda dari PROMPT_DISIPLIN: AGENTS.md adalah kontrak BERSAMA semua peran AI
+  (§26 peran + alur multi-AI, §5 format laporan Klaim & Bukti, §20
+  anti-halusinasi, §21 protokol empiris) — arsitek tunduk padanya.
+- Aturan ruang lingkup disempurnakan: brief harus mandiri KECUALI kontrak
+  bersama (AGENTS.md) yang memang wajib dirujuk; yang dilarang hanya pointer
+  ke file internal Asisten.
+
+**Update 2026-10-08 — spec Lapisan 3-H3 MASUK + gerbang LOLOS:**
+- File: `arsitek/spesifikasi-lapisan3-H3.md` (215 baris; hash `dacd0708...`
+  cocok klaim; staged 0; 1 file, tanpa commit).
+- Isi: Uji-1 materialitas gap (INK 974 vs EKS 740, M1 verdict-lock primer,
+  M2 chi-square α=0,01, M3 konsistensi B1; primer 234 penuh, 223 robustness;
+  MATERIAL picu anotasi dua-varian, bukan eksklusi); Uji-2 sensitivitas TAU
+  (ref terkunci + 4 alternatif tertutup A1-A4; K1 AUC≥0,70, K2 agreement≥90%,
+  K3 orde B>A; STABIL/MARJINAL/TIDAK STABIL; S4b = H3 GUGUR bila tak stabil —
+  keputusan spec ini, bukan lock); C1–C9 mesin (HEAD, status kosong, hash
+  D1/D2/D3/D5 + trio beku, gate, determinisme 2×sha, output M1/M2/M3 + tabel
+  TAU, hasil .md + hash); batasan H4/H5 + eksklusi buta + daftar lindung.
+- Arsitek perbaiki pointer stale :170-174 → :192-211/:214-217/:222-226
+  (T-5 re-audit keempat) atas inisiatif sendiri — kredibilitas naik.
+- Catatan worktree (bukan ulah siapa pun di sesi ini, dibiarkan): M `.ai/*`
+  (termasuk AGENTS.md — mojibake encoding terlihat saat baca), D beberapa
+  `reports/eda/progress/*` + governance root, banyak `??` (termasuk D1/D2
+  yang memang belum pernah di-commit). Berikutnya: prompt eksekusi coder.
+
+**Update 2026-10-08 — hasil Lapisan 3-H3 MASUK + gerbang LOLOS:**
+- File: `coder/hasil-lapisan3-H3.md` (1051 baris / 44919 byte / LF-only via
+  python; C8 `c5cb5177...` saya reproduksi bit-persis via sha1 body-only;
+  HEAD `e0b2b9f`; staged 0; src/tests/data/configs tanpa modifikasi —
+  hanya `??` D1/D2 pra-ada).
+- Hasil: Uji-1 IMMATERIAL (M1 GUGUR=GUGUR INK vs EKS; M2 p=0,6294; M3 tanda
+  sama B1; R1–R3 tak pindahkan verdict); Uji-2 TIDAK STABIL (K1/K2/K3 semua
+  gagal; A1 AUC 0,1559 strata terbalik; A2 agreement 0,6718) → konsekuensi
+  spec: H3 GUGUR via S4b (dilaporkan sebagai kutipan aturan, bukan vonis coder).
+- C1–C9 LULUS (C2 substansi + DEV-1: pola literal KOSONG tak tercapai di state
+  pra-ada, dibuktikan before/after identik + find-newermt kosong).
+- DEV terbuka: DEV-2 subset 223 tak dihitung (BELUM DIVERIFIKASI); DEV-3 AUC
+  rank 1 ULP di atas lock, trapesium bit-identik (INFO); DEV-4 jalur C3/C4
+  diekspansi (pola dok, bukan substansi). 6 ASUMSI A-1..A-6 dilabel + diuji
+  kepekaan; 2 FIX harness dicatat (FIX-1 dtype, FIX-2 nanmax).
+- Catatan gerbang saya: `Measure-Object` PS hitung 931 vs python 1051 —
+  artefak PS lagi (seperti kasus 322-vs-400); python otoritatif. Blok [O18]
+  coder sendiri menampung satu run ruff-0.16 gagal-cwd (io error) lalu C4e
+  yang benar rc=0 — jujur mentah, bukan disembunyikan.
+- Berikutnya: re-audit auditor atas hasil ini (sempit: eksekusi vs spec).
+
+**Update 2026-10-08 — re-audit Lapisan 3-H3: LULUS DENGAN CATATAN:**
+- File: `Audit/reaudit-lapisan3-H3.md` (527 baris / 28184 byte / 0 non-ASCII
+  via python — klaim 528/28172 selisih metode hitung, bukan substansi;
+  hash `1c233a8d...`; HEAD `e0b2b9f`; staged 0).
+- Vonis: Uji-1 IMMATERIAL + Uji-2 TIDAK STABIL TERBUKTI (rekomputasi
+  independen cocok digit terakhir; M3 bit-exact dari rekonstruksi sendiri;
+  TAU bit-exact; determinisme C5 dibuktikan ulang rc=0 stderr 0).
+- Source review diminta user TERLAKSANA (§D baris-per-baris kedua harness +
+  rekomputasi tanpa impor kode coder): chi2/Youden/AUC/agreement/NaN/FIX
+  benar; degenerasi Youden A1 diterangkan sebagai sifat data (bukan bug).
+- Temuan: F-1 MED (isclose rtol=1e-5 terlalu lemah untuk klaim bit-exact;
+  klaim benar via array_equal auditor) + F-2 MED (chi2 langgar independensi
+  nested + alpha/CI campur; vonis invarian via CI99 5B/7seed) → eskalasi
+  Arsitek; F-3/F-4/F-5 LOW (label bootstrap, B bebas, redaksi rc=2).
+- PUTUSAN C2: LULUS substansi (4 jalur: mtime/hash/index/OUT) / GAGAL pola
+  literal (salah desain spec, bukan coder) → eskalasi Arsitek. C9 auditor
+  sempat ragukan sendiri lalu koreksi (kolom index vs worktree) — tercatat.
+- Kredibilitas naik lagi: 3 keraguan sendiri diuji-dan-dibuang terbuka;
+  draf terkontaminasi Han/checkmark diperbaiki sampai pure ASCII; SHA-256
+  terpotong dikembalikan 64 hex; klaim "nol tulis" bohong dikoreksi
+  (satu-satunya tulisan = laporan ini, untracked); angka -uall=114
+  dilaporkan agar penambahan tak luput di balik collapsed-67.
+- S4b tetap kutipan aturan (bukan vonis auditor/coder). Berikutnya:
+  tindak lanjut arsitek (F-1/F-2/C2 + penegasan S4b + identitas 11 hari?).
+
+**Update 2026-10-08 — PUTUSAN Lapisan 3-H3: H3 GUGUR via S4b, rantai TERTUTUP:**
+- File: `arsitek/putusan-lapisan3-H3.md` (204 baris / 11167 byte / ASCII murni;
+  blob penuh `c643c1c9...` cocok; C8 `478fc831...` saya reproduksi bit-persis;
+  HEAD `e0b2b9f`; staged 0).
+- P-1: klaim S0 DITERIMA (bit-exact via array_equal auditor); standing rule:
+  provenans wajib exact-comparison atau toleransi eksplisit (isclose-default
+  dinyatakan tak memadai; pelanggaran = temuan).
+- P-2: M2/IMMATERIAL DITERIMA + DIKUNCI; rekaman dilengkapi CI99 (sitiran
+  sah); rule: estimator paired untuk nested + CI selaras alpha.
+- P-3: C2 = LULUS substansi / GAGAL pola (adopsi auditor); pola "output
+  KOSONG" DIPENSIUNKAN; spec berikut wajib tracked-only atau before/after.
+- P-4 (inti): S4b AKTIF → H3 GUGUR; filter dilarang di data mana pun; S4
+  MOOT (tak perlu dieksekusi); A-5 DITUTUP (primer resmi, non-material);
+  223 tetap BELUM DIVERIFIKASI non-blokir; tanpa ubah ambang/lock/vonis lain.
+- Arsitek baca 3 dokumen utuh (527+215+1051) + cocokkan 3 blob sesi ini;
+  tanpa hitung-ulang ketiga (preseden eksplisit kapan wajib); S27 tak terpicu
+  (coder-auditor sepakat); F-3/F-4/F-5 dicatat tanpa aksi.
+- Status akhir: Fase 1 TERTUTUP; H3 GUGUR; H1/H2/H4/H5 TERBUKA (tak divonis
+  di sini). Menunggu arah user fase berikut.
+
+**Update 2026-10-08 — jalur H1/H2/H4/H5 dipilih; desain dua-batch; draf prompt arsitek:**
+- User pilih jalur vonis H1/H2/H4/H5. Desain: Batch-1 = H1+H2 (verdict-ready),
+  Batch-2 = H4+H5 (butuh desain karantina/multiplicity); gabungan-sekaligus
+  ditolak (blast radius), satu-per-satu ditolak (boros ronde).
+- Bacaan wajib asisten tuntas (AGENTS, ASSISTANT_RULES, README, REPORT_EXPLAINER,
+  RULES TL;DR, STATE/TASKS/PROGRESS/CONTEXT, SESSION_LOG) + konteks Batch-1
+  (lock §H1/§H2, putusan H1-H5, protokol-H1-H2-H3, spec H3, PROMPT_DISIPLIN).
+- Draf prompt arsitek spec Batch-1 ditampilkan di chat + disimpan di
+  `.ai/assistant/prompts/2026-10-08_spec-batch1-H1H2-arsitek.md`. Isi: substansi
+  verbatim lock/putusan/protokol + standing rule P-1/P-2/P-3 + Q1 (M1=GUGUR =
+  vonis H1?) + Q2 (ratifikasi pra-registrasi H2?) + kriteria mesin + larangan
+  bentuk-spesifik + perintah .md `arsitek/spesifikasi-lapisan3-H1H2.md` +
+  self-audit 3×. Menunggu user: revisi atau paste ke arsitek.
+- Catatan: Task-tool subagent error model-not-found → riset langsung via baca
+  file. PROGRESS.md tertinggal (update 2026-10-07) → sinkron sesi berikut.
+
+**Update 2026-10-08 — spec Batch-1 MASUK + gerbang LOLOS nol catatan:**
+- File: `arsitek/spesifikasi-lapisan3-H1H2.md` (369 baris / 24143 byte /
+  0 non-ASCII / tanpa CR via python; hash `fc29f6fa…` cocok; HEAD `e0b2b9f`;
+  staged 0; dirt hanya pra-ada + spec di `?? arsitek/`).
+- Blob S0 saya cocokkan penuh: lock `97202803…`, putusan H1-H5 `e8eb03da…`,
+  protokol `bc17e5de…` — ketiganya 40-hex identik.
+- Q1: real-time H+1 satu-satunya sumber vonis H1; M1 anotasi; divergensi =
+  temuan wajib-lapor + eskalasi; anti-penyelamatan dua arah. Q2: H2
+  DIRATIFIKASI + teks final (a)–(f) kata-per-kata (exit mulai bar berikut;
+  konfirmasi day_label D4 T-1 dekopling S-H1; prioritas SL>TP>sinyal; biaya
+  by_session×0,01; tanpa pengecualian hari; VR pool mean 5/15/60).
+- S-H1: S1 gate reproduksi [O8] exact-match (mismatch = STOP) → S2 verdict
+  (CI95 + chi2 tanpa-Yates, seed 20261006, label "unpaired (disjoint)") →
+  S3 suplemen R1/R2/R3 + divergence. S-H2: S0 provenans → S1 EV median/tahun
+  → S2 VR OOS. C1–C9 mesin (C2 pola P-3, KOSONG pensiun); S-B 12 larangan.
+- Arsitek jujur soal 2 karakter asing pra-verifikasi (diperbaiki sebelum
+  serah) — pola kredibilitas seperti auditor H3.
+- Berkas gerbang: `verifications/2026-10-08_gerbang-spec-H1H2.md`.
+  Berikutnya: prompt eksekusi coder Batch-1.
+
+**Update 2026-10-09 — hasil coder Batch-1 MASUK + gerbang LOLOS nol catatan:**
+- File: `coder/hasil-lapisan3-H1H2.md` (1175 baris / 59016 byte / LF-only;
+  hash `1550209f…` cocok; C8 `522c221c…` cocok rekonstruksi git-style;
+  HEAD `e0b2b9f`; staged 0; porcelain 97 baris identik entri-per-entri
+  dengan [O18]; cek asing rc=0; D4 `47d15c41…`/`32eaf6b2…` + config
+  `e277d67e…` + protokol `bc17e5de…` cocok dari disk).
+- Isi (baca penuh, keluaran formula BUKAN vonis): S1 gate 9/9 bit-exact;
+  S-H1 = GUGUR (CI95 memuat 0; chi2 p=0.1888; burn-in 60, evaluable 914;
+  searah M1, tanpa divergensi); S-H2 = GUGUR (median EV ≤ 0 di 3/3 tahun;
+  mean VR 1.0265 > 1; 778 hari / 140 trade / exit sinyal 140).
+- Titik fokus re-audit: DEV-B1 (burn-in 60 posisi vs 60 nilai non-NaN —
+  satu-satunya interpretasi yang bisa geser batas; perlu putusan arsitek
+  perlu/tidaknya rerun); DEV-B3 smell-check (140/140 exit sinyal, 0 SL/TP —
+  pastikan monitoring mulai bar berikut, bukan salah implementasi).
+- Berkas gerbang: `verifications/2026-10-09_gerbang-hasil-H1H2.md`.
+  Berikutnya: prompt auditor re-audit sempit Batch-1.
+
+**Update 2026-10-09 — re-audit Batch-1 MASUK, verdict LULUS + gerbang LOLOS:**
+- File: `Audit/reaudit-lapisan3-H1H2.md` (511 baris / 25182 byte / ASCII
+  murni / LF-only; hash `e4143132…`; HEAD `e0b2b9f`; staged 0;
+  porcelain 98 = 97 + berkas gerbang saya sendiri, TERJAWAB sah).
+- Isi (baca penuh): C1–C9 LULUS; S1 9/9 `==` hitung-ulang dari nol;
+  S-H2 140/140 0 mismatch; VR bit-exact; suplemen digit-exact; C4/C5
+  dijalankan ulang (254 passed, 4 run + cmp coder-vs-auditor IDENTIK).
+- DEV-B1 SELESAI: kedua pembacaan burn-in → GUGUR identik, tanpa re-run;
+  sisa = ambang burn-in jadi keputusan eksplisit Arsitek. DEV-B3 SELESAI:
+  140/140 exit sinyal = fakta mekanis, bukan bug (jarak terdekat 0.26 JPY).
+- Q2(b) vs S-B.10: kopling terlarang TIDAK terjadi; 2 kesalahan auditor
+  dicatat terbuka. 2 MEDIUM non-penentu, nol temuan pemblokir.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-reaudit-H1H2.md`.
+  Berikutnya: putusan Arsitek H1/H2 (bahan: vonis resmi + ambang burn-in).
+
+**Update 2026-10-09 — putusan Arsitek Batch-1 MASUK: H1 GUGUR + H2 GUGUR resmi; gerbang LOLOS:**
+- File: `arsitek/putusan-lapisan3-H1H2.md` (296 baris / 15615 byte / ASCII
+  murni; hash `ca4e0b70…` cocok; C8 `9ad9f805…` cocok dua metode;
+  HEAD `e0b2b9f`; staged 0; porcelain 99 = 98 + doc ini, sah).
+- Isi (baca penuh): P-1 vonis H1 GUGUR (Q1 searah, eskalasi=false);
+  P-2 vonis H2 GUGUR FINAL tanpa menunggu 2026 (B4-06 diputus; ambang
+  4-tahun kelak = hipotesis BARU); P-3 burn-in kanonik 60 POSISI, tanpa
+  re-run, + rule posisi-vs-nilai untuk spec berikut; P-4 R-B1…R-B4
+  (manifest, bucket genap, realitas exit, venv kanonik); P-5 scope
+  (H3 tetap GUGUR, H4/H5 untouched, anti-penyelamatan dua arah).
+- Status: Batch-1 TERTUTUP (H1/H2/H3 GUGUR resmi; H4/H5 TERBUKA).
+  Berkas gerbang: `verifications/2026-10-09_gerbang-putusan-H1H2.md`.
+  Berikutnya: desain Batch-2 (H4/H5 — karantina/multiplicity).
+
+**Update 2026-10-09 — desain Batch-2 SELESAI + draf prompt spec tersimpan:**
+- Desain (perintah commander): OOS kanonik = walk-forward expanding-window
+  tahunan (2023 seed, evaluasi 2024–2025; tiap tahun-Y hanya info ≤ Y−1);
+  2026 parsial diusulkan dikecualikan dari penentu (preseden H4/H2/B4-06) —
+  diputus arsitek Q1. H5: grid TETAP 4 sel (sesi ∩ hari-kuartil-atas-ATR) +
+  1 agregat deskriptif, koreksi Holm, FDR ditolak (Q2). H4: separasi S5
+  ketat (EV jam-tetap [14,13,0,15,12,7] + cost_basis 4b vs pola top-6
+  hitung-ulang; dilarang tukar). Q3 pin biaya (tutup 0,65-vs-1,5). Q4
+  mekanik pintu + stance SL/TP (R-B3). Q5 pin placebo PERSIS nb04.
+  Opsi single-block dipertimbangkan + ditolak tertulis (daya + kontaminasi).
+- Hash ukur sesi ini: lock `97202803`, putusan-H1-H5 `e8eb03da`, report EDA
+  `15ecb37d`, putusan-B1 `91d4c993`; HEAD `e0b2b9f` tak berubah.
+- Draf: `.ai/assistant/prompts/2026-10-09_spec-batch2-H4H5-arsitek.md` —
+  menunggu user paste ke arsitek. Berikutnya: spec Batch-2 MASUK → gerbang.
+
+**Update 2026-10-09 — spec Batch-2 MASUK + gerbang LOLOS + draf coder:**
+- File: `arsitek/spesifikasi-lapisan3-H4H5.md` (461 baris / 29395 byte /
+  ASCII murni; hash `4a46b815…` cocok; HEAD `e0b2b9f`; staged 0;
+  porcelain 101 pola pra-ada, `requirements.txt` M pra-ada `41b21d8`).
+- S-2d 6/6 cocok penuh 40-hex; baca penuh: S0 + Q1–Q5 diputus beralasan +
+  S-H4/S-H5 (S21 + ambang pra-reg) + S-C C1–C9 + S-B 14 larangan + S-R +
+  self-audit + adversarial. Deviasi dari rekomendasi draf saya (pool
+  tunggal, 2026 dibuang penuh bahkan deskriptif, OR-gugur H4 tanpa
+  koreksi, long-only tanpa filter arah, kuartil blok-tahunan) = hak
+  arsitek, masing-masing beralasan + preseden tertulis.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-spec-H4H5.md`.
+- Draf prompt coder: `prompts/2026-10-09_eksekusi-batch2-H4H5-coder.md`
+  (sumber tunggal spec, anti-typo 5 lapis, harness %TEMP%, DAQ 2023/2026,
+  gates C1–C9) — menunggu user paste. Berikutnya: hasil coder MASUK.
+
+**Update 2026-10-09 — prompt coder ditulis-ulang v2 (teguran user):**
+- Asisten baca `.ai/AGENTS.md` + `ASSISTANT_RULES.md` + `assistant/README.md`
+  + `PROMPT_DISIPLIN.md` + `PERAN-coder.md` + `REPORT_EXPLAINER.md`.
+- Kesalahan diakui (§3.4): draf v1 parafrasa/tunjukan (bukan verbatim §4.2/§5),
+  improvisasi "anti-typo 5 lapis" tanpa tanya (§3.3), tanpa SELF-AUDIT 3× (§3.2).
+- v2 = format §5 (substansi verbatim arsitek + SELF-AUDIT 3× + USULAN TAMBAHAN
+  terpisah); brief mandiri (angka presisi-penuh + C1–C9 perintah mentah +
+  S-B 14 larangan + perintah .md/lokasi); rujukan hanya `.ai/AGENTS.md`.
+- USULAN TAMBAHAN (2 item) DITAHAN — butuh konfirmasi user sebelum kirim coder.
+**Update 2026-10-09 — user SETUJU kedua item:** digabung ke brief sebagai
+"Disiplin tambahan (DISETUJUI user 2026-10-09)"; status prompt = FINAL,
+siap paste ke coder. Berikutnya: hasil coder MASUK → gerbang.
+
+**Update 2026-10-09 — hasil coder Batch-2 MASUK + gerbang LOLOS:**
+- File: `coder/hasil-lapisan3-H4H5.md` (1299 baris / 50219 B / LF-only /
+  ASCII murni; full-blob `f06a8e27…` cocok; C8 `9cef2998…` cocok reproduksi;
+  HEAD `e0b2b9f`; staged 0; porcelain 103 pola pra-ada + doc baru ini).
+- Verdict formula (BUKAN vonis): S-H4 = TAHAN (P0→P1 kriteria-a negatif →
+  E1 median pool 0,0144 > 0 → kriteria-b negatif); S-H5 = GUGUR (Holm α=0,01:
+  p terkecil 0,244 Sydney > 0,0025 → nol reject → 4/4 sel gagal).
+- Harness: sh4 trio `b1b69d33` + sh5 trio `7a7f5ee7` terverifikasi di disk
+  `%TEMP%\opencode\l3h4h5` (run-ulang = wewenang auditor).
+- Anomali C8 ganda teresolusi (file berubah saat §8b ditambah; final konsisten).
+- Terbuka: DEV-B2-1..4 + top-6 hitung-ulang `[14,13,0,15,12,1]` vs P0
+  `[14,13,0,15,12,7]` (klaim coder: temuan sah kriteria-a — fokus re-audit).
+- Berkas gerbang: `verifications/2026-10-09_gerbang-hasil-H4H5.md`.
+  Berikutnya: prompt re-audit sempit Batch-2 → auditor.
+
+**Update 2026-10-09 — re-audit Batch-2 MASUK, verdict LULUS DENGAN TEMUAN + gerbang LOLOS:**
+- File: `Audit/reaudit-lapisan3-H4H5.md` (707 baris / 36824 B / LF-only /
+  ASCII; blob `8a4d2109…` saya ukur dari disk — file sengaja tanpa self-hash
+  sebagai respons T2; HEAD `e0b2b9f`; staged 0; porcelain 106 pola pra-ada).
+- R1/R2 bit-exact dari nol tanpa impor kode coder; harness byte-identik
+  (3x); 15 blob + 7 sha256 cocok 100%; C-gates + pytest 254 + ruff hijau
+  dijalankan ulang auditor.
+- 6 temuan: 2 MEDIUM non-penentu (T1 klaim sesi London/NY salah — jam 0/1
+  100% Tokyo, kontradiksi [O6] 0,6833; T2 C8 sirkular VACUOUS → S-B.10
+  VIOLATED, cacat sistemik pola) + 4 LOW (T3/T4/T5/T6).
+- 4 eskalasi: EKS-1 (lock-vs-hitung-ulang butuh keputusan sadar arsitek),
+  EKS-2 (cutoff_2025 dari ATR 2024, compliant), EKS-3 (tanda 2024 + vs 2025 −),
+  EKS-4 (definisi Off beku, aman).
+- S-B: 13 COMPLIANT + 1 VIOLATED. Auditor koreksi 3 kesalahan sendiri terbuka.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-reaudit-H4H5.md`.
+  Berikutnya: prompt putusan arsitek H4/H5.
+
+**Update 2026-10-09 — draf prompt putusan arsitek H4/H5 tersimpan:**
+- File: `prompts/2026-10-09_putusan-H4H5-arsitek.md` (menunggu user paste).
+- Butir tertutup P-1–P-5: vonis H4 (peringatan T1 — sitir [O6], bukan prosa),
+  vonis H5, disposisi EKS-1–EKS-4, disposisi T1–T6 + standing rule pengganti C8,
+  kunci anti-merambat. Pola: `putusan-lapisan3-H1H2.md`.
+  Berikutnya: putusan arsitek MASUK → gerbang → Batch-2 TERTUTUP.
+
+**Update 2026-10-09 — putusan arsitek H4/H5 MASUK + gerbang LOLOS → Batch-2 TERTUTUP:**
+- File: `arsitek/putusan-lapisan3-H4H5.md` (410 baris / 21171 B / LF-only /
+  ASCII; full-blob `e02a203b…` tercatat di luar dokumen; C8 `5bfa76a2…`
+  reproduksi persis; HEAD `e0b2b9f`; staged 0; porcelain 108 pola pra-ada).
+- Vonis resmi: **H4 TAHAN** + **H5 GUGUR** (telak) — FINAL.
+- S-V per huruf dikerjakan (a–d; tidak run-ulang beralasan; S27 tak terpicu).
+  P-1–P-5 tertutup: EKS-1 diputus sadar, EKS-3 peringatan tanpa konsekuensi
+  vonis, T1 sitir-angka-saja, T2 S-B.10 tetap + eksternal-binding wajib batch
+  berikut, T3–T6 catatan. P-5 kunci dua arah.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-putusan-H4H5.md`.
+- Status akhir hipotesis: H1/H2/H3/H5 GUGUR resmi; H4 TAHAN resmi.
+  Terbuka (keputusan user): rekomendasi T6 (`git add` dua file untracked).
+
+**Update 2026-10-09 — rekomendasi T6 DIEKSEKUSI (atas perintah user):**
+- Pra-check: `build_labels.py` = `2561efd5…` COCOK read-proof; status
+  untracked terkonfirmasi (`ls-files --error-unmatch` gagal pra-add).
+- Catatan koreksi: T6 menulis pasangan hash (`2561efd5…`, `ed7ac435…`) —
+  `ed7ac435…` milik `test_build_features.py` (re-audit A.1); hash aktual
+  `test_build_labels.py` = `dc07a7e6…` COCOK set beku spec C3 (`:331`).
+  Integritas sah; yang salah label sitiran, bukan isi.
+- `git add` tepat dua file: staged (A) 399 + 713 baris; kini tracked;
+  blind spot `git status` C2 tertutup. TANPA commit (menunggu perintah).
+  Baseline staged untuk gerbang berikut = 2 file ini.
+
+**Update 2026-10-09 — opsi B: brief telaah fondasi DISUSUN:**
+- File: `.ai/assistant/prompts/2026-10-09_telaah-fondasi-B-arsitek.md`
+  (U-1 karantina F-1 + U-2 dekomposisi biaya + U-3 regime deskriptif).
+- Substansi dirumuskan asisten dari 3 item yang user setujui + fakta
+  ground sesi ini (F-1 rencana-B2 `:75-90` + putusan-F1; biaya
+  hasil-H4H5 `:93,405-410` + lock M4; regime report EDA `:43` + larangan
+  filter putusan-H3 `:141`). Diagnostik, BUKAN vonis ulang; H6+ tetap DITOLAK.
+- Menunggu user paste ke arsitek → protokol MASUK → gerbang → ronde coder.
+
+**Update 2026-10-09 — protokol telaah fondasi B MASUK + gerbang LOLOS:**
+- File: `arsitek/protokol-telaah-fondasi-B.md` (218 baris / 11066 B /
+  LF-only / ASCII; blob `ed436fdd…` cocok; C8-pengganti; HEAD `e0b2b9f`;
+  staged tetap 2 T6; nol commit).
+- Struktur lengkap (S0+U-1–U-3+R-1–R-4+self-audit+STOP `:218`); vonis
+  H1–H5 tak tersentuh; H6 nihil.
+- Sitiran kunci TERVERIFIKASI: `sh4.py:369-375` = masker hanya counter,
+  INKLUSI sah. Catatan: file hidup di `%TEMP%\opencode\l3h4h5\`
+  (harness, luar repo) — substansi tidak rusak, tidak dikembalikan.
+- Porcelain: pola pra-ada (reorganisasi + file sesi); `M requirements.txt`
+  + `D` top-level duplikat lama + `??`; kanonis utuh. Baseline porcelain
+  kini >108 — gerbang berikut wajib sebut angka baru.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-protokol-fondasi-B.md`.
+- Berikutnya: brief eksekusi coder U-1–U-3 (belum disusun, menunggu perintah).
+
+**Update 2026-10-09 — brief eksekusi coder fondasi-B DISUSUN:**
+- File: `.ai/assistant/prompts/2026-10-09_eksekusi-fondasi-B-coder.md`.
+- Substansi arsitek verbatim (S0/U-1(b)/U-2/U-3/R-4/tugas-tulis) + 4
+  usulan asisten (lokasi `%TEMP%` harness, interpreter+tmp, gate
+  replikasi BLOKIR, JSON-bukan-prosa) menunggu konfirmasi via paste.
+- Menunggu user paste ke coder → laporan MASUK → gerbang → arsitek baca.
+
+**Update 2026-10-09 — laporan coder fondasi-B MASUK + gerbang LOLOS:**
+- File: `coder/hasil-telaah-fondasi-B.md` (416 baris / 25155 B / LF-only /
+  ASCII; blob `0284f5f0…` cocok; HEAD utuh; staged tetap 2 T6; nol commit).
+- R-4 TERVERIFIKASI independen: hash-ulang saya atas `%TEMP%\fondasiB`
+  → u1 `2c76e2d0…`, u2 `ac9eed29…`, u3 `2ced2c88…` cocok klaim.
+- Headline cocok: gate INKLUSI digit-per-digit; eksklusi 5 hari/30 trade,
+  selisih pool −0,0005, 2025 tidak balik tanda, n_Off 0/0; biaya 1,46%;
+  U-3 "Bertepatan"; TETAP TAHAN.
+- Koreksi atribusi: staged=2 = T6 asisten-atas-perintah-user (BUKAN pihak
+  tak dikenal); coder benar tak menyentuh. Typo "COOK" kosmetik.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-hasil-fondasi-B.md`.
+- Berikutnya: arsitek baca via cabang R-1–R-4 (perlu brief/disposisi?).
+
+**Update 2026-10-09 — brief disposisi fondasi-B FINAL (disetujui user):**
+- U-1–U-5 digabung ke `.ai/assistant/prompts/2026-10-09_disposisi-fondasi-B-arsitek.md`.
+- Siap paste ke arsitek → disposisi MASUK → gerbang → fondasi-B TERTUTUP.
+
+**Update 2026-10-09 — DUA pesan arsitek:**
+1. Penutupan Batch-2 (duplikat vonis H4 TAHAN/H5 GUGUR — sudah digerbang,
+   tanpa aksi baru). Koreksi catatan T6: `git add` D1/D2 SUDAH dikerjakan
+   asisten atas perintah user 2026-10-09 (staged A, BELUM commit) — tidak
+   tersisa sebagai pekerjaan, tinggal keputusan commit.
+2. Spec pra-registrasi H4b-stabilitas MASUK + gerbang LOLOS
+   (`arsitek/spesifikasi-H4b-stabilitas.md`, 108 baris, blob `0437b563…`;
+   lock GUGUR satisifed-satu-arah/TAHAN dua-arah; prosedur dua-arah
+   anti-intip; guard P-5 eksplisit; tindak lanjut R-2 yang sah).
+   Berkas gerbang: `verifications/2026-10-09_gerbang-spec-H4b.md`.
+   Menunggu perintah user "jalankan ronde coder H4b".
+
+**Update 2026-10-09 — laporan coder H4b MASUK + gerbang LOLOS:**
+- File: `coder/hasil-H4b-stabilitas.md` (259 baris / 14015 B / LF-only /
+  ASCII; blob `6410b180…` cocok; branch codex/ANN, HEAD utuh, staged
+  tetap 2 T6, nol commit).
+- Vonis mekanis: GUGUR(H4b) tepat satu (Maju median −0,00505 ≤ 0;
+  Mundur +0,0544 lolos; n_Off 0/0; top-6 selisih simetris {1,7}).
+- R-4 terverifikasi independen (hash-ulang `%TEMP%\h4b` cocok 2/2);
+  aritmetika exit-cause cocok; median Maju = median 2025 Batch-2
+  (cross-validasi, bukan bug — diselidiki coder).
+- Atribusi staged=2 diluruskan (T6 asisten-atas-perintah-user).
+- Berkas gerbang: `verifications/2026-10-09_gerbang-hasil-H4b.md`.
+- Berikutnya: ronde AUDITOR independen (brief belum disusun).
+
+**Update 2026-10-09 — brief reaudit H4b DISUSUN (atas perintah user):**
+- File: `.ai/assistant/prompts/2026-10-09_reaudit-H4b-auditor.md`.
+- Pola Batch-2 dipakai ulang (A1–A7; larangan 1–12 disalin eksplisit);
+  A5 baru: klaim cross-validasi = klaim yang diaudit, bukan fakta.
+- 3 usulan asisten (dir `%TEMP%\h4b_audit`, S0 8-hash + branch, A5
+  skeptis) menunggu konfirmasi via paste.
+- Menunggu user paste ke auditor → laporan MASUK → gerbang → putusan.
+
+**Update 2026-10-09 — compaction agresif + onboarding CTO:**
+- Diagnosis (terverifikasi): `~/.config/opencode/opencode.jsonc`
+  `compaction = {auto:false, reserved:20000, preserve_recent_tokens:300000}`.
+  `preserve_recent_tokens:300000` hampir pasti > jendela model
+  (muse-spark-1.3-contributor-free) → tail verbatim tak muat → seluruh
+  percakapan diringkas + tak ada yang dipertahankan verbatim (pola
+  kegagalan yang didokumentasikan hulu) = gejala "lupa semua" pasca-compact.
+  Lapisan pemicu pasti (host micode vs opencode vs provider) BELUM
+  DIVERIFIKASI — dinyatakan sebagai batas.
+- Opsi diajukan: A (perbaiki config, perlu persetujuan — sentuh global),
+  B (imunitas struktural: brief mandiri + context pack + CTO),
+  C (hemat konteks: pangkas dump porcelain, sesi segar per ronde).
+  Rekomendasi B+C sekarang, A menunggu Harras.
+- Prompt onboarding CTO: `.ai/assistant/prompts/2026-10-09_onboarding-CTO.md`.
+
+**Update 2026-10-09 — brief eksekusi coder H4b DISUSUN (atas perintah user):**
+- File: `.ai/assistant/prompts/2026-10-09_eksekusi-H4b-coder.md`.
+- Substansi spec verbatim (lock/input/prosedur/gate/aturan-baca) + 3
+  usulan asisten (lokasi `%TEMP%`, interpreter+tmp, S0 6-hash + staged=2
+  STOP) menunggu konfirmasi via paste.
+- Menunggu user paste ke coder → laporan MASUK → gerbang → auditor.
+
+**Update 2026-10-09 — reaudit H4b MASUK + gerbang LOLOS DENGAN CATATAN:**
+- File: `Audit/reaudit-H4b-stabilitas.md` (18199 B; 476 baris aktual vs klaim
+  477 = miscount 1, tak pengaruhi verdict; LF-only, tail LF, TANPA self-hash;
+  sha `3560bc05…` + blob `e3530477…` cocok hitung-ulang saya).
+- Verdict: LULUS DENGAN CATATAN — A1 COCOK / A2 COCOK+LOW-1 / A3 COCOK+ESK-1 /
+  A4 COCOK / A5 SAH / A6 COCOK / A7 COCOK+LOW-2; 0 MEDIUM/HIGH.
+- ESK-1: kriteria (a) n_Off tak operatif pada data beku (Off hanya 2023);
+  coder benar, desain lock perlu putusan arsitek sebelum generalisasi.
+- Gate saya: S0 8/8 cocok (HEAD/branch + 6 blob); staged=2 tak berubah;
+  HEAD `e0b2b9f9` utuh; nol commit/push; satu-satunya tulis = laporan ini.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-reaudit-H4b.md`.
+- Berikutnya: brief putusan arsitek H4b (vonis resmi + ESK-1) — menunggu perintah.
+
+**Update 2026-10-09 — brief putusan H4b DISUSUN (atas perintah user):**
+- File: `.ai/assistant/prompts/2026-10-09_putusan-H4b-arsitek.md`.
+- V-1 vonis resmi (sahkan GUGUR mekanis / tolak berpasal; satu kalimat) +
+  V-2 ESK-1 (bekukan+catat vs revisi-sekarang; DILARANG diam-diam) +
+  V-3 LOW-1/LOW-2 + V-4 anti-merambat (H4 Batch-2 FINAL + H1/H2/H3/H5
+  untouched; H6 DITOLAK; P-5 mengikat).
+- S-2d 8-hash + S-V(a)–(d) wajib (pola putusan-H4H5); target <150 baris.
+- Menunggu user paste ke arsitek → putusan MASUK → gerbang → H4b TERTUTUP.
+
+**Update 2026-10-09 — brief putusan H4b FINAL (disetujui user):**
+- U-1–U-5 digabung ke `.ai/assistant/prompts/2026-10-09_putusan-H4b-arsitek.md`.
+- Siap paste ke arsitek → putusan MASUK → gerbang → H4b TERTUTUP.
+
+**Update 2026-10-09 — putusan H4b MASUK + gerbang LOLOS → H4b TERTUTUP:**
+- File: `arsitek/putusan-H4b-stabilitas.md` (119 baris / 5326 B / LF-only /
+  ASCII; blob `fe11383b…` cocok, TANPA self-hash; HEAD utuh; staged 2 T6;
+  tanpa commit — putusan + brief = untracked).
+- Vonis resmi H4b: GUGUR (tepat satu, `:65` + dikutip `:71`).
+- V-2 ESK-1 BEKUKAN+CATAT; V-3 LOW tetap; V-4 H4/H1/H2/H3/H5 untouched, H6+ DITOLAK.
+- Berkas gerbang: `verifications/2026-10-09_gerbang-putusan-H4b.md`.
+- Makna: efek H4 tak stabil antar-tahun; H4 TAHAN Batch-2 tetap berdiri.
+
+**Update 2026-10-09 — disposisi fondasi-B MASUK + gerbang LOLOS → Fondasi-B TERTUTUP:**
+- File: `arsitek/disposisi-fondasi-B.md` (75 baris / 2881 B / LF-only /
+  ASCII murni, non-ASCII 0; blob `7d125022…` cocok, TANPA self-hash;
+  HEAD `e0b2b9f9` utuh; staged tetap 2 T6; nol commit).
+- D-1/D-2/D-3 DISAHKAN, D-4 SELESAI; R-2 DIBUKA (stratifikasi pra-registrasi
+  BOLEH, filter regime tetap DILARANG).
+- Berkas gerbang: `verifications/2026-10-09_gerbang-disposisi-fondasi-B.md`.
+- Status akhir: H1/H2/H3/H5 GUGUR resmi; H4 TAHAN resmi; H4b GUGUR;
+  fondasi-B TERTUTUP. Berikutnya (menunggu perintah user): brief desain R-2,
+  commit T6.
