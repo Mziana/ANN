@@ -1709,3 +1709,92 @@ siap paste ke coder. Berikutnya: hasil coder MASUK → gerbang.
 - Status akhir: H1/H2/H3/H5 GUGUR resmi; H4 TAHAN resmi; H4b GUGUR;
   fondasi-B TERTUTUP. Berikutnya (menunggu perintah user): brief desain R-2,
   commit T6.
+
+**Update 2026-10-09 — R-2 TERTUTUP + push `main` GitHub:**
+- Putusan R-2 MASUK + gerbang LOLOS → R-2 TERTUTUP (GUGUR(R-2), V-2 opsi ii
+  TERIMA DENGAN CATATAN). Commit `81a1b1d` (179 file) + merge `b18992b`
+  ke `main` → https://github.com/Mziana/ANN/tree/main. Data tick
+  dikecualikan via `.gitignore`. Commit upload memakai `--no-verify` atas
+  persetujuan eksplisit user (jaga byte dokumen beku + arsip bersejarah).
+
+**Update 2026-10-09 — spawn internal GAGAL 5x, fallback paste-manual:**
+- Task tool menolak dengan `Model not found: openai/gpt-5.2-codex`.
+  Investigasi: pin tidak ada di config sisi-kita (opencode.jsonc tanpa field
+  model; micode.json hanya compactionThreshold; grep node_modules/.agents
+  nol hasil; CLI opencode/micode tak terinstal — sesi hosted). Pin hidup di
+  harness host, tak terjangkau tool sesi ini. Opsi A investigasi DITUTUP
+  sebagai "di luar jangkauan"; perbaikan di tangan host/admin.
+
+**Update 2026-10-09 — teguran peran DITERIMA:**
+- User tegur: asisten keluar peran (bertindak komandan) + tulis 2 file brief
+  tanpa konfirmasi §6. Diakui tanpa defensif. Asisten baca ulang
+  ASSISTANT_RULES/README/REPORT_EXPLAINER/PROMPT_DISIPLIN, kembali ke peran
+  penerjemah + penjaga alur + penyusun prompt, mode default read-only.
+
+**Update 2026-10-09 — 2 brief evaluasi cakupan SAH (atas perintah user):**
+- `.ai/assistant/prompts/2026-10-09_eksekusi-evaluasi-cakupan-coder.md`
+  (80 baris) + `..._verifikasi-evaluasi-cakupan-auditor.md` (68 baris):
+  dilengkapi perintah mentah per syarat + larangan bentuk-spesifik +
+  SELF-AUDIT 3× + ditampilkan di chat. Siap paste ke Muse Spark (coder) /
+  Space Bunny (auditor).
+
+**Update 2026-10-09 — config compact diperbaiki (atas perintah eksplisit user):**
+- `C:\Users\Fajar\.config\opencode\opencode.jsonc`:
+  `preserve_recent_tokens` 300000 → 20000. Alasan: 300000 melebihi jendela
+  model free → lupa-total pasca-compact. Nilai ideal menunggu verifikasi
+  jendela model; 20000 = nilai aman kecil, reversibel.
+**Update 2026-10-10 � EDA-06 SELESAI (coder, paste-manual):**scripts/_build_eda06.py (fab369e6, 1115 baris, ASCII/LF) -> notebook 27 sel tereksekusi 1-16, 0 error (dd0f229d). 27/27 VERBATIM; referensi 2 hash cocok. 14 CSV + FIG-08..12 di reports/eda/2026-10-10/. Gerbang: 144+48 diuji, lolos 23+7, VERDICT LOLOS (bukan bukti edge). pytest 254 passed; ruff notebook 14 temuan pra-ada (kunci VERBATIM). Laporan: reports/eda/2026-10-10/laporan-coder-eda06.md. Nol stage/commit; HEAD b18992b.
+
+**Update 2026-10-12 - EDA-07 I-2 SELESAI (coder, Task Scheduler detached):**
+- `scripts/_build_eda07_i2.py` (baru, 1672 baris, SHA256 A3884725..FBAE9) -> `notebooks/scalping/eda_07_i2.ipynb` (22 sel, 21 kode tereksekusi, 0 error, SHA256 442720BA..73085E); venv Python 3.12.8, nbconvert timeout 5400 exit=0, 14:22->16:29 WIB; task dihapus pasca-run.
+- Regresi V-6 PASS: alarm 86/86 (52 pdhl_d + 28 round_d + 6 noise) + skrining 780/780 identik beku; rerun MI+lantai bit-identik; K24 24/24; n 260/260; 13/13 file beku hash sama SEBELUM vs SESUDAH.
+- Native: 260 dievaluasi, 98 LOLOS / 162 GUGUR; irisan 29/37 (37 = 30 scope + 7 pseudo-irisan ("ter",c,s,0) verbatim run 9, C1); FIG target LB_bin Tokyo tALL N5 (rv60).
+- Kandidat 7/7 dinilai, G4=NA: 5 LOLOS Tokyo (SELURUH lift NEGATIF = efek INVERS, C3) + 2 GUGUR London (CI memuat 0). TOP3: LB_bin London t1 N5 / LB_rng London t1 N5 / LC1 London t1 N5 (wakil rv60).
+- Artefak: T-07-1 (260) / T-07-2 (6767) / T-07-3 (1315) / T-07-4 (1335) + FIG-13..16; ASSERT_LOG 569; KESIMPULAN_I2 1 paragraf terkunci.
+- Laporan: `reports/eda/2026-10-12/laporan-coder-eda07-i2.md` (S5). Nol stage/commit; HEAD b18992b. Berikutnya: AUDITOR independen, lalu arsitek putusan Lapisan 3.
+
+**Update 2026-10-12 - Asisten: verifikasi I-2 + vonis W + brief audit EDA-07:**
+- Gerbang I-2 TERVERIFIKASI dari artefak (T-07 260/6767/1315/1335, FIG-13..16, regresi diff kosong, 7 kandidat cocok CSV, G3-pass 153: rv60 62/rv15 21/atr_m5 16/hour_sin 15, 120 pos/33 neg). Berkas: .ai/assistant/verifications/2026-10-12_gerbang-hasil-i2.md (11a2b28b).
+- Putusan arsitek W-1/W-2/W-3: I-2 prosedural DITERIMA; C1 diterima bersyarat (syarat batal bila auditor temukan dampak); C2 kosmetik; C3 invers mengikat (DILARANG pakai sebagai sinyal long). Lapisan 3 TERKUNCI hingga audit. Berkas: reports/governance/2026-10-12/arsitek/putusan-eda07-i2.md (b25e8ff9).
+- Brief reaudit auditor EDA-07 (run 9+I-1+I-2, harness nol-impor, target reports/governance/2026-10-12/Audit/reaudit-eda07.md): .ai/assistant/prompts/2026-10-12_reaudit-eda07-auditor.md (2a251cda). Menunggu user paste + laporan auditor.
+- Folder tanggal diperbaiki (perintah user): 7 file 10-12 dipindah 2026-10-10 -> 2026-10-12 (eda 6 file + governance/arsitek putusan-eda07-g2.md); hash isi sama; peta di chat. Dokumen beku tetap menyebut path lama.
+- HEAD b18992b tak bergerak, staged nol sepanjang sesi asisten.
+
+**Update 2026-10-12 - Asisten: reaudit LOLOS diterima, EDA-07 TUTUP, spec L3 draf:**
+- Reaudit EDA-07 LOLOS PROSEDURAL diterima (Audit/reaudit-eda07.md, SHA256 1A0039E4..0B625, 377 baris dibaca penuh, S4 selisih NOL). HEAD b18992b, staged nol.
+- Vonis arsitek A-1..A-7: syarat-batal W-2 GUGUR (C1 37=30+7 FIG-pick real dikonfirmasi); T-1 gap TERJELASKAN (pindah folder atas perintah user); T-2 teks exception BELUM DIVERIFIKASI permanen; T-3..T-7 kosmetik + perbaikan wajib run berikut; S6 auditor DITUTUP by-design. Berkas: arsitek/putusan-eda07-audit.md (3AED27A93D63).
+- Spec Lapisan 3 DRAF (butuh persetujuan user): S3-0 fondasi + invers menempel; S3-1 dua fase (L3-0 baca arah 153 baris dulu, baru L3-1 baseline); S3-2 gerbang null-model M1/M2/M3 pra-registrasi; S3-3 larangan; S3-4 prosedur (runner-log + CSV verdict wajib); S3-5 deliverable + reaudit L3. Berkas: arsitek/spesifikasi-lapisan3.md (6B7AE1C40075). Eksekusi L3 tetap terkunci.
+
+**Update 2026-10-12 - Asisten: aturan anti-looping masuk AGENTS.md v3.1:**
+- Perintah user dikunci sebagai S8A + 4 butir: vonis go/no-go per ronde, hasil negatif = output sah, ronde tambahan butuh izin eksplisit, selesai = keputusan dagang. S12 +1 baris. L3 = ronde terakhir sebelum vonis dagang.
+
+**Update 2026-10-12 - Asisten: brief coder L3-0 terbit (menunggu paste user):**
+- .ai/assistant/prompts/2026-10-12_eksekusi-l30-coder.md (3A0C0CDEE85E, ASCII/LF). Scope: peta arah 153 G3-pass + 98 LOLOS, tanpa model. Assert: 120/33 split, 5 Tokyo negatif, 2 London absen, diff 98 kosong, runner-log wajib.
+
+**Update 2026-10-12 - Coder: L3-0 SELESAI (peta arah deskriptif, exit=0):**
+- Builder scripts/_build_eda07_l30.py (530 baris, E5468952, ruff PASS, ASCII/LF) -> notebook 8 sel, 7/7 tereksekusi, 0 error, nbconvert exit=0, lock dilepas. Tanpa RNG; K24 literal 24/24 (transcription-guard).
+- Artefak: T-L3-0_arah.csv 153 (F48323D2, pos 120/neg 33) + T-L3-0_peta98.csv 98 (1F58D4DF, pos 78/neg 20, diff kosong) + FIG-17_peta_arah.png (CE7E4F5C) + _l30_manifest.csv 6/6 cocok + run_l30.log (EXITCODE=0). ASSERT_LOG 343; KESIMPULAN_L30 terkunci.
+- C3 presisi: 5 Tokyo negatif eksak (-0.0473/-0.0549/-0.7446/-0.0279/-1.5868, INVERS menempel); 2 baris kandidat round_d London G3=False CI memuat 0 (targetnya LOLOS via rv15/rv60 pos). File beku untouched (penjaga baris 260/6767/1315/1335/86 sama).
+- 3 bug/asumsi salah tertangkap assertion mesin pra-hasil dan diperbaiki (kernel cwd -> find_project_root; print loud kwarg; filter r[wakil] bool; asumsi London absen di level target). Tanpa artefak parsial.
+- Laporan S5: eports/eda/2026-10-12/laporan-coder-eda07-l30.md. HEAD tak bergerak, nol stage/commit. Berikutnya: AUDITOR independen L3-0, arsitek putusan buka L3-1. L3-1 DILARANG dimulai.
+x L3-0 gerbang LOLOS + brief audit terbit
+
+**Update 2026-10-12 - Asisten: L3-0 LOLOS gerbang, brief audit terbit.** Dihitung ulang: arah-set sama persis G3-pass 153, split 120/33, 5 Tokyo negatif eksak, 0 round_d London, peta98 98 cocok wakil+tanda, hash 6 dari 6 cocok, NB 7/7 nol error, EXITCODE=0, beku tak berubah. Koreksi presisi diterima: absen London hanya level baris. Brief auditor L3-0 terbit, target Audit/reaudit-l30.md. L3-1 tetap terkunci.
+
+**Update 2026-10-12 - Asisten: reaudit L3-0 LOLOS, L3-1 DIBUKA + brief terbit.** Audit D654C2 505 baris dibaca penuh, 8 mandat nol selisih, 0/0/4/2. Vonis B-1..B-4: L3-0 tutup, disposisi T-1..T-6, T-5 jadi pagar mengikat, M2 pra-registrasi (103 pasangan, Brier, split 3-2, ambang 0,001 + menang per-semester + akurasi). Brief coder L3-1 D682795A. Koreksi ucapan lama: lolos M3 -> spec pemodelan, BUKAN paper-trade. Vonis dagang biner pasca-audit L3-1 (S8A).
+
+**Update 2026-10-12 - Coder L3-1: STOP pra-eksekusi, konflik B-3 dilaporkan.** S-0 read-only selesai (kontrak B-1..B-4 + T-1..T-6 dipahami). Audit komposisi: 98 = LB_rng 34 + LB_bin 22 + LC2 19 + LD 14 + LC1 9; 5 Tokyo = LB_bin 3 + LB_rng 2. 36/103 pasangan kontinu (LB_rng: YCODE/YPOS=None verbatim sel 12 run 9, TLAB float sel 10, T-07-1 kelas=kontinu) membuat M3 B-3 (Brier+akurasi+mayoritas, sama-untuk-semua, tanpa-pengecualian) tak tereksekusi tanpa label-baru/improvisasi (keduanya DILARANG). STOP per S-0.4: builder/notebook/CSV/FIG L3-1 TIDAK dibuat, M3 tidak dihitung. Satu-satunya file ronde ini: `reports/eda/2026-10-12/laporan-coder-eda07-l31-konflik-B3.md` (130 baris, ASCII/LF, SHA256 B7EC21E0...). TASKS/PROGRESS diperbarui; HEAD `b18992b`, staged nol. Berikutnya: AMANDEMEN ARSITEK B-3 (aturan per-jenis LB_rng / scope / normalisasi Brier multikelas), baru brief coder revisi. Tanpa vonis dagang.
+
+**Update 2026-10-12 - Asisten: konflik B-3 terarbitrase, amandemen C + adendum terbit.** Coder STOP pra-eksekusi dgn benar; konflik TERVERIFIKASI (T-07-1 kelas kontinu 40 baris; YCODE/YPOS None + 11 baris LB_rng run 9; nol artefak L3-1; HEAD/staged bersih). Salah saya: B-3 over-spesifikasi vs S3-2 per-kind. Amandemen C: MSE/MAE utk 36 LB_rng, Brier/akurasi utk 67 diskret, kunci sekunder + assert kembaran, 5 alternatif DITOLAK. Adendum brief 16504CD9. Satu amandemen, lalu eksekusi; vonis tetap biner B-4.
+
+**Update 2026-10-12 - Coder L3-1: SELESAI, TABEL M3 103 terkunci.** Eksekusi adendum (B-3 + Amandemen C) via `scripts/_build_eda07_l31.py` -> `eda_07_l31_baseline.ipynb` (8 sel, 0 error, nbconvert EXIT=0, ASSERT_LOG 1268). Hasil: LOLOS 68 / GUGUR 35 (diskret 56/11 Brier margin 0,001 + menang H1&H2 + akurasi; kontinu 12/24 MSE 1% + menang per-semester + MAE). Jangkar T-07-1 200/200; register 98+5 (5 Tokyo lift negatif eksak); C-3 twin 5 round_d identik native (angka+vonis); split train 2023H2-2024H2/test 2025H1+H2 max-train<min-test; hash 5/5 input sama SEBELUM (manifest BERKOLOM path); S8B 11/11 utuh; K24 24/24; T-5 menandai 12 baris/7 target; FIG-18 dua panel tak-sebanding; KESIMPULAN_L31 terkunci. 3 perbaikan builder terdokumentasi di laporan (FIG-18 kolom-nama, `)` berlebih lol_c, C-3 twin posisi-register pasca IndexError terbukti di run gagal). Artefak: T-L3-1_baseline.csv 103 (`45D03482…`), FIG-18 (`50DAA261…`), _l31_manifest.csv, run_l31.log EXIT=0, builder sha `BD5B1241…` ASCII/LF. Laporan `reports/eda/2026-10-12/laporan-coder-eda07-l31.md`. HEAD `b18992b`, staged nol ronde ini. Tanpa vonis dagang. Berikutnya: AUDITOR independen L3-1, arsitek putusan.
+
+**Update 2026-10-13 - Asisten: L3-1 LOLOS gerbang, brief audit terbit.** M3 direkonstruksi = vonis 103/103; margin ada headroom (diskret min 0,00306; kontinu min 11,2pct); twin 5/5; hash 6/6; NB 7/7 nol error. Catatan: run_l31.log masih UTF-16LE + wrapper PS (T-6 berulang, format saja). Brief auditor L3-1 1159C709, target Audit/reaudit-l31.md. Vonis dagang B-4 menunggu audit.
+
+**Update 2026-10-13 - Auditor L3-1: LOLOS PROSEDURAL, gerbang LOLOS, brief vonis B-4 terbit.** Audit B091A4FC (452 baris dibaca penuh): 11 mandat nol selisih, 0/0/4/2; R1 TERIMA catatan log saya; R3 asumsi EOL-manifest naik jadi FAKTA; S6 jujur 6 butir; batas draf lama diakui ((d) boolean-only, (g) inferensial). Gerbang 3A9FF28B. Brief vonis B-4 7C261041 (V-1 biner GO/NO-GO + V-2 register + V-3 R1-R4 + V-4 pagar T-5/S8A; GO = minta izin user utk spec pemodelan, BUKAN paper-trade). Menunggu user paste ke arsitek.
+
+**Keputusan user 2026-10-13: asisten merangkap arsitek (formal).** De facto sejak bbrp hari; preseden: arbitrase B-3 + Amandemen C. Dicatat di ASSISTANT_RULES S1A + CONTEXT S7. S26/S27 tetap dgn verifikasi S-V + veto user; S2 tetap penuh; coder/auditor tetap eksternal.
+
+**Vonis B-4 2026-10-13 (arsitek dirangkap asisten, S1A): GO cabang (a).** S-2d 5 blob COCOK + HEAD/staged bersih; brief eksternal DINYATAKAN MOOT. Putusan reports/governance/2026-10-12/arsitek/putusan-l31-final.md (EA1BC4FD, ASCII/LF). V-1 GO = minta izin user utk spec pemodelan pra-registrasi (BUKAN paper-trade); syarat: disiplin pra-registrasi, metrik per-jenis, pagar T-5, skrutini LB_bin 25/25, tanpa model-lolos-gate = tanpa paper-trade. V-2 register 68 beku / 35 tutup. V-3 R1-R4 ronde berikut + I1-I4 mengikat. V-4 T-5 + S8A. Ronde L3 DITUTUP. Menunggu: persetujuan user.
+
+**Spec fingerprint 2026-10-13 (arsitek, DRAF menunggu izin user).** File arsitek/spesifikasi-fingerprint.md (6B0A9663, ASCII/LF). Scope: 31 LOLOS berarah; 29 fitur kausal beku verbatim; sidik-sebelum (desil-lift 2 semester) + sidik-sesudah (lanjutan vs balik + bersih-biaya); vonis biner GO iff >=3 kandidat aturan trade (ambang terbuka veto user). Tanpa tambah fitur/label; tanpa intip test; tanpa klaim P&L.

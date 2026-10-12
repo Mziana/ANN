@@ -1,123 +1,123 @@
 ---
 session: ses_eef7
-updated: 2026-10-09T11:57:40.488Z
+updated: 2026-10-12T20:27:05.303Z
 ---
 
 # Session Summary
 
 ## Goal
-Audit independen R-2 terhadap `spesifikasi-R2-stratifikasi.md`, menulis hanya `D:\ANN\reports\governance\2026-10-07\Audit\reaudit-R2-stratifikasi.md`, memverifikasi A1-A7 dengan bukti, lalu menghitung hash akhir dan STOP tanpa vonis resmi.
+Menyerahkan laporan re-audit L3-1 final yang independen, berbasis CSV/source beku, dengan verdict prosedural, temuan berperingkat, S6, rekomendasi, serta daftar LOLOS per-jenis tanpa klaim edge atau profitabilitas.
 
 ## Constraints & Preferences
-- Workdir `D:\ANN`; interpreter `D:\ANN\venv\Scripts\python.exe` (Python 3.12.8).
-- S0 wajib cocok; jika tidak, STOP sebelum audit.
-- Replikasi A1 harus dari parquet/resep produksi tanpa mengimpor `r2.py` atau `sh4.py`.
-- Probe hanya di `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\`; direktori coder tidak boleh dicampur.
-- Satu-satunya tulis repo yang diizinkan: `D:\ANN\reports\governance\2026-10-07\Audit\reaudit-R2-stratifikasi.md`.
-- Dilarang `utc.normalize()`, guard nilai-vs-diri, test seragam, partial-output, klaim tanpa bukti, commit, push, stage, atau_archive.
-- Audit kebenaran eksekusi, bukan penilaian desain ambang/vonis; keraguan desain harus dieskalasikan ke arsitek.
-- Pengikatan hash laporan dihitung setelah write final dan dilaporkan di luar dokumen; tanpa self-hash.
-- Staged T6 harus tetap tepat dua file dan tidak disentuh.
+- Workdir: `D:\ANN`; bahasa laporan: Indonesia.
+- Auditor independen; mode read-only.
+- Dilarang mengeksekusi `scripts/_build_eda07_l31.py` atau notebook L3-1.
+- Harness hanya di `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\`.
+-Repo hanya boleh ditulis untuk laporan final `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l31.md`.
+- Ikuti AGENTS S18/S20, `spesifikasi-lapisan3.md`, B-3, dan C-1..C-4.
+- Bedakan komputasi, provenance, dan kosmetik; tanpa bukti maka tulis **BELUM DIVERIFIKASI**.
+- Dilarang P&L, backtest, edge, kelayakan-trade, dan vonis dagang.
+- Berhenti setelah serah-terima.
 
 ## Progress
 ### Done
-- [x] Ronde H4b sebelumnya selesai; `reaudit-H4b-stabilitas.md` tervalidasi ASCII/LF tanpa self-hash, SHA256 `3560bc05e81a1e485e2bb68013dd9304b17f8ba1ae3bc41bc668d93f2473087c`, blob `e3530477948a677f3e8f244dcabc64c018b85c8e`.
-- [x] S0 R-2 LOLOS: HEAD `e0b2b9f9e4b300fba5e4ccea3a97e29c4ad5b169`, branch `codex/ANN`, staged tepat 2.
-- [x] Hash dokumen hasil R-2 `c2f799138593e7ea1a8f2da6901c9f818e60b731` dan spec `c04199cea2acfd692b731fcb7eacec16b0e4691d` cocok.
-- [x] Delapan hash S0 R-2 dipetakan dan cocok.
-- [x] `spesifikasi-R2-stratifikasi.md`, `hasil-R2-stratifikasi.md`, `r2.py`, konstanta/mesin `sh4.py`, dan artefak JSON telah dibaca/direview.
-- [x] A1 replikasi independen selesai: join-gate, ATR, counters, stratifikasi 2024/2025, Off/fallback, F-1, dan lock mekanis seluruhnya cocok.
-- [x] A2 review kode dan sabotage pertama selesai; gap guard loop ditemukan dan diuji через jalur executable `__main__ -> run()`.
-- [x] Preliminary A4: `r2_hasil.json` tidak memuat `2026`; trades hanya 2024/2025 dan enam jam lock; grep `utc.normalize`, top-6, regime, TAU, threshold/grid/calibration kosong di `r2.py`.
-- [x] Preliminary A5: angka R-2, Batch-2 `sh4_hasil.json`, dan spec S-V(b) menghasilkan angka identik.
+- [x] L3-0 sebelumnya selesai; `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l30.md` final 505 baris, SHA256 `D654C20716A1C29992E9F4B0E31AD59337AEE7855E2243797612B03CF599EF82`.
+- [x] Draf lama `reaudit-l31.md` ditemukan sudah ada: 321 baris/16.212 byte; tidak dipercayai sebagai bukti.
+- [x] Kontrak B-3 dan C-1..C-4 dibaca.
+- [x] S-0 diverifikasi: HEAD `b18992b5e57d45c125aacf3ca868c2f9e135d9d1`, branch `main`, staged `0`, enam file L3-1 cocok hash/ukuran.
+- [x] (a) diverifikasi: 103 baris = 98 peta98 + 5 Tokyo `round_d`; 67 Brier + 36 MSE; M1 103/103.
+- [x] (b) rekonstruksi M3 menghasilkan 103/103 identik: **LOLOS 68 / GUGUR 35**.
+- [x] (c) margin diskret `>0,001` dan kontinu `<0,99 × null` lolos 103/103; tidak ada LOLOS dekat ambang.
+- [x] (d) seluruh 68 LOLOS menang 2025H1 dan 2025H2; 12 GUGUR juga menang kedua semester tetapi gagal kaki (c).
+- [x] (e) 5/5 twin identik pada seluruh hasil M3; perbedaan `arah` native `pos` vs `round_d` `neg` dianggap sesuai C-3.
+- [x] (f) `punya_round_d_invers=True` sebanyak 12 baris, 7 target unik = 5 Tokyo + 2 London native.
+- [x] (g) split terkunci: train 2023H2–2024H2, test 2025H1–2025H2; `max(train) < min(test)` dan test tidak masuk 2026.
+- [x] (h) `sel10`/`sel11` identik byte-per-byte dengan run 9; K24 terkonfirmasi AST **24/24**.
+- [x] (i) manifest memiliki path relatif-root; lima input cocok.
+- [x] (j) source FIG-18 mengulang baca CSV dan mengecek 103/67/36; dua panel dan satuan non-sebanding.
+- [x] (k) sweep S3-3/S8A tidak menemukan P&L, backtest aktual, edge, atau fitur/label baru.
+- [x] Catatan asisten dikonfirmasi: `run_l31.log` UTF-16LE+BOM, 21 CR, tanpa trailing LF, dan memuat `NativeCommandError`; perbaikan T-6 belum diterapkan.
+- [x] Hash output CSV manifest direkonsiliasi: hash `2D46B0F9...` adalah tepat SHA256 CSV dengan LF→CRLF.
 
 ### In Progress
-- [ ] Finalisasi klasifikasi A2 dan wording temuan gate.
-- [ ] Menjalankan A3-A7 secara formal.
-- [ ] Menulis, memvalidasi, self-audit 3x, dan meng-hash laporan R-2.
+- [ ] Menulis ulang `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l31.md` dengan hasil independen dan koreksi terhadap draf lama.
+- [ ] Menjalankan validasi akhir format, karakter asing, isi, SHA256, dan status git.
 
 ### Blocked
-- (none)
+- Percobaan penulisan laporan final gagal karena payload tool malformed:
+  `SchemaError(Missing key at ["filePath"]).`
+- Karena itu laporan final belum tergantikan; file yang ada masih draf lama.
+- Karena larangan eksekusi, rerun deterministik bit-identik, replikasi lingkungan bersih, dan penghitungan ulang angka per-semester dari data mentah tetap **BELUM DIVERIFIKASI**.
 
 ## Key Decisions
-- **A1 memakai API produksi, bukan kode coder**: `build_features`, `daily_metrics`, config, dan parquet diimpor; `r2.py`/`sh4.py` hanya dibaca sebagai spesifikasi.
-- **A2 dinilai sebagai gap gate, bukan bukti kebocoran aktual**: artefak現行 memakai lock dan angkanya benar, tetapi guard tidak memverifikasi binding loop.
-- **A2 sementara-classify HIGH + eskalasi arsitek**: sesuai brief, mutasi loop `range(24)` dan top-6 dari data uji berhasil `rc=0` dengan angka berbeda; dampak verdict aktual nol harus ditegaskan.
-- **S3 allclose(X, X) bukan pelanggaran coder**: itu mutasi auditor untuk membuktikanKelPATuhan B6; guard asli `sh4.FIXED_HOURS` versus literal R-2 adalah dua sumber.
-- **False positive S1 dibatalkan terbuka**: suntikan pertama gagal dengan `AttributeError: 'Series' object has no attribute 'assign'`; diganti probe S1b yang valid.
-- **Counter anomali awal bukan temuan**: A1 pertama tidak menghitung `n_trade_hari_anomali_C`; `a1b_counter.py` kemudian mengonfirmasi 30.
+- **Draf lama diabaikan sebagai sumber angka**: semua klaim dihitung ulang dari CSV/source.
+- **C-2 menggantikan bagian metric B-3 yang terlalu spesifik**: diskret memakai Brier+akurasi, kontinu memakai MSE+MAE, tetapi konjungsi M3 tetap sama.
+- **`arah` twin tidak dihitung sebagai selisih M3**: perbedaan itu memang dirancang oleh C-3 untuk kandidat invers.
+- **Mismatch manifest CSV dipisahkan dari dampaknya**: reproduksi CRLF membuktikan hash lama, tetapi metadata `cocok=True` tetap tidak reproducible terhadap file final.
+- **S6 bersifat inferensial**: `chk(..., loud=False)` tidak mencetak PASS; bukti Passed berasal dari notebook tanpa output error, bukan baris PASS langsung.
+- **Rencana finding final**: 0 TINGGI, 0 MENENGAH, 4 RENDAH, 4 INFORMATIF; verdict **LOLOS PROSEDURAL**.
 
 ## Next Steps
-1. Finalisasi A2 dengan exact `file:line`, bukti `rc`, dan_[?]output sabotage; klarifikasi bahwa `r2.py` tidak memiliki `main()`, sehingga jalur produksi yang dijalankan adalah `__main__ -> run()`.
-2. Selesaikan A3: hitung ulang `session_label`/Off langsung dari kode `_eda_common.py`, konfirmasi 0/0 per tahun, dan audit setiap kemunculan vonis/H4/H6 di dokumen coder.
-3. Selesaikan A4: audit seluruh kemunculan H4/H6/2026/regime/TAU/threshold dan uji apakah data 2026 hanya dimuat tanpa kontribusi atau melanggar larangan eksklusi.
-4. Selesaikan A5: baca sumber F-1 terpisah, konfirmasi inklusi default, lima tanggal, dan makna “tiga rekaman sepakat” tanpa menjadikannya bukti circular.
-5. Jalankan A6 penuh pada salinan terisolasi, bandingkan SHA256 `4664B4D89151485A29AC445192EFD08E81E22770B155A8F665A5F08F967E64A4`, dan catat toolchain.
-6. Selesaikan A7: struktur dokumen, S-0, raw output, mesin, aturan baca, quality, Klaim & Bukti, self-audit 3x, STOP, dan tidak adanya self-hash.
-7. Tulis hanya `D:\ANN\reports\governance\2026-10-07\Audit\reaudit-R2-stratifikasi.md`, jalankan self-audit 3x, validasi ASCII/LF/tanpa self-hash, hitung SHA256 dan git blob setelah final.
-8. Re-check HEAD, branch, staged=2, T6 blobs, seluruh S0 hashes, lalu STOP tanpa commit/push/ronde berikutnya.
+1. Tulis laporan final dalam payload kecil atau melalui script temp; pastikan `filePath` valid dan hanya target report yang berubah.
+2. Sertakan S-0, rekonstruksi (a)–(k), tabel margin, twin/flag, manifest, FIG-18, K24, log wrapper, S6, rekomendasi, dan tabel LOLOS-per-jenis.
+3. Sertakan tabel minimum berikut: `LB_bin 25/0`, `LC1 7/2`, `LC2 13/6`, `LD 11/3`, `LB_rng 12/24`, total `68/35` untuk `LOLOS/GUGUR`.
+4. Verifikasi UTF-8, tanpa CJK/CYR/replacement, heading/tabel Markdown, tail LF, tidak ada klaim dagang.
+5. Hitung SHA256 laporan final, pastikan HEAD tetap `b18992b5...`, staged tetap `0`, lalu hentikan kerja.
 
 ## Critical Context
-- S0 R-2:
-  - Spec Batch-2: `4a46b815211e6b0b050cbb6f3e98ce5e27904069`
-  - Hasil Batch-2: `f06a8e27b916172f5824438acd545614360d3b57`
-  - Reaudit Batch-2: `8a4d21090f27dd53555b3a12583ec337819efb2f`
-  - Putusan Batch-2: `e02a203b96879d73e90339f2d78a37d15834a23a`
-  - Protokol fondasi-B: `ed436fddf607d3629fa226fd34d20ff60bf47232`
-  - Hasil fondasi-B: `0284f5f022ce1c147cefef6dd7780aded6acf820`
-  - Disposisi fondasi-B: `7d125022cd14113325e5c5721da53a39be661f5c`
-  - Putusan H4b: `fe11383b9bdd1e58819e32812eec75c52ab3aee9`
-- T6 staged blobs tetap:
-  - `src/features/build_labels.py`: `2561efd552544feeb9af0b6733711015b83f43dd`
-  - `tests/test_build_labels.py`: `dc07a7e651d38f07a5cabbe4e693b10681312d25`
-- A1 join-gate: 47.721 = 47.721 bar; sekuens `date_broker` dan `hour_utc` identik; ATR exact; 974 hari common ATR; 519 hari-broker; 3.114 slot/trade.
-- A1 2024: n 1.560; SL/TP/time-stop `87/9/1464`; median `0.04834999999999022`; mean `0.024799771062270975`; positif `0.5487179487179488`; Off/fallback `0/0`; F-1 30.
-- A1 2025: n 1.554; SL/TP/time-stop `71/6/1477`; median `-0.005049999999992838`; mean `-0.0039283324140465484`; positif `0.49356499356499356`; Off/fallback `0/0`; F-1 0.
-- Pool totals: SL/TP/time-stop `158/15/2941`; anomaly-C 30; gap-F2 636; ATR-NaN 0.
-- F-1 dates: `2024-10-28` sampai `2024-11-01`.
-- Lock mekanis: `GUGUR(R-2)`, `tahun_gugur=[2025]`; ini bukan vonis resmi auditor.
-- A2 guard aktual: `r2.py:86` membandingkan konstanta; loop aktual `r2.py:195` memakai `sh4.FIXED_HOURS`; tidak ada post-loop assertion bahwa semua trade berada pada lock.
-- S2 `range(24)`: `rc=0`; n 2024/2025 `5978/5953`; median `0.025100000000010687/-0.01910000000000523`; SHA `6F8A3E0EB4F1BF2D8642987104093C16FC584F1E461F29B70DF5C1CC310D072C`.
-- S1b top-6 dari data uji `[14,13,0,1,15,12]`: `rc=0`; median `0.05439999999999045/-0.010000000000002502`; SHA `09C883836EA88EA32E5480FDCC9C2C39F3E2CCD48925145337B1979DBB7B84E2`.
-- S4 menghapus guard konstanta: `rc=0`, output asli tetap; current execution memang tidak bergantung pada assertion untuk saat konstanta benar.
-- S3 mengganti guard dengan self-compare: `rc=0` dan output asli; ini hanya sabotage auditor.
-- A6 baseline: `r2.py` SHA256 `667EB4DFFFEE604724A577F29231F96BD09D5156A6CD8426E7870D02A0B9EEB1`; ketiga JSON dan kedua log byte-identik; full rerun auditor masih belum dilakukan.
-- Preliminary A5: `r2_hasil.json`, Batch-2 `E1_EV.per_tahun`, dan spec S-V(b) memiliki angka 2024/2025 identik. Penjelasan mekanis melalui fixed-hours/S-H4 yang sama harus diverifikasi; ini bukan tiga eksperimen independen.
-- Potensi isu A4: loader R-2似乎 memuat store penuh untuk `daily_metrics`, lalu mengambil ATR 2024-2025 dengan `shift(1)`; pengaruh 2026 mungkin nol, tetapi kepatuhan terhadap “2026 dikecualikan penuh” masih harus diputuskan dari spec dan uji kausal.
+- `T-L3-1_baseline.csv`: 103 baris, 27 kolom; jenis `{LB_bin:25, LC1:9, LC2:19, LD:14, LB_rng:36}`.
+- Lima Tokyo yang sah:
+  `LB_bin Tokyo t2 N15`, `LB_bin Tokyo tALL N5`, `LB_rng Tokyo tALL N5`, `LB_bin Tokyo tALL N15`, `LB_rng Tokyo tALL N15`.
+- Posisi twin native/Tokyo: `(15,98)`, `(19,101)`, `(21,99)`, `(52,102)`, `(54,100)`.
+- Margin LOLOS diskret: minimum `0,00306`, median `0,00549`, maksimum `0,01022`; perbaikan MSE kontinu minimum `11,24%`, median `18,77%`, maksimum `56,29%`.
+- Split UTC dari output notebook: train maksimum `2024-12-31T19:30`, test minimum `2025-01-02T00:11`, test maksimum `2025-12-31T19:54`.
+- K24 source run 9: 24/24 identik, termasuk `N_HORIZONS`, margin, `G1_*`, seeds, dan `YEARS`; ini transcription-guard, bukan bukti komputasi.
+- Empat RENDAH yang direncanakan:
+  1. `run_l31.log` UTF-16LE + `NativeCommandError`; dampak keterbacaan/provenance.
+  2. Blok verbatim sel02 kehilangan satu docstring dan sel05 empat baris display; komputasi identik.
+  3. Hash manifest CSV mencerminkan versi CRLF pra-normalisasi.
+  4. Kolom manifest `cocok=True` untuk output CSV tidak reproducible terhadap file final.
+- Empat INFORMATIF: `SEEDL31` tidak dipakai tetapi diizinkan; sel14/sel15 sengaja tidak dibawa; 12 GUGUR menang kedua semester tetapi gagal (c); perbedaan `arah` twin expected.
+- Fungsi/source anchor: `chk` di `scripts/_build_eda07_l31.py:148-153`; split di `:763-773`; `K24` di `:252-268`; `TLAB` di `:490-508`; `YCODE` di `:654-669`; `assoc_irisan` di `:676+`.
+- Error harness yang sudah diperbaiki: `ValueError: not enough values to unpack`, `TypeError: tuple indices must be integers or slices, not str`, `AttributeError: 'NoneType' object has no attribute 'elts'`, serta `ValueError: malformed node or line 9: <ast.Subscript ...>`. K24 akhirnya 24/24.
 
 ## File Operations
 ### Read
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b\h4b.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a5_crossval.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2\r2.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2\r2_hasil.json`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l3h4h5\sh4.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l3h4h5\sh4_hasil.json`
-- `D:\ANN\reports\governance\2026-10-07\Audit\reaudit-H4b-stabilitas.md`
-- `D:\ANN\reports\governance\2026-10-07\arsitek\spesifikasi-H4b-stabilitas.md`
-- `D:\ANN\reports\governance\2026-10-07\arsitek\spesifikasi-R2-stratifikasi.md`
-- `D:\ANN\reports\governance\2026-10-07\coder\hasil-H4b-stabilitas.md`
-- `D:\ANN\reports\governance\2026-10-07\coder\hasil-R2-stratifikasi.md`
-- `D:\ANN\reports\governance\2026-10-07\arsitek\protokol-telaah-fondasi-B.md`
-- `D:\ANN\reports\governance\2026-10-07\coder\hasil-telaah-fondasi-B.md`
-- `D:\ANN\reports\governance\2026-10-07\arsitek\disposisi-fondasi-B.md`
-- `D:\ANN\reports\governance\2026-10-07\arsitek\putusan-H4b-stabilitas.md`
+- `D:\ANN\.ai\AGENTS.md`
+- `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l30.md`
+- `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l31.md`
+- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-l30-audit.md`
+- `D:\ANN\reports\governance\2026-10-12\arsitek\amandemen-l31-metrik.md`
+- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l31.md`
+- `D:\ANN\.ai\assistant\verifications\2026-10-13_gerbang-hasil-l31.md`
+- `D:\ANN\scripts\_build_eda07_l31.py`
+- `D:\ANN\scripts\_build_eda07_l30.py`
+- `D:\ANN\notebooks\scalping\eda_07_l31_baseline.ipynb`
+- `D:\ANN\notebooks\scalping\eda_07_label_fitur.ipynb`
+- `D:\ANN\reports\eda\2026-10-12\T-L3-1_baseline.csv`
+- `D:\ANN\reports\eda\2026-10-12\T-L3-0_arah.csv`
+- `D:\ANN\reports\eda\2026-10-12\T-L3-0_peta98.csv`
+- `D:\ANN\reports\eda\2026-10-12\_l31_manifest.csv`
+- `D:\ANN\reports\eda\2026-10-12\run_l31.log`
+- `D:\ANN\reports\eda\2026-10-12\FIG-18_baseline.png`
+- `D:\ANN\reports\eda\2026-10-12\T-07-1_balance.csv`
+- `D:\ANN\reports\eda\2026-10-10\T-06-7_gerbang_tercile.csv`
+- `D:\ANN\reports\eda\2026-10-10\T-06-7_gerbang_sesi.csv`
 
 ### Modified
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a1_replika.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a3_a4_scope.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a4_atr_kausal.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a4_scope.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\a5_crossval.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\h4b_audit\buat_sabotase.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1_replika.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1b_counter.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a2_sabotase.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a2b_sabotase.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1_out.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1_out.json`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1b_out.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a1b_out.json`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a2_out.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_audit\a2b_out.txt`
-- `D:\ANN\reports\governance\2026-10-07\Audit\reaudit-H4b-stabilitas.md`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v1_s0.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v2_abc.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v3_def.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v4_gh.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v5_verbatim.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v6_ijk.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v7_k24.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v8_k24ast.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v9_k24ast2.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\v10_k24full.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l30\fixline.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l30\fix2.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l30\fix3.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l30\l30_gerbang.py`
+- `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l30.md` — selesai pada audit L3-0 sebelumnya.
+- `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l31.md` — draf lama ada; penulisan final belum berhasil.

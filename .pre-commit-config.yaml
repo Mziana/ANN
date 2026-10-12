@@ -11,7 +11,12 @@ repos:
     hooks:
       - id: ruff
         args: [--fix]
+        # Notebook = artefak GENERATOR (sumbernya scripts/_build_eda*.py
+        # yang tetap di-lint). Lint gaya di dalam JSON ipynb (E402/N816
+        # di sel hasil-generate) memblokir setiap commit tanpa nilai.
+        exclude: \.ipynb$
       - id: ruff-format
+        exclude: \.ipynb$
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

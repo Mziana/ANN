@@ -390,3 +390,61 @@ menyimpulkan "bukan bug" dengan metode sirkular. User mengabulkan fix.
       H4 Batch-2/H1-H3/H5/H4b/fondasi-B untouched; H6 DITOLAK)
 - [ ] Compaction agresif (15–20%): diagnosis + opsi solusi diajukan,
       menunggu keputusan user (opsi A sentuh config global)
+- [x] EDA-07 I-2 SELESAI 2026-10-12 (coder): full-run G1-G4 + 7 kandidat via
+      `scripts/_build_eda07_i2.py` -> `notebooks/scalping/eda_07_i2.ipynb`
+      (22 sel, 21 tereksekusi, 0 error; exit=0). Regresi 86/86 + 780/780 PASS;
+      native 98 LOLOS/162 GUGUR; kandidat 5 LOLOS-invers (Tokyo) + 2 GUGUR
+      (London); T-07 x4 + FIG-13..16 + KESIMPULAN_I2; 13/13 beku untouched.
+      Laporan `reports/eda/2026-10-12/laporan-coder-eda07-i2.md`.
+      Berikutnya: AUDITOR independen, arsitek putusan Lapisan 3.
+
+- [x] EDA-07 L3-0 SELESAI 2026-10-12 (coder): peta arah deskriptif via
+      scripts/_build_eda07_l30.py ->
+otebooks/scalping/eda_07_l30_arah.ipynb
+      (8 sel, 7 tereksekusi, 0 error; exit=0; tanpa RNG).
+      T-L3-0_arah.csv 153 (pos 120/neg 33) + T-L3-0_peta98.csv 98
+      (pos 78/neg 20, diff kosong) + FIG-17 + manifest 6/6 + runner-log;
+      5 Tokyo negatif eksak (INVERS); 2 baris kandidat London G3=False
+      (targetnya LOLOS via wakil asli rv15/rv60 pos); K24 24/24;
+      ASSERT_LOG 343; file beku untouched (penjaga 260/6767/1315/1335/86).
+       Laporan
+eports/eda/2026-10-12/laporan-coder-eda07-l30.md.
+       Berikutnya: AUDITOR independen L3-0, arsitek putusan buka L3-1.
+- [x] EDA-07 L3-1 STOP pra-eksekusi 2026-10-12 (coder): S-0 read-only menemukan
+      konflik B-3 mengikat — M3 (Brier+akurasi+mayoritas, sama-untuk-semua,
+      tanpa-pengecualian, 103 DILARANG tambah/kurang) tak terdefinisi untuk
+      36 pasangan kontinu LB_rng (34 native + 2 Tokyo; YCODE/YPOS=None verbatim
+      run 9, T-07-1 kelas=kontinu). Alternatif binarisasi/drop/MSE Renaming
+      semua melanggar klausul (label-baru/ubah-M3/pengecualian). STOP + lapor
+      per S-0.4; nol artefak M3 ditulis. Laporan
+       `reports/eda/2026-10-12/laporan-coder-eda07-l31-konflik-B3.md`.
+       Berikutnya: AMANDEMEN ARSITEK B-3 (aturan per-jenis LB_rng atau
+       persempit scope + kunci normalisasi Brier multikelas), baru brief
+       coder L3-1-revisi. HEAD `b18992b`, staged nol ronde ini.
+- [x] EDA-07 L3-1 SELESAI 2026-10-12 (coder, pasca-Amandemen C):
+      `scripts/_build_eda07_l31.py` -> `eda_07_l31_baseline.ipynb`
+      (8 sel, 0 error, EXIT=0, ASSERT_LOG 1268). TABEL M3 103:
+      LOLOS 68/GUGUR 35 (diskret 56/11 Brier, kontinu 12/24 MSE);
+      jangkar 200/200, register 98+5, C-3 twin identik, split tak-bocor,
+      hash 5/5, S8B 11/11. 3 perbaikan builder terdokumentasi di laporan.
+      Laporan `reports/eda/2026-10-12/laporan-coder-eda07-l31.md`.
+      HEAD `b18992b`, staged nol ronde ini.
+- [x] Re-audit L3-1 SELESAI + gerbang LOLOS 2026-10-13
+      (`Audit/reaudit-l31.md`, 452 baris / 24728 B, SHA256 `B091A4FC...`,
+      LOLOS PROSEDURAL; 11 mandat nol selisih; 0/0/4/2; R1 TERIMA catatan
+      log; R3 asumsi EOL-manifest jadi FAKTA; S6 jujur 6 butir; gate
+      `assistant/verifications/2026-10-13_gerbang-reaudit-l31.md`) —
+      berikut VONIS BINER B-4 arsitek (lihat entri berikut)
+- [x] Brief vonis B-4 DISUSUN 2026-10-13
+      (`assistant/prompts/2026-10-13_putusan-l31-arsitek.md`;
+      V-1 biner GO/NO-GO + V-2 register + V-3 R1-R4 + V-4 pagar T-5/S8A;
+      GO = minta izin user utk spec pemodelan, BUKAN paper-trade) —
+      menunggu user paste ke arsitek
+- [x] VONIS B-4 SELESAI 2026-10-13 (arsitek dirangkap asisten, S1A;
+      brief eksternal MOOT): `arsitek/putusan-l31-final.md`
+      (81 baris, blob `dfc20e6d`, SHA256 `EA1BC4FD...`, ASCII/LF;
+      S-2d 5 blob COCOK + HEAD/staged bersih) — V-1 GO cabang (a)
+      = minta izin user utk spec pemodelan pra-registrasi (BUKAN
+      paper-trade; 5 syarat mengikat incl. skrutini LB_bin 25/25);
+      V-2 register 68 beku / 35 tutup; V-3 R1-R4 + I1-I4; V-4 T-5/S8A.
+      Ronde L3 DITUTUP. Menunggu: persetujuan eksplisit user.

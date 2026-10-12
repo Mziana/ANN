@@ -186,6 +186,7 @@ Detail: RULES.md Â§18.
 | 2026-10-05 | Backtest folder per tanggal |
 | 2026-10-05 | Workflow multi-AI (1-3 AI) |
 | 2026-10-05 | Onboarding AI baru (Prompt 0) |
+| 2026-10-13 | Asisten merangkap arsitek (formal, S1A ASSISTANT_RULES; preseden Amandemen C) |
 
 ---
 

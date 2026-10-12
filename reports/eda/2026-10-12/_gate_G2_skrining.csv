@@ -1,0 +1,781 @@
+target,kontrol,G2a_pooled,G2b_arah,n_arah
+LA ATR_k0.75_rr2 London t3 buy,noise,False,False,5
+LA ATR_k0.75_rr2 London t3 buy,round_d,False,False,5
+LA ATR_k0.75_rr2 London t3 buy,pdhl_d,False,True,5
+LA ATR_k0.75_rr2 London t3 sell,noise,False,True,5
+LA ATR_k0.75_rr2 London t3 sell,round_d,True,True,5
+LA ATR_k0.75_rr2 London t3 sell,pdhl_d,False,True,5
+LA ATR_k0.75_rr2 Tokyo t3 buy,noise,False,True,5
+LA ATR_k0.75_rr2 Tokyo t3 buy,round_d,True,True,5
+LA ATR_k0.75_rr2 Tokyo t3 buy,pdhl_d,False,False,5
+LA ATR_k0.75_rr2 Tokyo t3 sell,noise,False,False,5
+LA ATR_k0.75_rr2 Tokyo t3 sell,round_d,False,False,5
+LA ATR_k0.75_rr2 Tokyo t3 sell,pdhl_d,False,False,5
+LA ATR_k1.5_rr1 London t3 buy,noise,False,False,5
+LA ATR_k1.5_rr1 London t3 buy,round_d,False,False,5
+LA ATR_k1.5_rr1 London t3 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr1 London t3 sell,noise,False,True,5
+LA ATR_k1.5_rr1 London t3 sell,round_d,False,False,5
+LA ATR_k1.5_rr1 London t3 sell,pdhl_d,False,True,5
+LA ATR_k1.5_rr1 NewYork t3 buy,noise,False,False,5
+LA ATR_k1.5_rr1 NewYork t3 buy,round_d,True,True,5
+LA ATR_k1.5_rr1 NewYork t3 buy,pdhl_d,False,True,5
+LA ATR_k1.5_rr1 NewYork t3 sell,noise,False,False,5
+LA ATR_k1.5_rr1 NewYork t3 sell,round_d,True,True,5
+LA ATR_k1.5_rr1 NewYork t3 sell,pdhl_d,False,True,5
+LA ATR_k1.5_rr1 Tokyo t3 buy,noise,False,False,5
+LA ATR_k1.5_rr1 Tokyo t3 buy,round_d,True,True,5
+LA ATR_k1.5_rr1 Tokyo t3 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr1 Tokyo t3 sell,noise,False,False,5
+LA ATR_k1.5_rr1 Tokyo t3 sell,round_d,False,True,5
+LA ATR_k1.5_rr1 Tokyo t3 sell,pdhl_d,False,True,5
+LA ATR_k1.5_rr1.4 London t3 buy,noise,False,False,5
+LA ATR_k1.5_rr1.4 London t3 buy,round_d,False,True,5
+LA ATR_k1.5_rr1.4 London t3 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr1.4 London t3 sell,noise,False,True,5
+LA ATR_k1.5_rr1.4 London t3 sell,round_d,False,False,5
+LA ATR_k1.5_rr1.4 London t3 sell,pdhl_d,False,True,5
+LA ATR_k1.5_rr1.4 Tokyo t3 buy,noise,False,False,5
+LA ATR_k1.5_rr1.4 Tokyo t3 buy,round_d,False,False,5
+LA ATR_k1.5_rr1.4 Tokyo t3 buy,pdhl_d,True,True,5
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,noise,False,False,5
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,round_d,True,True,5
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,pdhl_d,True,True,5
+LA ATR_k1.5_rr2 London t1 buy,noise,False,False,5
+LA ATR_k1.5_rr2 London t1 buy,round_d,True,False,5
+LA ATR_k1.5_rr2 London t1 buy,pdhl_d,True,True,5
+LA ATR_k1.5_rr2 London t1 sell,noise,False,True,5
+LA ATR_k1.5_rr2 London t1 sell,round_d,False,False,5
+LA ATR_k1.5_rr2 London t1 sell,pdhl_d,True,True,5
+LA ATR_k1.5_rr2 London t2 buy,noise,False,False,5
+LA ATR_k1.5_rr2 London t2 buy,round_d,True,False,5
+LA ATR_k1.5_rr2 London t2 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 London t2 sell,noise,False,False,5
+LA ATR_k1.5_rr2 London t2 sell,round_d,True,False,5
+LA ATR_k1.5_rr2 London t2 sell,pdhl_d,False,True,5
+LA ATR_k1.5_rr2 London t3 buy,noise,True,False,5
+LA ATR_k1.5_rr2 London t3 buy,round_d,False,True,5
+LA ATR_k1.5_rr2 London t3 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 London t3 sell,noise,False,False,5
+LA ATR_k1.5_rr2 London t3 sell,round_d,False,False,5
+LA ATR_k1.5_rr2 London t3 sell,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 Tokyo t2 buy,noise,False,False,5
+LA ATR_k1.5_rr2 Tokyo t2 buy,round_d,True,True,5
+LA ATR_k1.5_rr2 Tokyo t2 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 Tokyo t2 sell,noise,False,False,5
+LA ATR_k1.5_rr2 Tokyo t2 sell,round_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t2 sell,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 Tokyo t3 buy,noise,False,False,5
+LA ATR_k1.5_rr2 Tokyo t3 buy,round_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t3 buy,pdhl_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t3 sell,noise,False,False,5
+LA ATR_k1.5_rr2 Tokyo t3 sell,round_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t3 sell,pdhl_d,True,True,5
+LA ATR_k1_rr1 London t3 buy,noise,False,False,5
+LA ATR_k1_rr1 London t3 buy,round_d,False,True,5
+LA ATR_k1_rr1 London t3 buy,pdhl_d,False,True,5
+LA ATR_k1_rr1 London t3 sell,noise,False,False,5
+LA ATR_k1_rr1 London t3 sell,round_d,False,True,5
+LA ATR_k1_rr1 London t3 sell,pdhl_d,False,True,5
+LA ATR_k1_rr1.4 London t3 buy,noise,False,False,5
+LA ATR_k1_rr1.4 London t3 buy,round_d,False,True,5
+LA ATR_k1_rr1.4 London t3 buy,pdhl_d,False,True,5
+LA ATR_k1_rr1.4 London t3 sell,noise,False,False,5
+LA ATR_k1_rr1.4 London t3 sell,round_d,False,False,5
+LA ATR_k1_rr1.4 London t3 sell,pdhl_d,False,True,5
+LA ATR_k1_rr1.4 NewYork t3 buy,noise,False,True,5
+LA ATR_k1_rr1.4 NewYork t3 buy,round_d,True,True,5
+LA ATR_k1_rr1.4 NewYork t3 buy,pdhl_d,False,True,5
+LA ATR_k1_rr1.4 NewYork t3 sell,noise,False,False,5
+LA ATR_k1_rr1.4 NewYork t3 sell,round_d,True,True,5
+LA ATR_k1_rr1.4 NewYork t3 sell,pdhl_d,False,True,5
+LA ATR_k1_rr2 London t3 buy,noise,False,False,5
+LA ATR_k1_rr2 London t3 buy,round_d,False,False,5
+LA ATR_k1_rr2 London t3 buy,pdhl_d,False,False,5
+LA ATR_k1_rr2 London t3 sell,noise,False,True,5
+LA ATR_k1_rr2 London t3 sell,round_d,False,False,5
+LA ATR_k1_rr2 London t3 sell,pdhl_d,False,True,5
+LA ATR_k1_rr2 Tokyo t3 buy,noise,False,True,5
+LA ATR_k1_rr2 Tokyo t3 buy,round_d,False,False,5
+LA ATR_k1_rr2 Tokyo t3 buy,pdhl_d,False,True,5
+LA ATR_k1_rr2 Tokyo t3 sell,noise,False,False,5
+LA ATR_k1_rr2 Tokyo t3 sell,round_d,False,True,5
+LA ATR_k1_rr2 Tokyo t3 sell,pdhl_d,False,True,5
+LA FIX_100_140 London t1 buy,noise,False,True,5
+LA FIX_100_140 London t1 buy,round_d,False,False,5
+LA FIX_100_140 London t1 buy,pdhl_d,True,True,5
+LA FIX_100_140 London t1 sell,noise,False,True,5
+LA FIX_100_140 London t1 sell,round_d,False,False,5
+LA FIX_100_140 London t1 sell,pdhl_d,True,False,5
+LA FIX_100_140 London t3 buy,noise,False,False,5
+LA FIX_100_140 London t3 buy,round_d,True,False,5
+LA FIX_100_140 London t3 buy,pdhl_d,False,False,5
+LA FIX_100_140 London t3 sell,noise,False,False,5
+LA FIX_100_140 London t3 sell,round_d,True,False,5
+LA FIX_100_140 London t3 sell,pdhl_d,False,True,5
+LA FIX_100_140 Sydney t1 buy,noise,False,False,0
+LA FIX_100_140 Sydney t1 buy,round_d,True,False,0
+LA FIX_100_140 Sydney t1 buy,pdhl_d,True,False,0
+LA FIX_100_140 Sydney t1 sell,noise,False,False,0
+LA FIX_100_140 Sydney t1 sell,round_d,False,False,0
+LA FIX_100_140 Sydney t1 sell,pdhl_d,False,False,0
+LA FIX_100_140 Tokyo t1 buy,noise,False,False,5
+LA FIX_100_140 Tokyo t1 buy,round_d,True,False,5
+LA FIX_100_140 Tokyo t1 buy,pdhl_d,True,True,5
+LA FIX_100_140 Tokyo t1 sell,noise,False,True,5
+LA FIX_100_140 Tokyo t1 sell,round_d,False,False,5
+LA FIX_100_140 Tokyo t1 sell,pdhl_d,True,False,5
+LA FIX_100_140 Tokyo t2 buy,noise,False,False,5
+LA FIX_100_140 Tokyo t2 buy,round_d,True,True,5
+LA FIX_100_140 Tokyo t2 buy,pdhl_d,True,False,5
+LA FIX_100_140 Tokyo t2 sell,noise,False,False,5
+LA FIX_100_140 Tokyo t2 sell,round_d,True,False,5
+LA FIX_100_140 Tokyo t2 sell,pdhl_d,True,False,5
+LA FIX_100_140 Tokyo t3 buy,noise,False,False,5
+LA FIX_100_140 Tokyo t3 buy,round_d,True,False,5
+LA FIX_100_140 Tokyo t3 buy,pdhl_d,False,False,5
+LA FIX_100_140 Tokyo t3 sell,noise,False,False,5
+LA FIX_100_140 Tokyo t3 sell,round_d,True,True,5
+LA FIX_100_140 Tokyo t3 sell,pdhl_d,False,False,5
+LA ATR_k1.5_rr1.4 London t0 buy,noise,False,True,5
+LA ATR_k1.5_rr1.4 London t0 buy,round_d,True,False,5
+LA ATR_k1.5_rr1.4 London t0 buy,pdhl_d,True,False,5
+LA ATR_k1.5_rr1.4 London t0 sell,noise,False,False,5
+LA ATR_k1.5_rr1.4 London t0 sell,round_d,True,False,5
+LA ATR_k1.5_rr1.4 London t0 sell,pdhl_d,True,False,5
+LA ATR_k1.5_rr1.4 Tokyo t0 buy,noise,True,True,5
+LA ATR_k1.5_rr1.4 Tokyo t0 buy,round_d,True,False,5
+LA ATR_k1.5_rr1.4 Tokyo t0 buy,pdhl_d,False,False,5
+LA ATR_k1.5_rr1.4 Tokyo t0 sell,noise,False,False,5
+LA ATR_k1.5_rr1.4 Tokyo t0 sell,round_d,True,False,5
+LA ATR_k1.5_rr1.4 Tokyo t0 sell,pdhl_d,False,False,5
+LA ATR_k1.5_rr2 London t0 buy,noise,False,True,5
+LA ATR_k1.5_rr2 London t0 buy,round_d,True,False,5
+LA ATR_k1.5_rr2 London t0 buy,pdhl_d,True,False,5
+LA ATR_k1.5_rr2 London t0 sell,noise,False,False,5
+LA ATR_k1.5_rr2 London t0 sell,round_d,True,False,5
+LA ATR_k1.5_rr2 London t0 sell,pdhl_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t0 buy,noise,False,True,5
+LA ATR_k1.5_rr2 Tokyo t0 buy,round_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t0 buy,pdhl_d,False,True,5
+LA ATR_k1.5_rr2 Tokyo t0 sell,noise,False,False,5
+LA ATR_k1.5_rr2 Tokyo t0 sell,round_d,True,False,5
+LA ATR_k1.5_rr2 Tokyo t0 sell,pdhl_d,False,False,5
+LA ATR_k1_rr2 London t0 buy,noise,False,False,5
+LA ATR_k1_rr2 London t0 buy,round_d,True,False,5
+LA ATR_k1_rr2 London t0 buy,pdhl_d,True,True,5
+LA ATR_k1_rr2 London t0 sell,noise,False,False,5
+LA ATR_k1_rr2 London t0 sell,round_d,False,False,5
+LA ATR_k1_rr2 London t0 sell,pdhl_d,True,True,5
+LA FIX_100_140 London t0 buy,noise,False,True,5
+LA FIX_100_140 London t0 buy,round_d,True,True,5
+LA FIX_100_140 London t0 buy,pdhl_d,True,False,5
+LA FIX_100_140 London t0 sell,noise,False,False,5
+LA FIX_100_140 London t0 sell,round_d,True,False,5
+LA FIX_100_140 London t0 sell,pdhl_d,True,True,5
+LA FIX_100_140 Tokyo t0 buy,noise,False,True,5
+LA FIX_100_140 Tokyo t0 buy,round_d,True,True,5
+LA FIX_100_140 Tokyo t0 buy,pdhl_d,True,True,5
+LA FIX_100_140 Tokyo t0 sell,noise,False,False,5
+LA FIX_100_140 Tokyo t0 sell,round_d,True,False,5
+LA FIX_100_140 Tokyo t0 sell,pdhl_d,True,False,5
+LB_bin London t1 N5,noise,False,False,5
+LB_bin London t1 N5,round_d,False,False,5
+LB_bin London t1 N5,pdhl_d,True,True,5
+LB_rng London t1 N5,noise,False,False,5
+LB_rng London t1 N5,round_d,False,False,5
+LB_rng London t1 N5,pdhl_d,True,True,5
+LC1 London t1 N5,noise,False,False,5
+LC1 London t1 N5,round_d,False,True,5
+LC1 London t1 N5,pdhl_d,True,True,5
+LC2 London t1 N5,noise,False,False,5
+LC2 London t1 N5,round_d,False,False,5
+LC2 London t1 N5,pdhl_d,True,True,5
+LD London t1 N5,noise,False,True,5
+LD London t1 N5,round_d,False,True,5
+LD London t1 N5,pdhl_d,False,False,5
+LB_bin London t1 N15,noise,False,True,5
+LB_bin London t1 N15,round_d,False,False,5
+LB_bin London t1 N15,pdhl_d,True,False,5
+LB_rng London t1 N15,noise,False,True,5
+LB_rng London t1 N15,round_d,False,False,5
+LB_rng London t1 N15,pdhl_d,True,False,5
+LC1 London t1 N15,noise,False,True,5
+LC1 London t1 N15,round_d,False,True,5
+LC1 London t1 N15,pdhl_d,False,False,5
+LC2 London t1 N15,noise,False,True,5
+LC2 London t1 N15,round_d,False,True,5
+LC2 London t1 N15,pdhl_d,False,False,5
+LD London t1 N15,noise,False,True,5
+LD London t1 N15,round_d,False,True,5
+LD London t1 N15,pdhl_d,False,False,5
+LB_bin London t1 N30,noise,False,True,5
+LB_bin London t1 N30,round_d,False,False,5
+LB_bin London t1 N30,pdhl_d,False,True,5
+LB_rng London t1 N30,noise,False,True,5
+LB_rng London t1 N30,round_d,False,False,5
+LB_rng London t1 N30,pdhl_d,True,False,5
+LC1 London t1 N30,noise,False,True,5
+LC1 London t1 N30,round_d,False,True,5
+LC1 London t1 N30,pdhl_d,False,False,5
+LC2 London t1 N30,noise,False,True,5
+LC2 London t1 N30,round_d,False,False,5
+LC2 London t1 N30,pdhl_d,False,False,5
+LD London t1 N30,noise,False,True,5
+LD London t1 N30,round_d,False,True,5
+LD London t1 N30,pdhl_d,False,False,5
+LB_bin London t1 N60,noise,False,False,5
+LB_bin London t1 N60,round_d,False,False,4
+LB_bin London t1 N60,pdhl_d,False,False,5
+LB_rng London t1 N60,noise,False,False,5
+LB_rng London t1 N60,round_d,False,False,5
+LB_rng London t1 N60,pdhl_d,False,False,5
+LC1 London t1 N60,noise,False,False,5
+LC1 London t1 N60,round_d,False,True,5
+LC1 London t1 N60,pdhl_d,False,False,5
+LC2 London t1 N60,noise,False,False,5
+LC2 London t1 N60,round_d,False,False,5
+LC2 London t1 N60,pdhl_d,False,True,5
+LD London t1 N60,noise,False,False,5
+LD London t1 N60,round_d,False,False,5
+LD London t1 N60,pdhl_d,False,True,5
+LB_bin London t2 N5,noise,True,True,5
+LB_bin London t2 N5,round_d,False,False,5
+LB_bin London t2 N5,pdhl_d,False,False,5
+LB_rng London t2 N5,noise,False,False,5
+LB_rng London t2 N5,round_d,False,True,5
+LB_rng London t2 N5,pdhl_d,False,True,5
+LC1 London t2 N5,noise,False,True,5
+LC1 London t2 N5,round_d,False,False,5
+LC1 London t2 N5,pdhl_d,False,True,5
+LC2 London t2 N5,noise,False,True,5
+LC2 London t2 N5,round_d,False,True,5
+LC2 London t2 N5,pdhl_d,False,True,5
+LD London t2 N5,noise,False,True,5
+LD London t2 N5,round_d,False,False,5
+LD London t2 N5,pdhl_d,False,False,5
+LB_bin London t2 N15,noise,False,False,5
+LB_bin London t2 N15,round_d,False,False,5
+LB_bin London t2 N15,pdhl_d,False,False,5
+LB_rng London t2 N15,noise,False,True,5
+LB_rng London t2 N15,round_d,False,False,5
+LB_rng London t2 N15,pdhl_d,False,True,5
+LC1 London t2 N15,noise,False,True,5
+LC1 London t2 N15,round_d,False,False,5
+LC1 London t2 N15,pdhl_d,False,True,5
+LC2 London t2 N15,noise,False,True,5
+LC2 London t2 N15,round_d,False,False,5
+LC2 London t2 N15,pdhl_d,False,True,5
+LD London t2 N15,noise,False,True,5
+LD London t2 N15,round_d,False,False,5
+LD London t2 N15,pdhl_d,False,True,5
+LB_bin London t2 N30,noise,False,False,5
+LB_bin London t2 N30,round_d,False,False,5
+LB_bin London t2 N30,pdhl_d,False,False,5
+LB_rng London t2 N30,noise,False,False,5
+LB_rng London t2 N30,round_d,False,True,5
+LB_rng London t2 N30,pdhl_d,False,True,5
+LC1 London t2 N30,noise,False,False,5
+LC1 London t2 N30,round_d,False,False,5
+LC1 London t2 N30,pdhl_d,False,True,5
+LC2 London t2 N30,noise,False,True,5
+LC2 London t2 N30,round_d,False,True,5
+LC2 London t2 N30,pdhl_d,False,True,5
+LD London t2 N30,noise,False,False,5
+LD London t2 N30,round_d,False,False,5
+LD London t2 N30,pdhl_d,False,True,5
+LB_bin London t2 N60,noise,False,False,5
+LB_bin London t2 N60,round_d,False,False,5
+LB_bin London t2 N60,pdhl_d,True,False,5
+LB_rng London t2 N60,noise,False,False,5
+LB_rng London t2 N60,round_d,True,True,5
+LB_rng London t2 N60,pdhl_d,False,True,5
+LC1 London t2 N60,noise,True,True,5
+LC1 London t2 N60,round_d,False,False,5
+LC1 London t2 N60,pdhl_d,False,True,5
+LC2 London t2 N60,noise,True,True,5
+LC2 London t2 N60,round_d,False,False,5
+LC2 London t2 N60,pdhl_d,False,False,5
+LD London t2 N60,noise,True,False,5
+LD London t2 N60,round_d,False,False,5
+LD London t2 N60,pdhl_d,False,True,5
+LB_bin London t3 N5,noise,False,False,5
+LB_bin London t3 N5,round_d,False,False,5
+LB_bin London t3 N5,pdhl_d,False,True,5
+LB_rng London t3 N5,noise,False,False,5
+LB_rng London t3 N5,round_d,True,True,5
+LB_rng London t3 N5,pdhl_d,True,True,5
+LC1 London t3 N5,noise,False,False,5
+LC1 London t3 N5,round_d,False,True,5
+LC1 London t3 N5,pdhl_d,False,False,5
+LC2 London t3 N5,noise,False,True,5
+LC2 London t3 N5,round_d,False,True,5
+LC2 London t3 N5,pdhl_d,False,False,5
+LD London t3 N5,noise,False,False,5
+LD London t3 N5,round_d,False,False,5
+LD London t3 N5,pdhl_d,False,False,5
+LB_bin London t3 N15,noise,False,False,5
+LB_bin London t3 N15,round_d,False,False,5
+LB_bin London t3 N15,pdhl_d,False,False,5
+LB_rng London t3 N15,noise,False,False,5
+LB_rng London t3 N15,round_d,True,False,5
+LB_rng London t3 N15,pdhl_d,False,False,5
+LC1 London t3 N15,noise,False,False,5
+LC1 London t3 N15,round_d,False,False,5
+LC1 London t3 N15,pdhl_d,False,True,5
+LC2 London t3 N15,noise,False,True,5
+LC2 London t3 N15,round_d,False,False,5
+LC2 London t3 N15,pdhl_d,False,True,5
+LD London t3 N15,noise,False,False,5
+LD London t3 N15,round_d,False,False,5
+LD London t3 N15,pdhl_d,False,True,5
+LB_bin London t3 N30,noise,False,True,5
+LB_bin London t3 N30,round_d,False,False,5
+LB_bin London t3 N30,pdhl_d,False,False,5
+LB_rng London t3 N30,noise,False,False,5
+LB_rng London t3 N30,round_d,False,False,5
+LB_rng London t3 N30,pdhl_d,False,False,5
+LC1 London t3 N30,noise,False,False,5
+LC1 London t3 N30,round_d,False,True,5
+LC1 London t3 N30,pdhl_d,False,False,5
+LC2 London t3 N30,noise,False,False,5
+LC2 London t3 N30,round_d,True,False,5
+LC2 London t3 N30,pdhl_d,False,False,5
+LD London t3 N30,noise,False,False,5
+LD London t3 N30,round_d,True,True,5
+LD London t3 N30,pdhl_d,False,False,5
+LB_bin London t3 N60,noise,False,True,5
+LB_bin London t3 N60,round_d,False,False,5
+LB_bin London t3 N60,pdhl_d,False,True,5
+LB_rng London t3 N60,noise,False,True,5
+LB_rng London t3 N60,round_d,False,False,5
+LB_rng London t3 N60,pdhl_d,False,True,5
+LC1 London t3 N60,noise,False,True,5
+LC1 London t3 N60,round_d,False,False,5
+LC1 London t3 N60,pdhl_d,False,False,5
+LC2 London t3 N60,noise,False,True,5
+LC2 London t3 N60,round_d,False,False,5
+LC2 London t3 N60,pdhl_d,False,False,5
+LD London t3 N60,noise,False,False,5
+LD London t3 N60,round_d,False,False,5
+LD London t3 N60,pdhl_d,False,False,5
+LB_bin London tALL N5,noise,False,True,5
+LB_bin London tALL N5,round_d,True,False,5
+LB_bin London tALL N5,pdhl_d,True,True,5
+LB_rng London tALL N5,noise,False,True,5
+LB_rng London tALL N5,round_d,True,True,5
+LB_rng London tALL N5,pdhl_d,True,True,5
+LC1 London tALL N5,noise,False,True,5
+LC1 London tALL N5,round_d,True,False,5
+LC1 London tALL N5,pdhl_d,True,True,5
+LC2 London tALL N5,noise,False,False,5
+LC2 London tALL N5,round_d,True,False,5
+LC2 London tALL N5,pdhl_d,True,True,5
+LD London tALL N5,noise,False,False,5
+LD London tALL N5,round_d,True,False,5
+LD London tALL N5,pdhl_d,False,False,5
+LB_bin London tALL N15,noise,False,False,5
+LB_bin London tALL N15,round_d,False,False,5
+LB_bin London tALL N15,pdhl_d,True,True,5
+LB_rng London tALL N15,noise,False,False,5
+LB_rng London tALL N15,round_d,True,False,5
+LB_rng London tALL N15,pdhl_d,True,True,5
+LC1 London tALL N15,noise,False,True,5
+LC1 London tALL N15,round_d,False,False,5
+LC1 London tALL N15,pdhl_d,True,False,5
+LC2 London tALL N15,noise,False,True,5
+LC2 London tALL N15,round_d,False,True,5
+LC2 London tALL N15,pdhl_d,True,False,5
+LD London tALL N15,noise,False,True,5
+LD London tALL N15,round_d,False,False,5
+LD London tALL N15,pdhl_d,False,False,5
+LB_bin London tALL N30,noise,False,True,5
+LB_bin London tALL N30,round_d,False,False,5
+LB_bin London tALL N30,pdhl_d,True,True,5
+LB_rng London tALL N30,noise,False,False,5
+LB_rng London tALL N30,round_d,True,True,5
+LB_rng London tALL N30,pdhl_d,True,True,5
+LC1 London tALL N30,noise,False,False,5
+LC1 London tALL N30,round_d,False,True,5
+LC1 London tALL N30,pdhl_d,False,False,5
+LC2 London tALL N30,noise,False,False,5
+LC2 London tALL N30,round_d,False,True,5
+LC2 London tALL N30,pdhl_d,True,False,5
+LD London tALL N30,noise,False,False,5
+LD London tALL N30,round_d,False,True,5
+LD London tALL N30,pdhl_d,False,False,5
+LB_bin London tALL N60,noise,False,False,5
+LB_bin London tALL N60,round_d,False,False,5
+LB_bin London tALL N60,pdhl_d,False,True,5
+LB_rng London tALL N60,noise,False,True,5
+LB_rng London tALL N60,round_d,False,False,5
+LB_rng London tALL N60,pdhl_d,True,True,5
+LC1 London tALL N60,noise,True,False,5
+LC1 London tALL N60,round_d,False,False,5
+LC1 London tALL N60,pdhl_d,False,False,5
+LC2 London tALL N60,noise,False,False,5
+LC2 London tALL N60,round_d,False,False,5
+LC2 London tALL N60,pdhl_d,False,False,5
+LD London tALL N60,noise,False,False,5
+LD London tALL N60,round_d,False,False,5
+LD London tALL N60,pdhl_d,False,False,5
+LB_bin NewYork t3 N5,noise,False,False,5
+LB_bin NewYork t3 N5,round_d,False,False,5
+LB_bin NewYork t3 N5,pdhl_d,False,True,5
+LB_rng NewYork t3 N5,noise,False,False,5
+LB_rng NewYork t3 N5,round_d,False,True,5
+LB_rng NewYork t3 N5,pdhl_d,False,True,5
+LC1 NewYork t3 N5,noise,False,True,5
+LC1 NewYork t3 N5,round_d,False,True,5
+LC1 NewYork t3 N5,pdhl_d,False,True,5
+LC2 NewYork t3 N5,noise,False,True,5
+LC2 NewYork t3 N5,round_d,False,True,5
+LC2 NewYork t3 N5,pdhl_d,False,True,5
+LD NewYork t3 N5,noise,False,False,5
+LD NewYork t3 N5,round_d,False,True,5
+LD NewYork t3 N5,pdhl_d,False,True,5
+LB_bin NewYork t3 N15,noise,False,False,4
+LB_bin NewYork t3 N15,round_d,False,True,5
+LB_bin NewYork t3 N15,pdhl_d,False,True,5
+LB_rng NewYork t3 N15,noise,False,False,5
+LB_rng NewYork t3 N15,round_d,False,True,5
+LB_rng NewYork t3 N15,pdhl_d,False,True,5
+LC1 NewYork t3 N15,noise,False,False,4
+LC1 NewYork t3 N15,round_d,False,True,5
+LC1 NewYork t3 N15,pdhl_d,False,True,5
+LC2 NewYork t3 N15,noise,False,False,4
+LC2 NewYork t3 N15,round_d,False,False,5
+LC2 NewYork t3 N15,pdhl_d,False,True,5
+LD NewYork t3 N15,noise,False,False,4
+LD NewYork t3 N15,round_d,False,True,5
+LD NewYork t3 N15,pdhl_d,False,False,4
+LB_bin NewYork t3 N30,noise,False,False,5
+LB_bin NewYork t3 N30,round_d,False,True,5
+LB_bin NewYork t3 N30,pdhl_d,False,True,5
+LB_rng NewYork t3 N30,noise,True,True,5
+LB_rng NewYork t3 N30,round_d,False,True,5
+LB_rng NewYork t3 N30,pdhl_d,False,True,5
+LC1 NewYork t3 N30,noise,False,False,5
+LC1 NewYork t3 N30,round_d,False,False,4
+LC1 NewYork t3 N30,pdhl_d,False,True,5
+LC2 NewYork t3 N30,noise,False,False,5
+LC2 NewYork t3 N30,round_d,False,False,5
+LC2 NewYork t3 N30,pdhl_d,False,True,5
+LD NewYork t3 N30,noise,False,True,5
+LD NewYork t3 N30,round_d,False,True,5
+LD NewYork t3 N30,pdhl_d,False,True,5
+LB_bin NewYork t3 N60,noise,False,False,5
+LB_bin NewYork t3 N60,round_d,False,False,5
+LB_bin NewYork t3 N60,pdhl_d,False,False,5
+LB_rng NewYork t3 N60,noise,False,True,5
+LB_rng NewYork t3 N60,round_d,False,True,5
+LB_rng NewYork t3 N60,pdhl_d,False,True,5
+LC1 NewYork t3 N60,noise,False,True,5
+LC1 NewYork t3 N60,round_d,False,False,5
+LC1 NewYork t3 N60,pdhl_d,False,True,5
+LC2 NewYork t3 N60,noise,False,True,5
+LC2 NewYork t3 N60,round_d,False,False,5
+LC2 NewYork t3 N60,pdhl_d,False,True,5
+LD NewYork t3 N60,noise,False,False,5
+LD NewYork t3 N60,round_d,False,False,5
+LD NewYork t3 N60,pdhl_d,False,True,5
+LB_bin Sydney t1 N5,noise,False,False,0
+LB_bin Sydney t1 N5,round_d,False,False,0
+LB_bin Sydney t1 N5,pdhl_d,False,False,0
+LB_rng Sydney t1 N5,noise,False,False,0
+LB_rng Sydney t1 N5,round_d,False,False,0
+LB_rng Sydney t1 N5,pdhl_d,False,False,0
+LC1 Sydney t1 N5,noise,False,False,0
+LC1 Sydney t1 N5,round_d,False,False,0
+LC1 Sydney t1 N5,pdhl_d,False,False,0
+LC2 Sydney t1 N5,noise,False,False,0
+LC2 Sydney t1 N5,round_d,False,False,0
+LC2 Sydney t1 N5,pdhl_d,False,False,0
+LD Sydney t1 N5,noise,False,False,0
+LD Sydney t1 N5,round_d,False,False,0
+LD Sydney t1 N5,pdhl_d,False,False,0
+LB_bin Sydney t1 N15,noise,False,False,0
+LB_bin Sydney t1 N15,round_d,False,False,0
+LB_bin Sydney t1 N15,pdhl_d,False,False,0
+LB_rng Sydney t1 N15,noise,False,False,0
+LB_rng Sydney t1 N15,round_d,False,False,0
+LB_rng Sydney t1 N15,pdhl_d,False,False,0
+LC1 Sydney t1 N15,noise,False,False,0
+LC1 Sydney t1 N15,round_d,False,False,0
+LC1 Sydney t1 N15,pdhl_d,False,False,0
+LC2 Sydney t1 N15,noise,False,False,0
+LC2 Sydney t1 N15,round_d,False,False,0
+LC2 Sydney t1 N15,pdhl_d,False,False,0
+LD Sydney t1 N15,noise,False,False,0
+LD Sydney t1 N15,round_d,False,False,0
+LD Sydney t1 N15,pdhl_d,False,False,0
+LB_bin Sydney t1 N30,noise,False,False,0
+LB_bin Sydney t1 N30,round_d,False,False,0
+LB_bin Sydney t1 N30,pdhl_d,False,False,0
+LB_rng Sydney t1 N30,noise,False,False,0
+LB_rng Sydney t1 N30,round_d,False,False,0
+LB_rng Sydney t1 N30,pdhl_d,False,False,0
+LC1 Sydney t1 N30,noise,True,False,0
+LC1 Sydney t1 N30,round_d,False,False,0
+LC1 Sydney t1 N30,pdhl_d,False,False,0
+LC2 Sydney t1 N30,noise,True,False,0
+LC2 Sydney t1 N30,round_d,False,False,0
+LC2 Sydney t1 N30,pdhl_d,False,False,0
+LD Sydney t1 N30,noise,False,False,0
+LD Sydney t1 N30,round_d,False,False,0
+LD Sydney t1 N30,pdhl_d,False,False,0
+LB_bin Sydney t1 N60,noise,False,False,0
+LB_bin Sydney t1 N60,round_d,False,False,0
+LB_bin Sydney t1 N60,pdhl_d,False,False,0
+LB_rng Sydney t1 N60,noise,False,False,0
+LB_rng Sydney t1 N60,round_d,False,False,0
+LB_rng Sydney t1 N60,pdhl_d,False,False,0
+LC1 Sydney t1 N60,noise,False,False,0
+LC1 Sydney t1 N60,round_d,False,False,0
+LC1 Sydney t1 N60,pdhl_d,False,False,0
+LC2 Sydney t1 N60,noise,False,False,0
+LC2 Sydney t1 N60,round_d,False,False,0
+LC2 Sydney t1 N60,pdhl_d,False,False,0
+LD Sydney t1 N60,noise,False,False,0
+LD Sydney t1 N60,round_d,False,False,0
+LD Sydney t1 N60,pdhl_d,False,False,0
+LB_bin Tokyo t1 N5,noise,False,True,5
+LB_bin Tokyo t1 N5,round_d,False,True,5
+LB_bin Tokyo t1 N5,pdhl_d,True,True,5
+LB_rng Tokyo t1 N5,noise,False,False,5
+LB_rng Tokyo t1 N5,round_d,False,True,5
+LB_rng Tokyo t1 N5,pdhl_d,True,True,5
+LC1 Tokyo t1 N5,noise,False,True,5
+LC1 Tokyo t1 N5,round_d,False,True,5
+LC1 Tokyo t1 N5,pdhl_d,True,True,5
+LC2 Tokyo t1 N5,noise,False,False,5
+LC2 Tokyo t1 N5,round_d,False,True,5
+LC2 Tokyo t1 N5,pdhl_d,True,True,5
+LD Tokyo t1 N5,noise,False,False,5
+LD Tokyo t1 N5,round_d,False,False,5
+LD Tokyo t1 N5,pdhl_d,False,False,5
+LB_bin Tokyo t1 N15,noise,False,False,5
+LB_bin Tokyo t1 N15,round_d,False,False,5
+LB_bin Tokyo t1 N15,pdhl_d,True,True,5
+LB_rng Tokyo t1 N15,noise,False,False,5
+LB_rng Tokyo t1 N15,round_d,False,True,5
+LB_rng Tokyo t1 N15,pdhl_d,True,True,5
+LC1 Tokyo t1 N15,noise,False,False,5
+LC1 Tokyo t1 N15,round_d,False,False,5
+LC1 Tokyo t1 N15,pdhl_d,False,True,5
+LC2 Tokyo t1 N15,noise,False,True,5
+LC2 Tokyo t1 N15,round_d,False,False,5
+LC2 Tokyo t1 N15,pdhl_d,False,True,5
+LD Tokyo t1 N15,noise,True,False,5
+LD Tokyo t1 N15,round_d,False,False,5
+LD Tokyo t1 N15,pdhl_d,False,True,5
+LB_bin Tokyo t1 N30,noise,False,True,5
+LB_bin Tokyo t1 N30,round_d,False,False,5
+LB_bin Tokyo t1 N30,pdhl_d,True,True,5
+LB_rng Tokyo t1 N30,noise,False,True,5
+LB_rng Tokyo t1 N30,round_d,False,True,5
+LB_rng Tokyo t1 N30,pdhl_d,True,True,5
+LC1 Tokyo t1 N30,noise,False,False,5
+LC1 Tokyo t1 N30,round_d,False,True,5
+LC1 Tokyo t1 N30,pdhl_d,False,True,5
+LC2 Tokyo t1 N30,noise,False,True,5
+LC2 Tokyo t1 N30,round_d,False,True,5
+LC2 Tokyo t1 N30,pdhl_d,True,True,5
+LD Tokyo t1 N30,noise,False,False,5
+LD Tokyo t1 N30,round_d,False,False,5
+LD Tokyo t1 N30,pdhl_d,False,True,5
+LB_bin Tokyo t1 N60,noise,False,False,5
+LB_bin Tokyo t1 N60,round_d,False,False,5
+LB_bin Tokyo t1 N60,pdhl_d,False,True,5
+LB_rng Tokyo t1 N60,noise,True,True,5
+LB_rng Tokyo t1 N60,round_d,False,True,5
+LB_rng Tokyo t1 N60,pdhl_d,False,True,5
+LC1 Tokyo t1 N60,noise,False,False,5
+LC1 Tokyo t1 N60,round_d,False,False,5
+LC1 Tokyo t1 N60,pdhl_d,False,True,5
+LC2 Tokyo t1 N60,noise,False,False,5
+LC2 Tokyo t1 N60,round_d,False,False,5
+LC2 Tokyo t1 N60,pdhl_d,False,True,5
+LD Tokyo t1 N60,noise,False,False,5
+LD Tokyo t1 N60,round_d,False,True,5
+LD Tokyo t1 N60,pdhl_d,False,False,5
+LB_bin Tokyo t2 N5,noise,False,True,5
+LB_bin Tokyo t2 N5,round_d,False,True,5
+LB_bin Tokyo t2 N5,pdhl_d,False,True,5
+LB_rng Tokyo t2 N5,noise,False,True,5
+LB_rng Tokyo t2 N5,round_d,False,True,5
+LB_rng Tokyo t2 N5,pdhl_d,False,True,5
+LC1 Tokyo t2 N5,noise,False,False,5
+LC1 Tokyo t2 N5,round_d,False,False,5
+LC1 Tokyo t2 N5,pdhl_d,False,True,5
+LC2 Tokyo t2 N5,noise,False,False,5
+LC2 Tokyo t2 N5,round_d,False,False,5
+LC2 Tokyo t2 N5,pdhl_d,False,True,5
+LD Tokyo t2 N5,noise,False,False,5
+LD Tokyo t2 N5,round_d,False,True,5
+LD Tokyo t2 N5,pdhl_d,False,True,5
+LB_bin Tokyo t2 N15,noise,False,True,5
+LB_bin Tokyo t2 N15,round_d,True,True,5
+LB_bin Tokyo t2 N15,pdhl_d,False,False,5
+LB_rng Tokyo t2 N15,noise,False,True,5
+LB_rng Tokyo t2 N15,round_d,False,True,5
+LB_rng Tokyo t2 N15,pdhl_d,False,True,5
+LC1 Tokyo t2 N15,noise,False,False,5
+LC1 Tokyo t2 N15,round_d,False,True,5
+LC1 Tokyo t2 N15,pdhl_d,False,False,5
+LC2 Tokyo t2 N15,noise,False,False,5
+LC2 Tokyo t2 N15,round_d,False,True,5
+LC2 Tokyo t2 N15,pdhl_d,False,True,5
+LD Tokyo t2 N15,noise,False,True,5
+LD Tokyo t2 N15,round_d,False,False,5
+LD Tokyo t2 N15,pdhl_d,False,True,5
+LB_bin Tokyo t2 N30,noise,False,False,5
+LB_bin Tokyo t2 N30,round_d,False,False,5
+LB_bin Tokyo t2 N30,pdhl_d,False,False,5
+LB_rng Tokyo t2 N30,noise,True,False,5
+LB_rng Tokyo t2 N30,round_d,False,True,5
+LB_rng Tokyo t2 N30,pdhl_d,False,True,5
+LC1 Tokyo t2 N30,noise,False,False,5
+LC1 Tokyo t2 N30,round_d,False,True,5
+LC1 Tokyo t2 N30,pdhl_d,False,False,5
+LC2 Tokyo t2 N30,noise,True,False,5
+LC2 Tokyo t2 N30,round_d,False,True,5
+LC2 Tokyo t2 N30,pdhl_d,False,False,5
+LD Tokyo t2 N30,noise,True,False,5
+LD Tokyo t2 N30,round_d,False,True,5
+LD Tokyo t2 N30,pdhl_d,False,True,5
+LB_bin Tokyo t2 N60,noise,False,True,5
+LB_bin Tokyo t2 N60,round_d,False,True,5
+LB_bin Tokyo t2 N60,pdhl_d,False,True,4
+LB_rng Tokyo t2 N60,noise,False,False,5
+LB_rng Tokyo t2 N60,round_d,False,False,5
+LB_rng Tokyo t2 N60,pdhl_d,False,True,5
+LC1 Tokyo t2 N60,noise,False,False,5
+LC1 Tokyo t2 N60,round_d,False,False,5
+LC1 Tokyo t2 N60,pdhl_d,False,False,5
+LC2 Tokyo t2 N60,noise,False,True,5
+LC2 Tokyo t2 N60,round_d,False,False,5
+LC2 Tokyo t2 N60,pdhl_d,False,False,5
+LD Tokyo t2 N60,noise,False,False,5
+LD Tokyo t2 N60,round_d,False,False,5
+LD Tokyo t2 N60,pdhl_d,False,False,5
+LB_bin Tokyo t3 N5,noise,False,False,5
+LB_bin Tokyo t3 N5,round_d,True,False,5
+LB_bin Tokyo t3 N5,pdhl_d,True,True,5
+LB_rng Tokyo t3 N5,noise,False,True,5
+LB_rng Tokyo t3 N5,round_d,False,True,5
+LB_rng Tokyo t3 N5,pdhl_d,True,True,5
+LC1 Tokyo t3 N5,noise,False,False,5
+LC1 Tokyo t3 N5,round_d,False,False,5
+LC1 Tokyo t3 N5,pdhl_d,False,True,5
+LC2 Tokyo t3 N5,noise,False,False,5
+LC2 Tokyo t3 N5,round_d,False,False,5
+LC2 Tokyo t3 N5,pdhl_d,True,True,5
+LD Tokyo t3 N5,noise,False,True,5
+LD Tokyo t3 N5,round_d,False,False,5
+LD Tokyo t3 N5,pdhl_d,False,False,5
+LB_bin Tokyo t3 N15,noise,False,True,5
+LB_bin Tokyo t3 N15,round_d,False,False,5
+LB_bin Tokyo t3 N15,pdhl_d,False,True,5
+LB_rng Tokyo t3 N15,noise,False,False,5
+LB_rng Tokyo t3 N15,round_d,False,True,5
+LB_rng Tokyo t3 N15,pdhl_d,True,True,5
+LC1 Tokyo t3 N15,noise,False,True,5
+LC1 Tokyo t3 N15,round_d,False,False,5
+LC1 Tokyo t3 N15,pdhl_d,False,False,5
+LC2 Tokyo t3 N15,noise,False,False,5
+LC2 Tokyo t3 N15,round_d,False,False,5
+LC2 Tokyo t3 N15,pdhl_d,False,True,5
+LD Tokyo t3 N15,noise,False,False,5
+LD Tokyo t3 N15,round_d,False,False,5
+LD Tokyo t3 N15,pdhl_d,False,False,5
+LB_bin Tokyo t3 N30,noise,False,False,5
+LB_bin Tokyo t3 N30,round_d,False,False,5
+LB_bin Tokyo t3 N30,pdhl_d,False,True,5
+LB_rng Tokyo t3 N30,noise,False,True,5
+LB_rng Tokyo t3 N30,round_d,False,False,5
+LB_rng Tokyo t3 N30,pdhl_d,False,True,5
+LC1 Tokyo t3 N30,noise,False,False,5
+LC1 Tokyo t3 N30,round_d,False,False,4
+LC1 Tokyo t3 N30,pdhl_d,False,True,5
+LC2 Tokyo t3 N30,noise,False,False,5
+LC2 Tokyo t3 N30,round_d,False,False,4
+LC2 Tokyo t3 N30,pdhl_d,False,True,5
+LD Tokyo t3 N30,noise,False,False,5
+LD Tokyo t3 N30,round_d,False,False,5
+LD Tokyo t3 N30,pdhl_d,False,False,5
+LB_bin Tokyo t3 N60,noise,False,False,5
+LB_bin Tokyo t3 N60,round_d,False,True,4
+LB_bin Tokyo t3 N60,pdhl_d,False,False,5
+LB_rng Tokyo t3 N60,noise,False,True,5
+LB_rng Tokyo t3 N60,round_d,True,True,5
+LB_rng Tokyo t3 N60,pdhl_d,False,True,5
+LC1 Tokyo t3 N60,noise,False,False,5
+LC1 Tokyo t3 N60,round_d,False,True,5
+LC1 Tokyo t3 N60,pdhl_d,False,False,4
+LC2 Tokyo t3 N60,noise,False,False,5
+LC2 Tokyo t3 N60,round_d,False,True,5
+LC2 Tokyo t3 N60,pdhl_d,False,False,4
+LD Tokyo t3 N60,noise,False,False,5
+LD Tokyo t3 N60,round_d,False,True,5
+LD Tokyo t3 N60,pdhl_d,False,False,4
+LB_bin Tokyo tALL N5,noise,False,False,5
+LB_bin Tokyo tALL N5,round_d,True,True,5
+LB_bin Tokyo tALL N5,pdhl_d,True,True,5
+LB_rng Tokyo tALL N5,noise,False,True,5
+LB_rng Tokyo tALL N5,round_d,True,True,5
+LB_rng Tokyo tALL N5,pdhl_d,True,True,5
+LC1 Tokyo tALL N5,noise,False,True,5
+LC1 Tokyo tALL N5,round_d,True,True,5
+LC1 Tokyo tALL N5,pdhl_d,True,True,5
+LC2 Tokyo tALL N5,noise,False,False,5
+LC2 Tokyo tALL N5,round_d,True,True,5
+LC2 Tokyo tALL N5,pdhl_d,True,True,5
+LD Tokyo tALL N5,noise,False,False,5
+LD Tokyo tALL N5,round_d,False,True,5
+LD Tokyo tALL N5,pdhl_d,False,True,5
+LB_bin Tokyo tALL N15,noise,False,True,5
+LB_bin Tokyo tALL N15,round_d,True,True,5
+LB_bin Tokyo tALL N15,pdhl_d,True,True,5
+LB_rng Tokyo tALL N15,noise,False,False,5
+LB_rng Tokyo tALL N15,round_d,True,True,5
+LB_rng Tokyo tALL N15,pdhl_d,True,True,5
+LC1 Tokyo tALL N15,noise,False,False,5
+LC1 Tokyo tALL N15,round_d,False,True,5
+LC1 Tokyo tALL N15,pdhl_d,True,True,5
+LC2 Tokyo tALL N15,noise,False,True,5
+LC2 Tokyo tALL N15,round_d,True,True,5
+LC2 Tokyo tALL N15,pdhl_d,True,True,5
+LD Tokyo tALL N15,noise,False,True,5
+LD Tokyo tALL N15,round_d,False,False,5
+LD Tokyo tALL N15,pdhl_d,False,False,5
+LB_bin Tokyo tALL N30,noise,False,False,5
+LB_bin Tokyo tALL N30,round_d,False,True,5
+LB_bin Tokyo tALL N30,pdhl_d,True,True,5
+LB_rng Tokyo tALL N30,noise,False,False,5
+LB_rng Tokyo tALL N30,round_d,True,True,5
+LB_rng Tokyo tALL N30,pdhl_d,True,True,5
+LC1 Tokyo tALL N30,noise,False,True,5
+LC1 Tokyo tALL N30,round_d,False,True,5
+LC1 Tokyo tALL N30,pdhl_d,True,True,5
+LC2 Tokyo tALL N30,noise,False,True,5
+LC2 Tokyo tALL N30,round_d,False,True,5
+LC2 Tokyo tALL N30,pdhl_d,True,True,5
+LD Tokyo tALL N30,noise,False,False,5
+LD Tokyo tALL N30,round_d,False,True,5
+LD Tokyo tALL N30,pdhl_d,False,True,5
+LB_bin Tokyo tALL N60,noise,False,False,5
+LB_bin Tokyo tALL N60,round_d,False,True,5
+LB_bin Tokyo tALL N60,pdhl_d,False,True,5
+LB_rng Tokyo tALL N60,noise,False,True,5
+LB_rng Tokyo tALL N60,round_d,False,True,5
+LB_rng Tokyo tALL N60,pdhl_d,True,True,5
+LC1 Tokyo tALL N60,noise,False,True,5
+LC1 Tokyo tALL N60,round_d,False,True,5
+LC1 Tokyo tALL N60,pdhl_d,False,False,5
+LC2 Tokyo tALL N60,noise,False,True,5
+LC2 Tokyo tALL N60,round_d,False,True,5
+LC2 Tokyo tALL N60,pdhl_d,True,True,5
+LD Tokyo tALL N60,noise,False,True,5
+LD Tokyo tALL N60,round_d,False,True,5
+LD Tokyo tALL N60,pdhl_d,False,False,5

@@ -1,0 +1,87 @@
+target,kontrol,n_arah,blok,label,irisan,session,tercile,sisi,combo,N
+LA ATR_k0.75_rr2 London t3 sell,round_d,4,LA,LA,ter,London,3,sell,ATR_k0.75_rr2,120
+LA ATR_k0.75_rr2 Tokyo t3 buy,round_d,5,LA,LA,ter,Tokyo,3,buy,ATR_k0.75_rr2,120
+LA ATR_k1.5_rr1 NewYork t3 buy,round_d,5,LA,LA,ter,NewYork,3,buy,ATR_k1.5_rr1,120
+LA ATR_k1.5_rr1 NewYork t3 sell,round_d,5,LA,LA,ter,NewYork,3,sell,ATR_k1.5_rr1,120
+LA ATR_k1.5_rr1 Tokyo t3 buy,round_d,4,LA,LA,ter,Tokyo,3,buy,ATR_k1.5_rr1,120
+LA ATR_k1.5_rr1.4 Tokyo t3 buy,pdhl_d,4,LA,LA,ter,Tokyo,3,buy,ATR_k1.5_rr1.4,120
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,round_d,4,LA,LA,ter,Tokyo,3,sell,ATR_k1.5_rr1.4,120
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,pdhl_d,4,LA,LA,ter,Tokyo,3,sell,ATR_k1.5_rr1.4,120
+LA ATR_k1.5_rr2 London t1 buy,pdhl_d,4,LA,LA,ter,London,1,buy,ATR_k1.5_rr2,120
+LA ATR_k1.5_rr2 London t1 sell,pdhl_d,4,LA,LA,ter,London,1,sell,ATR_k1.5_rr2,120
+LA ATR_k1.5_rr2 Tokyo t2 buy,round_d,4,LA,LA,ter,Tokyo,2,buy,ATR_k1.5_rr2,120
+LA ATR_k1.5_rr2 Tokyo t3 sell,pdhl_d,5,LA,LA,ter,Tokyo,3,sell,ATR_k1.5_rr2,120
+LA ATR_k1_rr1.4 NewYork t3 buy,round_d,4,LA,LA,ter,NewYork,3,buy,ATR_k1_rr1.4,120
+LA ATR_k1_rr1.4 NewYork t3 sell,round_d,5,LA,LA,ter,NewYork,3,sell,ATR_k1_rr1.4,120
+LA FIX_100_140 London t1 buy,pdhl_d,4,LA,LA,ter,London,1,buy,FIX_100_140,120
+LA FIX_100_140 Tokyo t1 buy,pdhl_d,5,LA,LA,ter,Tokyo,1,buy,FIX_100_140,120
+LA FIX_100_140 Tokyo t2 buy,round_d,4,LA,LA,ter,Tokyo,2,buy,FIX_100_140,120
+LA FIX_100_140 Tokyo t3 sell,round_d,4,LA,LA,ter,Tokyo,3,sell,FIX_100_140,120
+LA ATR_k1.5_rr1.4 Tokyo t0 buy,noise,5,LA,LA,ses,Tokyo,0,buy,ATR_k1.5_rr1.4,120
+LA ATR_k1_rr2 London t0 buy,pdhl_d,4,LA,LA,ses,London,0,buy,ATR_k1_rr2,120
+LA ATR_k1_rr2 London t0 sell,pdhl_d,4,LA,LA,ses,London,0,sell,ATR_k1_rr2,120
+LA FIX_100_140 London t0 buy,round_d,4,LA,LA,ses,London,0,buy,FIX_100_140,120
+LA FIX_100_140 London t0 sell,pdhl_d,4,LA,LA,ses,London,0,sell,FIX_100_140,120
+LA FIX_100_140 Tokyo t0 buy,round_d,4,LA,LA,ses,Tokyo,0,buy,FIX_100_140,120
+LA FIX_100_140 Tokyo t0 buy,pdhl_d,5,LA,LA,ses,Tokyo,0,buy,FIX_100_140,120
+LB_bin London t1 N5,pdhl_d,5,WAKTU,LB_bin,ter,London,1,-,-,5
+LB_rng London t1 N5,pdhl_d,4,WAKTU,LB_rng,ter,London,1,-,-,5
+LC1 London t1 N5,pdhl_d,4,WAKTU,LC1,ter,London,1,-,-,5
+LC2 London t1 N5,pdhl_d,4,WAKTU,LC2,ter,London,1,-,-,5
+LB_bin London t2 N5,noise,5,WAKTU,LB_bin,ter,London,2,-,-,5
+LB_rng London t2 N60,round_d,4,WAKTU,LB_rng,ter,London,2,-,-,60
+LC1 London t2 N60,noise,4,WAKTU,LC1,ter,London,2,-,-,60
+LC2 London t2 N60,noise,4,WAKTU,LC2,ter,London,2,-,-,60
+LB_rng London t3 N5,round_d,4,WAKTU,LB_rng,ter,London,3,-,-,5
+LB_rng London t3 N5,pdhl_d,4,WAKTU,LB_rng,ter,London,3,-,-,5
+LD London t3 N30,round_d,4,WAKTU,LD,ter,London,3,-,-,30
+LB_bin London tALL N5,pdhl_d,5,WAKTU,LB_bin,ses,London,ALL,-,-,5
+LB_rng London tALL N5,round_d,4,WAKTU,LB_rng,ses,London,ALL,-,-,5
+LB_rng London tALL N5,pdhl_d,5,WAKTU,LB_rng,ses,London,ALL,-,-,5
+LC1 London tALL N5,pdhl_d,5,WAKTU,LC1,ses,London,ALL,-,-,5
+LC2 London tALL N5,pdhl_d,5,WAKTU,LC2,ses,London,ALL,-,-,5
+LB_bin London tALL N15,pdhl_d,5,WAKTU,LB_bin,ses,London,ALL,-,-,15
+LB_rng London tALL N15,pdhl_d,5,WAKTU,LB_rng,ses,London,ALL,-,-,15
+LB_bin London tALL N30,pdhl_d,5,WAKTU,LB_bin,ses,London,ALL,-,-,30
+LB_rng London tALL N30,round_d,4,WAKTU,LB_rng,ses,London,ALL,-,-,30
+LB_rng London tALL N30,pdhl_d,5,WAKTU,LB_rng,ses,London,ALL,-,-,30
+LB_rng London tALL N60,pdhl_d,5,WAKTU,LB_rng,ses,London,ALL,-,-,60
+LB_rng NewYork t3 N30,noise,5,WAKTU,LB_rng,ter,NewYork,3,-,-,30
+LB_bin Tokyo t1 N5,pdhl_d,4,WAKTU,LB_bin,ter,Tokyo,1,-,-,5
+LB_rng Tokyo t1 N5,pdhl_d,4,WAKTU,LB_rng,ter,Tokyo,1,-,-,5
+LC1 Tokyo t1 N5,pdhl_d,4,WAKTU,LC1,ter,Tokyo,1,-,-,5
+LC2 Tokyo t1 N5,pdhl_d,4,WAKTU,LC2,ter,Tokyo,1,-,-,5
+LB_bin Tokyo t1 N15,pdhl_d,4,WAKTU,LB_bin,ter,Tokyo,1,-,-,15
+LB_rng Tokyo t1 N15,pdhl_d,5,WAKTU,LB_rng,ter,Tokyo,1,-,-,15
+LB_bin Tokyo t1 N30,pdhl_d,4,WAKTU,LB_bin,ter,Tokyo,1,-,-,30
+LB_rng Tokyo t1 N30,pdhl_d,4,WAKTU,LB_rng,ter,Tokyo,1,-,-,30
+LC2 Tokyo t1 N30,pdhl_d,5,WAKTU,LC2,ter,Tokyo,1,-,-,30
+LB_rng Tokyo t1 N60,noise,4,WAKTU,LB_rng,ter,Tokyo,1,-,-,60
+LB_bin Tokyo t2 N15,round_d,4,WAKTU,LB_bin,ter,Tokyo,2,-,-,15
+LB_bin Tokyo t3 N5,pdhl_d,5,WAKTU,LB_bin,ter,Tokyo,3,-,-,5
+LB_rng Tokyo t3 N5,pdhl_d,5,WAKTU,LB_rng,ter,Tokyo,3,-,-,5
+LC2 Tokyo t3 N5,pdhl_d,4,WAKTU,LC2,ter,Tokyo,3,-,-,5
+LB_rng Tokyo t3 N15,pdhl_d,5,WAKTU,LB_rng,ter,Tokyo,3,-,-,15
+LB_rng Tokyo t3 N60,round_d,4,WAKTU,LB_rng,ter,Tokyo,3,-,-,60
+LB_bin Tokyo tALL N5,round_d,5,WAKTU,LB_bin,ses,Tokyo,ALL,-,-,5
+LB_bin Tokyo tALL N5,pdhl_d,5,WAKTU,LB_bin,ses,Tokyo,ALL,-,-,5
+LB_rng Tokyo tALL N5,round_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,5
+LB_rng Tokyo tALL N5,pdhl_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,5
+LC1 Tokyo tALL N5,round_d,5,WAKTU,LC1,ses,Tokyo,ALL,-,-,5
+LC1 Tokyo tALL N5,pdhl_d,5,WAKTU,LC1,ses,Tokyo,ALL,-,-,5
+LC2 Tokyo tALL N5,round_d,5,WAKTU,LC2,ses,Tokyo,ALL,-,-,5
+LC2 Tokyo tALL N5,pdhl_d,5,WAKTU,LC2,ses,Tokyo,ALL,-,-,5
+LB_bin Tokyo tALL N15,round_d,4,WAKTU,LB_bin,ses,Tokyo,ALL,-,-,15
+LB_bin Tokyo tALL N15,pdhl_d,4,WAKTU,LB_bin,ses,Tokyo,ALL,-,-,15
+LB_rng Tokyo tALL N15,round_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,15
+LB_rng Tokyo tALL N15,pdhl_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,15
+LC1 Tokyo tALL N15,pdhl_d,5,WAKTU,LC1,ses,Tokyo,ALL,-,-,15
+LC2 Tokyo tALL N15,round_d,5,WAKTU,LC2,ses,Tokyo,ALL,-,-,15
+LC2 Tokyo tALL N15,pdhl_d,5,WAKTU,LC2,ses,Tokyo,ALL,-,-,15
+LB_bin Tokyo tALL N30,pdhl_d,4,WAKTU,LB_bin,ses,Tokyo,ALL,-,-,30
+LB_rng Tokyo tALL N30,round_d,4,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,30
+LB_rng Tokyo tALL N30,pdhl_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,30
+LC1 Tokyo tALL N30,pdhl_d,5,WAKTU,LC1,ses,Tokyo,ALL,-,-,30
+LC2 Tokyo tALL N30,pdhl_d,5,WAKTU,LC2,ses,Tokyo,ALL,-,-,30
+LB_rng Tokyo tALL N60,pdhl_d,5,WAKTU,LB_rng,ses,Tokyo,ALL,-,-,60
+LC2 Tokyo tALL N60,pdhl_d,4,WAKTU,LC2,ses,Tokyo,ALL,-,-,60

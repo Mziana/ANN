@@ -3,8 +3,8 @@
 > File ini dibaca AI agent sebelum menulis kode apa pun.
 > Aturan WAJIB. Kalau tidak jelas, tanya dulu, jangan asumsi.
 >
-> Versi: 3.0
-> Update: 2026-10-05
+> Versi: 3.1
+> Update: 2026-10-12
 > Proyek: USDJPY Trading Bot
 
 ---
@@ -272,6 +272,22 @@ DILARANG: "Sepertinya OK", "Harusnya jalan".
 
 ---
 
+## Â§8A. ANTI-LOOPING PENELITIAN (perintah user 2026-10-12)
+
+> Kita membangun ini bukan untuk bahan penelitian panjang, tapi untuk
+> trading, bukan looping penelitian. Ingat itu.
+
+1. Setiap ronde WAJIB berakhir dengan vonis go/no-go trading, bukan
+   dengan usulan ronde investigasi berikutnya.
+2. Hasil negatif yang menghemat modal (slice gugur biaya, fitur
+   artefak) = output trading yang sah, bukan kegagalan.
+3. Ronde investigasi tambahan setelah vonis DILARANG atas inisiatif
+   AI - butuh persetujuan eksplisit user.
+4. Ukuran selesai ronde: keputusan dagang (lanjut models, pivot,
+   atau matikan pendekatan), bukan kelengkapan verifikasi.
+
+---
+
 ## Â§9. TESTING
 
 Minimal 3 test per fungsi publik.
@@ -298,6 +314,7 @@ Update `.ai/CONTEXT.md` saat: milestone, arah berubah, strategi baru, stack beru
 - Fitur vs Stabilitas â†’ Stabilitas.
 - Cantik vs Jalan â†’ Jalan dulu.
 - Asumsi vs Tanya â†’ Tanya.
+- Penelitian vs Trading â†’ Trading (Â§8A).
 
 ---
 

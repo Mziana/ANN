@@ -1,0 +1,261 @@
+target,n,kelas,fraksi,G1
+LA ATR_k0.75_rr2 London t3 buy,26107,-1|0|1,0.6751|0.0127|0.3121,False
+LA ATR_k0.75_rr2 London t3 sell,26107,-1|0|1,0.6952|0.0127|0.2921,False
+LA ATR_k0.75_rr2 Tokyo t3 buy,15866,-1|0|1,0.6849|0.0106|0.3046,False
+LA ATR_k0.75_rr2 Tokyo t3 sell,15866,-1|0|1,0.6920|0.0092|0.2988,False
+LA ATR_k1.5_rr1 London t3 buy,26107,-1|0|1,0.4708|0.0649|0.4643,False
+LA ATR_k1.5_rr1 London t3 sell,26107,-1|0|1,0.5059|0.0645|0.4295,False
+LA ATR_k1.5_rr1 NewYork t3 buy,11981,-1|0|1,0.4461|0.1483|0.4056,True
+LA ATR_k1.5_rr1 NewYork t3 sell,11981,-1|0|1,0.4531|0.1477|0.3991,True
+LA ATR_k1.5_rr1 Tokyo t3 buy,15866,-1|0|1,0.4957|0.0524|0.4519,False
+LA ATR_k1.5_rr1 Tokyo t3 sell,15866,-1|0|1,0.4978|0.0525|0.4497,False
+LA ATR_k1.5_rr1.4 London t3 buy,26107,-1|0|1,0.5176|0.1270|0.3555,True
+LA ATR_k1.5_rr1.4 London t3 sell,26107,-1|0|1,0.5547|0.1244|0.3209,True
+LA ATR_k1.5_rr1.4 Tokyo t3 buy,15866,-1|0|1,0.5454|0.1074|0.3472,True
+LA ATR_k1.5_rr1.4 Tokyo t3 sell,15866,-1|0|1,0.5507|0.0991|0.3502,False
+LA ATR_k1.5_rr2 London t1 buy,22561,-1|0|1,0.6454|0.0882|0.2664,False
+LA ATR_k1.5_rr2 London t1 sell,22561,-1|0|1,0.6634|0.0762|0.2604,False
+LA ATR_k1.5_rr2 London t2 buy,25183,-1|0|1,0.6177|0.1312|0.2511,True
+LA ATR_k1.5_rr2 London t2 sell,25183,-1|0|1,0.6340|0.1147|0.2513,True
+LA ATR_k1.5_rr2 London t3 buy,26107,-1|0|1,0.5468|0.2288|0.2244,True
+LA ATR_k1.5_rr2 London t3 sell,26107,-1|0|1,0.5841|0.2106|0.2053,True
+LA ATR_k1.5_rr2 Tokyo t2 buy,18872,-1|0|1,0.6224|0.1087|0.2689,True
+LA ATR_k1.5_rr2 Tokyo t2 sell,18872,-1|0|1,0.6533|0.0958|0.2510,False
+LA ATR_k1.5_rr2 Tokyo t3 buy,15866,-1|0|1,0.5840|0.1960|0.2200,True
+LA ATR_k1.5_rr2 Tokyo t3 sell,15866,-1|0|1,0.5911|0.1758|0.2331,True
+LA ATR_k1_rr1 London t3 buy,26107,-1|0|1,0.5169|0.0082|0.4749,False
+LA ATR_k1_rr1 London t3 sell,26107,-1|0|1,0.5340|0.0087|0.4574,False
+LA ATR_k1_rr1.4 London t3 buy,26107,-1|0|1,0.5828|0.0214|0.3958,False
+LA ATR_k1_rr1.4 London t3 sell,26107,-1|0|1,0.6088|0.0214|0.3698,False
+LA ATR_k1_rr1.4 NewYork t3 buy,11981,-1|0|1,0.5796|0.0548|0.3657,False
+LA ATR_k1_rr1.4 NewYork t3 sell,11981,-1|0|1,0.5901|0.0536|0.3563,False
+LA ATR_k1_rr2 London t3 buy,26107,-1|0|1,0.6441|0.0553|0.3006,False
+LA ATR_k1_rr2 London t3 sell,26107,-1|0|1,0.6715|0.0549|0.2735,False
+LA ATR_k1_rr2 Tokyo t3 buy,15866,-1|0|1,0.6612|0.0467|0.2921,False
+LA ATR_k1_rr2 Tokyo t3 sell,15866,-1|0|1,0.6684|0.0434|0.2882,False
+LA FIX_100_140 London t1 buy,22561,-1|0|1,0.4868|0.2341|0.2791,True
+LA FIX_100_140 London t1 sell,22561,-1|0|1,0.4889|0.2292|0.2819,True
+LA FIX_100_140 London t3 buy,26107,-1|0|1,0.5944|0.0119|0.3937,False
+LA FIX_100_140 London t3 sell,26107,-1|0|1,0.6166|0.0120|0.3714,False
+LA FIX_100_140 Sydney t1 buy,1149,-1|0|1,0.6249|0.1053|0.2698,True
+LA FIX_100_140 Sydney t1 sell,1149,-1|0|1,0.5239|0.1375|0.3386,True
+LA FIX_100_140 Tokyo t1 buy,19296,-1|0|1,0.4318|0.3228|0.2454,True
+LA FIX_100_140 Tokyo t1 sell,19296,-1|0|1,0.4503|0.3001|0.2496,True
+LA FIX_100_140 Tokyo t2 buy,18872,-1|0|1,0.5440|0.0974|0.3586,False
+LA FIX_100_140 Tokyo t2 sell,18872,-1|0|1,0.5800|0.0893|0.3307,False
+LA FIX_100_140 Tokyo t3 buy,15866,-1|0|1,0.5920|0.0278|0.3802,False
+LA FIX_100_140 Tokyo t3 sell,15866,-1|0|1,0.5997|0.0248|0.3755,False
+LA ATR_k1.5_rr1.4 London t0 buy,73851,-1|0|1,0.5592|0.0802|0.3606,False
+LA ATR_k1.5_rr1.4 London t0 sell,73851,-1|0|1,0.5858|0.0752|0.3390,False
+LA ATR_k1.5_rr1.4 Tokyo t0 buy,54034,-1|0|1,0.5774|0.0625|0.3601,False
+LA ATR_k1.5_rr1.4 Tokyo t0 sell,54034,-1|0|1,0.5961|0.0581|0.3458,False
+LA ATR_k1.5_rr2 London t0 buy,73851,-1|0|1,0.6011|0.1526|0.2463,True
+LA ATR_k1.5_rr2 London t0 sell,73851,-1|0|1,0.6253|0.1368|0.2378,True
+LA ATR_k1.5_rr2 Tokyo t0 buy,54034,-1|0|1,0.6226|0.1221|0.2553,True
+LA ATR_k1.5_rr2 Tokyo t0 sell,54034,-1|0|1,0.6428|0.1090|0.2481,True
+LA ATR_k1_rr2 London t0 buy,73851,-1|0|1,0.6723|0.0310|0.2968,False
+LA ATR_k1_rr2 London t0 sell,73851,-1|0|1,0.6940|0.0296|0.2765,False
+LA FIX_100_140 London t0 buy,73851,-1|0|1,0.5540|0.0992|0.3468,False
+LA FIX_100_140 London t0 sell,73851,-1|0|1,0.5671|0.0963|0.3367,False
+LA FIX_100_140 Tokyo t0 buy,54034,-1|0|1,0.5180|0.1575|0.3245,True
+LA FIX_100_140 Tokyo t0 sell,54034,-1|0|1,0.5395|0.1456|0.3149,True
+LB_bin London t1 N5,22561,0|1,0.3228|0.6772,True
+LB_rng London t1 N5,22561,kontinu,1.0000,True
+LC1 London t1 N5,22561,-1|0|1,0.3624|0.2491|0.3885,True
+LC2 London t1 N5,22561,-1|0|1,0.2466|0.4884|0.2650,True
+LD London t1 N5,22023,-1|1,0.4872|0.5128,True
+LB_bin London t1 N15,7465,0|1,0.1924|0.8076,True
+LB_rng London t1 N15,7465,kontinu,1.0000,True
+LC1 London t1 N15,7465,-1|0|1,0.4046|0.1476|0.4478,True
+LC2 London t1 N15,7465,-1|0|1,0.3348|0.2944|0.3708,True
+LD London t1 N15,7375,-1|1,0.4800|0.5200,True
+LB_bin London t1 N30,3675,0|1,0.1298|0.8702,True
+LB_rng London t1 N30,3675,kontinu,1.0000,True
+LC1 London t1 N30,3675,-1|0|1,0.4307|0.0936|0.4756,False
+LC2 London t1 N30,3675,-1|0|1,0.3747|0.2095|0.4158,True
+LD London t1 N30,3647,-1|1,0.4771|0.5229,True
+LB_bin London t1 N60,1856,0|1,0.0911|0.9089,False
+LB_rng London t1 N60,1856,kontinu,1.0000,True
+LC1 London t1 N60,1856,-1|0|1,0.4461|0.0663|0.4876,False
+LC2 London t1 N60,1856,-1|0|1,0.4089|0.1390|0.4520,True
+LD London t1 N60,1846,-1|1,0.4816|0.5184,True
+LB_bin London t2 N5,25183,0|1,0.1872|0.8128,True
+LB_rng London t2 N5,25183,kontinu,1.0000,True
+LC1 London t2 N5,25183,-1|0|1,0.4204|0.1438|0.4358,True
+LC2 London t2 N5,25183,-1|0|1,0.3429|0.2992|0.3578,True
+LD London t2 N5,24897,-1|1,0.4919|0.5081,True
+LB_bin London t2 N15,8341,0|1,0.1065|0.8935,True
+LB_rng London t2 N15,8341,kontinu,1.0000,True
+LC1 London t2 N15,8341,-1|0|1,0.4503|0.0803|0.4694,False
+LC2 London t2 N15,8341,-1|0|1,0.4050|0.1711|0.4239,True
+LD London t2 N15,8287,-1|1,0.4899|0.5101,True
+LB_bin London t2 N30,4185,0|1,0.0750|0.9250,False
+LB_rng London t2 N30,4185,kontinu,1.0000,True
+LC1 London t2 N30,4185,-1|0|1,0.4559|0.0605|0.4836,False
+LC2 London t2 N30,4185,-1|0|1,0.4222|0.1216|0.4562,True
+LD London t2 N30,4164,-1|1,0.4870|0.5130,True
+LB_bin London t2 N60,2140,0|1,0.0528|0.9472,False
+LB_rng London t2 N60,2140,kontinu,1.0000,True
+LC1 London t2 N60,2140,-1|0|1,0.4729|0.0425|0.4846,False
+LC2 London t2 N60,2140,-1|0|1,0.4509|0.0827|0.4664,False
+LD London t2 N60,2136,-1|1,0.4916|0.5084,True
+LB_bin London t3 N5,26107,0|1,0.1269|0.8731,True
+LB_rng London t3 N5,26107,kontinu,1.0000,True
+LC1 London t3 N5,26107,-1|0|1,0.4436|0.0972|0.4591,False
+LC2 London t3 N5,26107,-1|0|1,0.3945|0.1995|0.4060,True
+LD London t3 N5,25892,-1|1,0.4917|0.5083,True
+LB_bin London t3 N15,8813,0|1,0.0751|0.9249,False
+LB_rng London t3 N15,8813,kontinu,1.0000,True
+LC1 London t3 N15,8813,-1|0|1,0.4653|0.0578|0.4769,False
+LC2 London t3 N15,8813,-1|0|1,0.4348|0.1171|0.4481,True
+LD London t3 N15,8764,-1|1,0.4938|0.5062,True
+LB_bin London t3 N30,4457,0|1,0.0480|0.9520,False
+LB_rng London t3 N30,4457,kontinu,1.0000,True
+LC1 London t3 N30,4457,-1|0|1,0.4586|0.0357|0.5057,False
+LC2 London t3 N30,4457,-1|0|1,0.4398|0.0790|0.4813,False
+LD London t3 N30,4444,-1|1,0.4755|0.5245,True
+LB_bin London t3 N60,2170,0|1,0.0396|0.9604,False
+LB_rng London t3 N60,2170,kontinu,1.0000,True
+LC1 London t3 N60,2170,-1|0|1,0.4493|0.0327|0.5180,False
+LC2 London t3 N60,2170,-1|0|1,0.4300|0.0650|0.5051,False
+LD London t3 N60,2164,-1|1,0.4681|0.5319,True
+LB_bin London tALL N5,73851,0|1,0.2073|0.7927,True
+LB_rng London tALL N5,73851,kontinu,1.0000,True
+LC1 London tALL N5,73851,-1|0|1,0.4109|0.1595|0.4296,True
+LC2 London tALL N5,73851,-1|0|1,0.3317|0.3218|0.3465,True
+LD London tALL N5,72812,-1|1,0.4904|0.5096,True
+LB_bin London tALL N15,24619,0|1,0.1213|0.8787,True
+LB_rng London tALL N15,24619,kontinu,1.0000,True
+LC1 London tALL N15,24619,-1|0|1,0.4418|0.0927|0.4655,False
+LC2 London tALL N15,24619,-1|0|1,0.3944|0.1892|0.4165,True
+LD London tALL N15,24426,-1|1,0.4883|0.5117,True
+LB_bin London tALL N30,12317,0|1,0.0816|0.9184,False
+LB_rng London tALL N30,12317,kontinu,1.0000,True
+LC1 London tALL N30,12317,-1|0|1,0.4494|0.0614|0.4892,False
+LC2 London tALL N30,12317,-1|0|1,0.4144|0.1324|0.4532,True
+LD London tALL N30,12255,-1|1,0.4799|0.5201,True
+LB_bin London tALL N60,6166,0|1,0.0597|0.9403,False
+LB_rng London tALL N60,6166,kontinu,1.0000,True
+LC1 London tALL N60,6166,-1|0|1,0.4565|0.0462|0.4972,False
+LC2 London tALL N60,6166,-1|0|1,0.4309|0.0934|0.4757,False
+LD London tALL N60,6146,-1|1,0.4803|0.5197,True
+LB_bin NewYork t3 N5,11981,0|1,0.2190|0.7810,True
+LB_rng NewYork t3 N5,11981,kontinu,1.0000,True
+LC1 NewYork t3 N5,11981,-1|0|1,0.4030|0.1811|0.4159,True
+LC2 NewYork t3 N5,11981,-1|0|1,0.3152|0.3602|0.3245,True
+LD NewYork t3 N5,11867,-1|1,0.4927|0.5073,True
+LB_bin NewYork t3 N15,3916,0|1,0.1307|0.8693,True
+LB_rng NewYork t3 N15,3916,kontinu,1.0000,True
+LC1 NewYork t3 N15,3916,-1|0|1,0.4418|0.1052|0.4530,True
+LC2 NewYork t3 N15,3916,-1|0|1,0.3871|0.2219|0.3910,True
+LD NewYork t3 N15,3901,-1|1,0.4976|0.5024,True
+LB_bin NewYork t3 N30,2093,0|1,0.1018|0.8982,True
+LB_rng NewYork t3 N30,2093,kontinu,1.0000,True
+LC1 NewYork t3 N30,2093,-1|0|1,0.4429|0.0827|0.4744,False
+LC2 NewYork t3 N30,2093,-1|0|1,0.4013|0.1720|0.4267,True
+LD NewYork t3 N30,2089,-1|1,0.4864|0.5136,True
+LB_bin NewYork t3 N60,1182,0|1,0.0812|0.9188,False
+LB_rng NewYork t3 N60,1182,kontinu,1.0000,True
+LC1 NewYork t3 N60,1182,-1|0|1,0.4543|0.0711|0.4746,False
+LC2 NewYork t3 N60,1182,-1|0|1,0.4213|0.1337|0.4450,True
+LD NewYork t3 N60,1179,-1|1,0.4818|0.5182,True
+LB_bin Sydney t1 N5,1149,0|1,0.6327|0.3673,True
+LB_rng Sydney t1 N5,1149,kontinu,1.0000,False
+LC1 Sydney t1 N5,1149,-1|0|1,0.2185|0.5840|0.1976,True
+LC2 Sydney t1 N5,1149,-1|0|1,0.1010|0.8085|0.0905,False
+LD Sydney t1 N5,1095,-1|1,0.5151|0.4849,True
+LB_bin Sydney t1 N15,405,0|1,0.3778|0.6222,True
+LB_rng Sydney t1 N15,405,kontinu,1.0000,False
+LC1 Sydney t1 N15,405,-1|0|1,0.3778|0.3235|0.2988,True
+LC2 Sydney t1 N15,405,-1|0|1,0.2444|0.5432|0.2123,True
+LD Sydney t1 N15,397,-1|1,0.5088|0.4912,True
+LB_bin Sydney t1 N30,215,0|1,0.2372|0.7628,True
+LB_rng Sydney t1 N30,215,kontinu,1.0000,False
+LC1 Sydney t1 N30,215,-1|0|1,0.4372|0.2093|0.3535,True
+LC2 Sydney t1 N30,215,-1|0|1,0.3395|0.3767|0.2837,True
+LD Sydney t1 N30,214,-1|1,0.5607|0.4393,True
+LB_bin Sydney t1 N60,115,0|1,0.1739|0.8261,True
+LB_rng Sydney t1 N60,115,kontinu,1.0000,False
+LC1 Sydney t1 N60,115,-1|0|1,0.5478|0.1565|0.2957,True
+LC2 Sydney t1 N60,115,-1|0|1,0.4609|0.2609|0.2783,True
+LD Sydney t1 N60,115,-1|1,0.5913|0.4087,True
+LB_bin Tokyo t1 N5,19296,0|1,0.4093|0.5907,True
+LB_rng Tokyo t1 N5,19296,kontinu,1.0000,True
+LC1 Tokyo t1 N5,19296,-1|0|1,0.3333|0.3203|0.3464,True
+LC2 Tokyo t1 N5,19296,-1|0|1,0.2132|0.5673|0.2195,True
+LD Tokyo t1 N5,18762,-1|1,0.4932|0.5068,True
+LB_bin Tokyo t1 N15,6418,0|1,0.2435|0.7565,True
+LB_rng Tokyo t1 N15,6418,kontinu,1.0000,True
+LC1 Tokyo t1 N15,6418,-1|0|1,0.3947|0.1882|0.4171,True
+LC2 Tokyo t1 N15,6418,-1|0|1,0.3144|0.3514|0.3342,True
+LD Tokyo t1 N15,6303,-1|1,0.4887|0.5113,True
+LB_bin Tokyo t1 N30,3183,0|1,0.1703|0.8297,True
+LB_rng Tokyo t1 N30,3183,kontinu,1.0000,True
+LC1 Tokyo t1 N30,3183,-1|0|1,0.4263|0.1357|0.4380,True
+LC2 Tokyo t1 N30,3183,-1|0|1,0.3682|0.2520|0.3798,True
+LD Tokyo t1 N30,3137,-1|1,0.4960|0.5040,True
+LB_bin Tokyo t1 N60,1552,0|1,0.1186|0.8814,True
+LB_rng Tokyo t1 N60,1552,kontinu,1.0000,True
+LC1 Tokyo t1 N60,1552,-1|0|1,0.4343|0.0909|0.4749,False
+LC2 Tokyo t1 N60,1552,-1|0|1,0.3963|0.1682|0.4356,True
+LD Tokyo t1 N60,1542,-1|1,0.4818|0.5182,True
+LB_bin Tokyo t2 N5,18872,0|1,0.2579|0.7421,True
+LB_rng Tokyo t2 N5,18872,kontinu,1.0000,True
+LC1 Tokyo t2 N5,18872,-1|0|1,0.3897|0.1996|0.4107,True
+LC2 Tokyo t2 N5,18872,-1|0|1,0.3020|0.3810|0.3170,True
+LD Tokyo t2 N5,18593,-1|1,0.4905|0.5095,True
+LB_bin Tokyo t2 N15,6278,0|1,0.1434|0.8566,True
+LB_rng Tokyo t2 N15,6278,kontinu,1.0000,True
+LC1 Tokyo t2 N15,6278,-1|0|1,0.4278|0.1164|0.4557,True
+LC2 Tokyo t2 N15,6278,-1|0|1,0.3791|0.2160|0.4049,True
+LD Tokyo t2 N15,6223,-1|1,0.4848|0.5152,True
+LB_bin Tokyo t2 N30,3137,0|1,0.1020|0.8980,True
+LB_rng Tokyo t2 N30,3137,kontinu,1.0000,True
+LC1 Tokyo t2 N30,3137,-1|0|1,0.4415|0.0787|0.4798,False
+LC2 Tokyo t2 N30,3137,-1|0|1,0.4010|0.1543|0.4447,True
+LD Tokyo t2 N30,3121,-1|1,0.4790|0.5210,True
+LB_bin Tokyo t2 N60,1418,0|1,0.0790|0.9210,False
+LB_rng Tokyo t2 N60,1418,kontinu,1.0000,True
+LC1 Tokyo t2 N60,1418,-1|0|1,0.4386|0.0677|0.4937,False
+LC2 Tokyo t2 N60,1418,-1|0|1,0.4168|0.1185|0.4647,True
+LD Tokyo t2 N60,1410,-1|1,0.4695|0.5305,True
+LB_bin Tokyo t3 N5,15866,0|1,0.1678|0.8322,True
+LB_rng Tokyo t3 N5,15866,kontinu,1.0000,True
+LC1 Tokyo t3 N5,15866,-1|0|1,0.4270|0.1317|0.4414,True
+LC2 Tokyo t3 N5,15866,-1|0|1,0.3680|0.2527|0.3793,True
+LD Tokyo t3 N5,15734,-1|1,0.4927|0.5073,True
+LB_bin Tokyo t3 N15,5276,0|1,0.0927|0.9073,False
+LB_rng Tokyo t3 N15,5276,kontinu,1.0000,True
+LC1 Tokyo t3 N15,5276,-1|0|1,0.4591|0.0709|0.4701,False
+LC2 Tokyo t3 N15,5276,-1|0|1,0.4198|0.1444|0.4357,True
+LD Tokyo t3 N15,5254,-1|1,0.4951|0.5049,True
+LB_bin Tokyo t3 N30,2667,0|1,0.0664|0.9336,False
+LB_rng Tokyo t3 N30,2667,kontinu,1.0000,True
+LC1 Tokyo t3 N30,2667,-1|0|1,0.4721|0.0540|0.4739,False
+LC2 Tokyo t3 N30,2667,-1|0|1,0.4447|0.1061|0.4492,True
+LD Tokyo t3 N30,2657,-1|1,0.4972|0.5028,True
+LB_bin Tokyo t3 N60,1196,0|1,0.0652|0.9348,False
+LB_rng Tokyo t3 N60,1196,kontinu,1.0000,True
+LC1 Tokyo t3 N60,1196,-1|0|1,0.4607|0.0543|0.4849,False
+LC2 Tokyo t3 N60,1196,-1|0|1,0.4431|0.0886|0.4682,False
+LD Tokyo t3 N60,1194,-1|1,0.4916|0.5084,True
+LB_bin Tokyo tALL N5,54034,0|1,0.2855|0.7145,True
+LB_rng Tokyo tALL N5,54034,kontinu,1.0000,True
+LC1 Tokyo tALL N5,54034,-1|0|1,0.3805|0.2227|0.3968,True
+LC2 Tokyo tALL N5,54034,-1|0|1,0.2896|0.4099|0.3005,True
+LD Tokyo tALL N5,53089,-1|1,0.4921|0.5079,True
+LB_bin Tokyo tALL N15,17972,0|1,0.1643|0.8357,True
+LB_rng Tokyo tALL N15,17972,kontinu,1.0000,True
+LC1 Tokyo tALL N15,17972,-1|0|1,0.4252|0.1287|0.4461,True
+LC2 Tokyo tALL N15,17972,-1|0|1,0.3680|0.2433|0.3887,True
+LD Tokyo tALL N15,17780,-1|1,0.4892|0.5108,True
+LB_bin Tokyo tALL N30,8987,0|1,0.1156|0.8844,True
+LB_rng Tokyo tALL N30,8987,kontinu,1.0000,True
+LC1 Tokyo tALL N30,8987,-1|0|1,0.4452|0.0916|0.4632,False
+LC2 Tokyo tALL N30,8987,-1|0|1,0.4024|0.1746|0.4231,True
+LD Tokyo tALL N30,8915,-1|1,0.4904|0.5096,True
+LB_bin Tokyo tALL N60,4166,0|1,0.0898|0.9102,False
+LB_rng Tokyo tALL N60,4166,kontinu,1.0000,True
+LC1 Tokyo tALL N60,4166,-1|0|1,0.4434|0.0725|0.4842,False
+LC2 Tokyo tALL N60,4166,-1|0|1,0.4167|0.1284|0.4549,True
+LD Tokyo tALL N60,4146,-1|1,0.4805|0.5195,True

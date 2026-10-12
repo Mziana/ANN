@@ -41,6 +41,21 @@
 - Bisa salah, bisa halusinasi.
 - Klaim tanpa bukti → tulis "PERLU VERIFIKASI".
 
+### §1A. Peran ganda arsitek (keputusan user 2026-10-13, mengikat)
+
+- Sejak beberapa hari sebelum 2026-10-13, asisten de facto
+  merangkap ARSITEK: memutus tie-break/arbitrase (preseden:
+  arbitrase konflik B-3 + Amandemen C, 2026-10-12) selain tugas
+  asisten (penerjemah + penjaga alur + penyusun prompt + gerbang).
+- Aturan §26/§27 AGENTS.md TETAP berlaku dengan penyesuaian:
+  putusan arsitek oleh asisten WAJIB (a) verifikasi S-V penuh atas
+  bahan yang diperiksa sendiri, (b) terbuka untuk veto user
+  baris-per-baris, (c) dicatat sebagai putusan di SESSION_LOG.
+- Larangan §2 (no edit src/scripts/configs tanpa perintah
+  eksplisit, no commit, no perintah destruktif) TETAP penuh.
+- Coder dan auditor tetap pihak eksternal terpisah; pemisahan
+  itu TIDAK digabung.
+
 ---
 
 ## §2. BATAS EKSEKUSI FILE (HARD LIMIT)
