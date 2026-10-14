@@ -1,64 +1,51 @@
 ---
 session: ses_ef0b
-updated: 2026-10-13T19:07:41.586Z
+updated: 2026-10-14T01:39:54.377Z
 ---
 
 # Session Summary
 
 ## Goal
-Menentukan lewat uji diagnostik non-vonis di bed 2026 yang sama apakah paket flip-sinyal + resize ATR E1-E3 gugur kuat atau layak lanjut, tanpa menyentuh segel R1/R2 dan tanpa memakai bed 2025.
+Menjelaskan tabel replay tanpa-timer 26-Apr (atribusi E dan logika entry) dan mendorong evidence discovery R1/R2/R3/P2 ke GitHub main.
 
 ## Constraints & Preferences
-- Pemanasan R3 = NON-VONIS dengan tafsir asimetri: KALAH = ide gugur kuat, MENANG = tanpa makna, tetap wajib bed baru.
-- Hanya 2 perubahan dari R2 yang diizinkan: `side → -side` sesudah scan + SL 1,0×ATR / TP 1,5×ATR; scan E1/E2/E3 verbatim, H+10, entry OPEN t0+1, biaya 3 lapis literal, Q0=300, seed 1337, paruh-2026 sama.
-- Folder R2 + segel D-8 R2/R1 tidak disentuh; folder evidence terpisah `discovery-R3-pemanasan`; tanpa D-8/segel untuk pemanasan; satu paket tanpa ladder.
-- Data terbatas/berharga: gunakan ulang 2026 untuk pemanasan/pembanding; prinsip lama→baru untuk ronde vonis berikut.
-- User: sinyal tidak berubah, yang dibalik eksekusinya; hanya satu paket TP/SL yang dieksekusi.
+- Entry OPEN bar `t0+1` (BUY ask, SELL bid), race mulai `t0+2`, first-passage warisan R2; 1-posisi: tidak ada entry baru sebelum `busy_until`.
+- Scan WAJIB reuse `d1_events.py` folder R2 read-only; `side -> -side` satu-satunya ubahan P2-flipmurni, pagar R2 beku (SL=1,5xATR, TP=3,0xATR).
+- Push ke `https://github.com/Mziana/ANN` branch `main` langsung, jangan buat branch baru.
+- Jangan commit `events.jsonl` >100MB (limit GitHub); `__pycache__`/`*.log` diabaikan.
+- Klaim angka wajib dari output mentah di disk; tafsir asimetri pemanasan: KALAH=gugur kuat, MENANG=tanpa makna.
 
 ## Progress
 ### Done
-- [x] Vonis Final Discovery-R2: TOLAK E1/E2/E3 (8/8 sel s1/s2 false, s3/s4 true negatif); replikasi identik ~1e-12; selisih 5 event E2 = <1 ULP 2,8e-14; segel D-8 R2 tetap TERTUTUP.
-- [x] Definisi E1-E3 dikonfirmasi dari spec: E1 exhaustion-to-reversal N={4,5,6} D={2,5;3,5} t0 lawan body≥50%; E2 pullback-then-continuation expansion 20bar≥1,0×ATR + retrace≤40% ≤5bar; E3 compression-to-expansion range30≤0,5×median20window + break≥1,0pip.
-- [x] Tabel R1 barrier tetap 25pt 2024: median -3,59..-3,71 SL~57% TP~33% TIME 3-12%; R2 barrier ATR SL1,5×/TP3,0× 2026: median -1,32..-1,72 SL15-24% TP1,3-4,3% TIME71-84%.
-- [x] Posisi saat TIME-out dihitung dari kolom beku: R2 68.737 TIME WIN38,2% LOSS61,8% median -1,01pip; R1 10.989 TIME WIN16,1% LOSS83,8% median -1,22pip.
-- [x] Sempat-profit sebelum SL dihitung ketat `t_mfe<kbar`: R2 32,5% ketat/33,7% longgar median 1,0pip (10pt) p25-p75 0,5..2,3pip; R1 21,8%/26,8% median 1,0pip; per-family E1 35,5% E2 32,0% E3 31,7% di R2.
-- [x] Logika sisi dari `d1_events.py:152-155,209-214,240-243`: E1 ikut t0 reversal, E2 ikut expansion, E3 ikut break; flip = negasi satu kolom `side→-side`; SL/TP relatif side jadi otomatis tercermin.
-- [x] Angka fix program: R1 `TP_EVAL,SL_EVAL=2,5,2,5` pip; R2 `ATR_K_SL=1,5 ATR_RR=2,0` → SL=1,5×ATR TP=3,0×ATR; median realisasi SL~7,0pip TP~14,1pip.
-- [x] Bed dijelaskan + hari-UTC dihitung dari parquet: 2024 358.331bar/314hari, 2026 269.846bar/236hari, 2025 356.977bar/313hari; bed=dataset belum tersentuh + setting kunci + sekali jalan.
-- [x] Override user dicatat di log: R3-pemanasan di bed 2026; SL 1,0×ATR/TP1,5×ATR dikunci; brief `.ai/assistant/prompts/2026-10-13_pemanasan-R3-coder.md` ditulis.
-- [x] Coder pulang KALAH 7/7 sel (median -1,82..-2,24 CI<0 H1/H2 negatif TP~11% SL~31% TIME~58%; E3 DROP Q0 n=146); verifikasi byte-level 177.623 evaluable: flip-salah 0, sl!=1,0×ATR 0, tp!=1,5×ATR 0; arithmetika 186.904=177.623+106ambig+9.175cancel pas.
-- [x] Drift tak-diminta ditemukan: E2 162.592 vs R2 69.538 (2,34×), E3 146 vs 507, ATR_NA 7.517 vs 4.265, E1 ±1%; penyebab ambiguitas prose spec (resep ATR-M1, range expansion, loop pullback, >= vs >); coder akui baca folder R2 read-only → diterima dengan catatan untuk pemanasan.
-- [x] Dekomposisi EV pemanasan: TP10,6% mean+6,42 kontribusi+0,68; SL31,2% -5,72 kontribusi-1,78; TIME58,2% -0,46 kontribusi-0,27; total -1,37; gross TIME flip +0,48 vs R2 -0,1 → flip benar arah tapi <biaya 0,94.
-- [x] Koreksi terbuka: proposal pemanasan-2 flip-murni 70/141 ditarik karena salah nalar (SL-70 tetap SL-70 hanya pindah sisi); rumus butuh-72% dicabut karena abai TIME; varian tukar-jarak SL3,0×/TP1,5× dihitung ulang butuh ~11-19% vs langit-langit ~15% = abu-abu.
-- [x] Jawab bug-logic: tidak ada bug; pagar dekat selalu menang duluan apa pun labelnya; TP30/SL70 → TP duluan tapi TP-duluan≠untung.
+- [x] Perbaiki `KeyError: 1777245000` di `replay_notimer.py` — akar: `raw` epoch UTC vs `time` jam dinding broker + gap weekend 49,07 jam (last `2026-04-24 23:57 UTC`, first `2026-04-27 01:01 UTC`); ganti `pos_of` ke string `time` + assert `t0_pos`.
+- [x] Perbaiki `race()` di `replay_notimer.py`: MFE/MAE dipotong sampai bar exit `fav[:f+1]`, betulkan arah adverse SELL (`adv = ask_h - entry`).
+- [x] Reproduksi tabel tanpa-timer: `R3=78 R2=34`, `R3 dibuka=10 dilewat=68 net -5,20 (W4 L6)`, `R2 dibuka=5 dilewat=29 net -12,84 (W1 L4)`.
+- [x] Jelaskan logika entry dari `d1_events.py:scan_e1`: E1 run N + displacement D + reversal body>=50%, E2 expansion `|close-close20|>=ATR14` + retrace<=40% 1-5 bar, E3 kompresi range30<=0,5x median + break 1,0 pip.
+- [x] Verifikasi atribusi E: `R3 jendela 78 Counter({'E2':78})`, `R2 jendela 34 Counter({E2/single:33, E3/single:1})`; 10/10 R3-flip=E2, 5/5 R2-asli=E2/single (t0_pos 111573,111582,111590,111624,111668).
+- [x] Staging git `git add -A` lalu `git reset` 4x `events.jsonl` agar tidak ikut push.
 
 ### In Progress
-- [ ] Keputusan user: uji pemanasan-2 tukar-jarak SL3,0×ATR/TP1,5×ATR sinyal asli (satu perubahan, bed 2026 gratis) atau tutup buku jalur event-first.
-- [ ] Sisa jalur utama: replikasi R1 + vonis final R1.
+- [ ] Update `STATE.md` tanggal 2026-10-14 agar lolos pre-commit hook, lalu commit + push staged evidence ke `main`.
 
 ### Blocked
-- (none)
+- `git commit` GAGAL oleh hook: `GAGAL: .ai/STATE.md belum diupdate hari ini (2026-10-14) Update STATE.md dulu sebelum commit.` — push belum terjadi.
 
 ## Key Decisions
-- **Pemanasan di 2026 yang sama**: Data terbatas + contekan-gagal=mesin rusak lebih berharga dari hemat prosedural; tafsir asimetri menjaga kejujuran.
-- **Bundel flip+resize sekarang, bedah kalau kalah**: Hemat bed 2025 sekarang; harga kebingungan inferensi dibayar nanti jika kalah.
-- **SL 1,0×ATR / TP 1,5×ATR dikunci**: Contoh jadi angka beku atas permintaan user.
-- **Bed R3-vonisse = 2025**: Tahun penuh, biaya tier 1,5 sama, apel-ke-apel vs R2; 2023-H1 disimpan karena regime SA-03 tier 3,0.
-- **Terima pelanggaran baca-R2 dengan catatan**: Read-only, divergen bukan jiplakan, daya bunuh KALAH tak terpengaruh; di ronde vonis = gagal.
-- **Tarik proposal flip-murni**: Logika pagar-dekat-menang membuktikan cerminan R2 tetap kalah; usulan dibatalkan sebelum coder jalan.
+- **Mapping waktu pakai string `time`, bukan epoch `raw`**: karena label `+0000` adalah jam dinding broker, epoch UTC sejati selisih 3 jam + libur weekend.
+- **Label E2 prosedural, bukan substantif**: replay buka entri pertama-di-file; sinyal E1/E3 semenit yang t0+pagar identik gugur sebagai dilewat, hasil baris sama.
+- **Exclude 4x `events.jsonl` (112-258MB) dari push**: `R1 258.64MB, R3 124.16MB, P2 116.69MB, R2 112.1MB` melebihi limit GitHub; `appendix_D8.sealed.json` tetap ikut.
 
 ## Next Steps
-1. User pilih: kunci pemanasan-2 SL3,0×ATR/TP1,5×ATR sinyal asli (saya tulis brief) atau tutup jalur event-first.
-2. Jika kunci: paste brief ke coder, verifikasi byte-level sama (side==side_scan, sl==3,0×atr, tp==1,5×atr).
-3. Kembali ke jalur utama: minta laporan replikasi R1, verifikasi, jatuhkan vonis final R1.
-4. Backlog hardening spec: kunci operasional resep ATR-M1, definisi range expansion, batas loop pullback, inklusivitas batas.
+1. Update minimal `.ai/STATE.md` (tanggal 2026-10-14) + catat hasil P2-flipmurni KALAH 8/8 ke `SESSION_LOG.md`/`TASKS.md`.
+2. `git commit -m "docs(sync): discovery R1/R2/R3/P2 evidence + state 2026-10-13/14"` lalu `git push origin main`, verifikasi di `github.com/Mziana/ANN`.
+3. Tunggu user paste brief replikasi R1 ke auditor eksternal, lalu vonis final R1.
 
 ## Critical Context
-- R2 TOLAK final; segel D-8 tak pernah dibuka; syarat buka=kandidat beku; koreksi brief C-R2-3 TP1,33-4,34%/SL14,60-24,26%.
-- Napas 10pt = median MFE kondisional sepertiga SL sempat hijau; ombak 42pt = excursion simetris ~26-35%; pagar dekat menang lomba di sisi mana pun.
-- Horizon 10mnt: ~80% TIME, biaya ~0,92-0,94pip > drift 0,8pip → kedua arah tenggelam; impas contoh 1,0/1,5 butuh ~49% vs langit-langit ~17%.
-- Error ditemui: `SyntaxError unmatched ')'` di one-liner stats; `KeyError 'atr'` (kolom bernama `atr_pips`); `ArrowInvalid No match FieldRef.Name(T)` (kolom bernama `time`).
-- Coder artefak: ledger/manifest 17:35Z, run 00:50, hash `63404598…2cb502` + `fdbf8105…67000f68` 2-run identik, ruff hijau, fungsi<50baris.
+- Error awal: `r["_t"], r["_t0pos"] = r["t0"], pos_of[int(dt.timestamp())]` → `KeyError: 1777245000`; cek `df['time'].iloc[0]=2026-01-01T23:00:00+0000 raw=1767315600`.
+- Bukti t0_pos: `2026-04-26T23:10+0000 pos 111573 raw 1777255800`; replay output baris R3 no1 `23:10 BUY entry 159.516 exit 159.556 TP-16 net +2,90`, R2 no4 `00:01 SELL entry 159.533 exit 159.495 TP-43 net +7,08`.
+- P2-flipmurni run selesai 2026-10-14 02:26 (`summary.json` ada) tapi belum masuk `SESSION_LOG.md`; anti-drift: `n total 90525 = R2, E2 eval 69538 = R2, E3 eval 507 = R2`.
+- Remote: `origin https://github.com/Mziana/ANN (fetch/push)`; `.gitignore` tidak mengabaikan `events.jsonl` sehingga harus `git reset` manual.
+- User lelah/ingin menyerah — sudah diberikan pesan istirahat + hotline Kemenkes 119 ext 8 sebelum request push.
 
 ## File Operations
 ### Read
@@ -72,17 +59,24 @@ Menentukan lewat uji diagnostik non-vonis di bed 2026 yang sama apakah paket fli
 - `D:\ANN\.ai\TASKS.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-P2-flipmurni.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_replikasi-discovery-R1-auditor.md`
 - `D:\ANN\.ai\backup\2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`
 - `D:\ANN\README.md`
+- `D:\ANN\data`
 - `D:\ANN\reports\governance\2026-10-12\arsitek\spesifikasi-fingerprint.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_ledger_prarun.md`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_manifest.json`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d1_events.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d2_outcomes.py`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\run_stdout.log`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\summary.json`
+- `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef37.md`
 
 ### Modified
 - `D:\ANN\.ai\CONTEXT.md`
@@ -94,6 +88,7 @@ Menentukan lewat uji diagnostik non-vonis di bed 2026 yang sama apakah paket fli
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_audit-spec-R2-auditor.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-P2-flipmurni.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_reaudit-spec-R1-auditor.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_reaudit-spec-R2-auditor.md`
@@ -102,3 +97,6 @@ Menentukan lewat uji diagnostik non-vonis di bed 2026 yang sama apakah paket fli
 - `D:\ANN\README.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R2.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\run_flipmurni.py`
