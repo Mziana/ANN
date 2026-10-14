@@ -103,6 +103,9 @@ vs render — batas keras dari user. Batas ">600 baris" belum tersentuh, tapi
 - [ ] Draf `spesifikasi-fingerprint.md` DIPENSIUNKAN (arsip)
 - [x] **P2-flipmurni SELESAI 2026-10-14: KALAH 8/8** (jalur flip ditutup;
       med stacked -1,52..-1,89; replay 1-posisi negatif semua sel)
+- [x] **R4-M15-native SELESAI 2026-10-14: TOLAK 9/9 sel** (M15 sebagai basis,
+      ambang ATR bukan pip, bed 2024; audit independen nol bug material;
+      E1 proven berarah terbalik, E2/E3 netral-arah)
 - [ ] Spesifikasi Metode Target v1 (definisi sukses trading) — setelah Discovery-R1
 
 ## Milestone 4: Baseline Model — BELUM DIMULAI

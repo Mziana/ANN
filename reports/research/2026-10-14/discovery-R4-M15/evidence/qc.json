@@ -1,0 +1,174 @@
+{
+  "spec": "spesifikasi-discovery-R4-M15.md (PRA-REGISTRASI, 2026-10-14)",
+  "run_date": "2026-10-14",
+  "bed": "2024",
+  "versions": {
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "python": "3.12.8"
+  },
+  "session_fingerprint": "Tokyo:Asia/Tokyo:9-18|London:Europe/London:8-16|New York:America/New_York:8-17|Sydney:Australia/Sydney:8-16|priority=London>NewYork>Tokyo>Sydney|xtab=is_tokyo:0-9,is_london:8-16,is_ny:13-22,is_sydney:21-6",
+  "session_fingerprint_expected": "Tokyo:Asia/Tokyo:9-18|London:Europe/London:8-16|New York:America/New_York:8-17|Sydney:Australia/Sydney:8-16|priority=London>NewYork>Tokyo>Sydney|xtab=is_tokyo:0-9,is_london:8-16,is_ny:13-22,is_sydney:21-6",
+  "session_fingerprint_match": true,
+  "path_whitelist": {
+    "allowed": [
+      "D:\\ANN\\data\\processed\\M1\\usdjpy_m1_2024.parquet"
+    ],
+    "accessed": [
+      "D:\\ANN\\data\\processed\\M1\\usdjpy_m1_2024.parquet"
+    ],
+    "forbidden_years": [
+      "2023",
+      "2025",
+      "2026"
+    ],
+    "violations": 0
+  },
+  "whitelist_note": "hanya usdjpy_m1_2024.parquet yang dibaca; tidak ada file 2023/2025/2026 yang diakses",
+  "m1_rows_source": 358331,
+  "m15_buckets_total": 23909,
+  "m15_buckets_full_15": 23758,
+  "m15_buckets_partial_dropped": 151,
+  "m15_bars": 23758,
+  "m15_contiguity_pct": 98.60672643852338,
+  "m15_contiguity_pairs_ok": 23426,
+  "m15_noncontig_pairs": 331,
+  "spread_per_bucket_is_max_conservative": true,
+  "pip_definition": {
+    "PIP_price_units": 0.01,
+    "basis": "USDJPY 1 pip = 0.01 harga; spread_pips dikonversi ke satuan harga dengan spread_price = spread_pips * PIP"
+  },
+  "spread_pips_stats": {
+    "mean": 0.8815977775907062,
+    "median": 0.8,
+    "p95": 1.5,
+    "max": 21.6
+  },
+  "atr_available_pct": 100.0,
+  "atr_first_valid_index": 0,
+  "atr_note": "tr[0]=h[0]-l[0] (Wilder); ewm adjust=False; kausal",
+  "cost_table": {
+    "COST_OBS": {
+      "London": 0.61,
+      "NewYork": 0.69,
+      "Tokyo": 0.62,
+      "Sydney": 0.8,
+      "default": 0.65
+    },
+    "COST_P95": {
+      "London": 0.8,
+      "NewYork": 1.2,
+      "Tokyo": 0.9,
+      "Sydney": 1.5,
+      "default": 1.0
+    },
+    "obs": "COST_OBS+0.3",
+    "cons": "obs+0.2",
+    "stress": "COST_P95+0.6"
+  },
+  "barrier": {
+    "sl_atr_mult": 1.5,
+    "tp_atr_mult": 3.0,
+    "rr": 2.0,
+    "race_bars": 10,
+    "entry": "OPEN bar t0+1",
+    "twin_bar": "AMBIGUOUS (buang + hitung eksplisit)",
+    "time_exit": "close bar ke-10 sisi keluar"
+  },
+  "cancel_order": [
+    "GAP",
+    "ATR_NA",
+    "OFF_SESSION"
+  ],
+  "events_per_cell": {
+    "E1_N3_k1.0": 438,
+    "E1_N3_k1.5": 202,
+    "E1_N4_k1.0": 349,
+    "E1_N4_k1.5": 200,
+    "E1_N6_k1.0": 135,
+    "E1_N6_k1.5": 114,
+    "E2_W12_k1.5": 6106,
+    "E2_W12_k2.5": 4022,
+    "E3_W16": 149
+  },
+  "cancel_per_cell": {
+    "E1_N3_k1.0": {
+      "GAP": 39,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E1_N3_k1.5": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E1_N4_k1.0": {
+      "GAP": 30,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E1_N4_k1.5": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E1_N6_k1.0": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E1_N6_k1.5": {
+      "GAP": 9,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E2_W12_k1.5": {
+      "GAP": 653,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E2_W12_k2.5": {
+      "GAP": 369,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "E3_W16": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    }
+  },
+  "n_eval_per_cell": {
+    "E1_N3_k1.0": 398,
+    "E1_N3_k1.5": 189,
+    "E1_N4_k1.0": 315,
+    "E1_N4_k1.5": 186,
+    "E1_N6_k1.0": 121,
+    "E1_N6_k1.5": 104,
+    "E2_W12_k1.5": 5422,
+    "E2_W12_k2.5": 3637,
+    "E3_W16": 136
+  },
+  "determinism_check": {
+    "n_checked": 50,
+    "max_abs_gross_diff": 0.0,
+    "max_abs_net_obs_diff": 0.0,
+    "max_abs_mfe_diff": 0.0,
+    "max_abs_mae_diff": 0.0,
+    "outcome_mismatch": 0,
+    "passed": true
+  },
+  "shadow_note": "kaki B cermin memakai entry/waktu/barrier/biaya identik; tidak mengubah vonis",
+  "verdicts": {
+    "E1_N3_k1.0": "TOLAK",
+    "E1_N3_k1.5": "TOLAK",
+    "E1_N4_k1.0": "TOLAK",
+    "E1_N4_k1.5": "TOLAK",
+    "E1_N6_k1.0": "TOLAK",
+    "E1_N6_k1.5": "TOLAK",
+    "E2_W12_k1.5": "TOLAK",
+    "E2_W12_k2.5": "TOLAK",
+    "E3_W16": "TOLAK"
+  },
+  "total_events_rows": 11715
+}

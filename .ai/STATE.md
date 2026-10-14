@@ -1,6 +1,6 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-14 (catat hasil P2-flipmurni)
+**Update terakhir:** 2026-10-14 (R4-M15-native: TOLAK 9/9 sel, audit LOLOS)
 **Fase:** Milestone 1 (Data) + 2 (EDA) SELESAI. Milestone 3 (Metode) BERJALAN
 dan TERBLOKIR di persetujuan user.
 **Status ronde terakhir:** EDA-07 L3-1 selesai + re-audit LULUS PROSEDURAL +
@@ -19,6 +19,25 @@ tetap TERTUTUP — tak ada KANDIDAT).
 beku, bed 2026; med stacked -1,52..-1,89; replay 1-posisi negatif semua
 sel; anti-drift LOLOS n=90.525). **Jalur flip DITUTUP** (kill-signal
 kedua setelah R3-KALAH 7/7).
+
+**R4-M15-native SELESAI 2026-10-14: TOLAK 9/9 sel.** M15 jadi basis,
+ambang ATR-based (bukan pip) — desain ulang setelah run tercemar
+dikarantina. Bed 2024, 2025/2026 tetap terkunci. 23.758 bar M15.
+Median net_obs_A: E1 −10,4..−15,5; E2 −6,61/−7,40; E3 −10,06. **Ujung
+atas CI pun negatif semua sel** (−0,41..−3,51). P(profit) dengan timeout
+ikut dihitung 27,96–42,98%, tapi **impas nominal 33,3% itu salah**: RR
+terealisasi hanya 1,09–1,67 karena exit TIME, jadi impas nyata 37,5–47,8%
+dan **9/9 sel tetap gagal**. Shadow: **E1 arah-buta TERBALIK**
+(Edge A 0,37–0,46 < 0,5 di 6/6 sel, kaki B di atas 0,5); E2 simetris;
+E3 kaki A sedikit di atas 0,5 (koreksi atas "netral"). Nol bug material
+(auditor independen). Lihat SESSION_LOG.
+**Audit addendum 2026-10-14:** `reports/governance/2026-10-14/Audit/
+addendum-R4-M15.md` — 3 temuan: (1) label `winrate` sebenarnya
+`TP/(TP+SL)` dengan TIME dibuang; (2) exit TIME SELL di BID vs BUY di ASK
+(baris 326 `r4_m15.py`) sehingga 19% event dua kaki rugi, invarian PnL
+tidak berlaku untuk barrier; (3) ambang impas nominal keliru. Vonis tidak
+berubah. Batasan: bed 2024 tidak boleh di-run ulang dengan aturan exit
+berbeda.
 Audit R2 = CATATAN; Amandemen-R2-1 SUDAH diterapkan 2026-10-13
 (disetujui user paket).
 **Progress keseluruhan:** ~60% (data+EDA selesai, metode belum)

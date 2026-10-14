@@ -1,0 +1,37 @@
+{
+    "run":  "R4-M15-native discovery",
+    "run_date":  "2026-10-14",
+    "bed":  "2024",
+    "spec":  "reports/governance/2026-10-14/arsitek/spesifikasi-discovery-R4-M15.md",
+    "spec_status":  "PRA-REGISTRASI",
+    "whitelist":  [
+                      "D:\\ANN\\data\\processed\\M1\\usdjpy_m1_2024.parquet"
+                  ],
+    "forbidden_years":  [
+                            "2023",
+                            "2025",
+                            "2026"
+                        ],
+    "hash_algorithm":  "SHA-256",
+    "written_before_run":  true,
+    "files":  [
+                  {
+                      "role":  "input_m1_parquet_2024",
+                      "path":  "D:\\ANN\\data\\processed\\M1\\usdjpy_m1_2024.parquet",
+                      "bytes":  7186113,
+                      "sha256":  "69b2c026d3ac52d47b2d29e6bb80a1747f32a46cc611ef7bebbdb3f74e213cac"
+                  },
+                  {
+                      "role":  "input_session_definition",
+                      "path":  "D:\\ANN\\notebooks\\scalping\\_eda_common.py",
+                      "bytes":  4067,
+                      "sha256":  "82f02ceb19754c79fbe1d9e6e3d87fc3c0c6e02201843512efdddac9917c6559"
+                  },
+                  {
+                      "role":  "code_run_script",
+                      "path":  "D:\\ANN\\reports\\research\\2026-10-14\\discovery-R4-M15\\evidence\\r4_m15.py",
+                      "bytes":  31391,
+                      "sha256":  "3796a7ffabf830ddb5d98dc542c5bf1abd0d8a2229c9cebdf8063155904ccb86"
+                  }
+              ]
+}

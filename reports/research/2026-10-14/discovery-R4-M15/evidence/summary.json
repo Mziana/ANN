@@ -1,0 +1,1081 @@
+{
+  "E1_N3_k1.0": {
+    "family": "E1",
+    "params": {
+      "N": 3,
+      "k": 1.0
+    },
+    "n_raw": 438,
+    "cancel": {
+      "GAP": 39,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 39,
+    "n_after_cancel": 399,
+    "n_ambiguous_A": 1,
+    "n_ambiguous_B": 3,
+    "n_eval": 398,
+    "outcome_A": {
+      "TP": 44,
+      "SL": 210,
+      "TIME": 144,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 60,
+      "SL": 161,
+      "TIME": 175,
+      "AMBIGUOUS": 2
+    },
+    "decisive_A": 254,
+    "decisive_B": 221,
+    "winrate_decisive_A": 0.1732283464566929,
+    "winrate_decisive_B": 0.27149321266968324,
+    "median_net_obs_A": -11.955000000001125,
+    "median_net_obs_B": -4.194999999997988,
+    "median_net_obs_A_paired_subset": -11.955000000001125,
+    "median_net_cons_A": -12.155000000001126,
+    "median_net_stress_A": -12.700000000001125,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 44,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 60,
+      "A=SL|B=SL": 40,
+      "A=SL|B=TIME": 108,
+      "A=SL|B=AMBIGUOUS": 2,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 77,
+      "A=TIME|B=TIME": 67,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 396,
+      "median_netA_minus_netB_obs": -6.450000000000955,
+      "share_gt0": 0.4444444444444444,
+      "median_MFE_A_pips": 12.100000000000932,
+      "median_MFE_B_pips": 16.799999999999216,
+      "median_MFE_A_R": 0.36944998715196,
+      "median_MFE_B_R": 0.49970354630830804,
+      "median_MAE_A_pips": 17.549999999999955,
+      "median_MAE_B_pips": 13.100000000000023,
+      "share_MFE_A_ge_1R": 0.12562814070351758,
+      "share_MFE_B_ge_1R": 0.17587939698492464
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -11.955000000001125,
+      "bootstrap_median_of_medians": -10.709999999998477,
+      "ci95_lower": -14.099999999999545,
+      "ci95_upper": -7.490000000002615,
+      "n_clusters_days": 209,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 199,
+      "H1_median_netA_obs": -10.499999999999408,
+      "H2_n": 199,
+      "H2_median_netA_obs": -14.320000000001455,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 163,
+        "median_netA_obs": -12.010000000001842,
+        "median_netB_obs": null
+      },
+      "NewYork": {
+        "n": 55,
+        "median_netA_obs": -4.990000000002047,
+        "median_netB_obs": -4.090000000000591
+      },
+      "Tokyo": {
+        "n": 143,
+        "median_netA_obs": -13.919999999999545,
+        "median_netB_obs": null
+      },
+      "Sydney": {
+        "n": 37,
+        "median_netA_obs": -12.100000000001364,
+        "median_netB_obs": -6.800000000001637
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E1_N3_k1.5": {
+    "family": "E1",
+    "params": {
+      "N": 3,
+      "k": 1.5
+    },
+    "n_raw": 202,
+    "cancel": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 13,
+    "n_after_cancel": 189,
+    "n_ambiguous_A": 0,
+    "n_ambiguous_B": 0,
+    "n_eval": 189,
+    "outcome_A": {
+      "TP": 26,
+      "SL": 98,
+      "TIME": 65,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 28,
+      "SL": 87,
+      "TIME": 74,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 124,
+    "decisive_B": 115,
+    "winrate_decisive_A": 0.20967741935483872,
+    "winrate_decisive_B": 0.24347826086956523,
+    "median_net_obs_A": -10.799999999997999,
+    "median_net_obs_B": -5.9000000000001815,
+    "median_net_obs_A_paired_subset": -10.799999999997999,
+    "median_net_cons_A": -10.999999999998,
+    "median_net_stress_A": -11.799999999997999,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 26,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 28,
+      "A=SL|B=SL": 23,
+      "A=SL|B=TIME": 47,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 38,
+      "A=TIME|B=TIME": 27,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 189,
+      "median_netA_minus_netB_obs": -5.700000000001637,
+      "share_gt0": 0.4444444444444444,
+      "median_MFE_A_pips": 13.700000000002888,
+      "median_MFE_B_pips": 15.999999999999659,
+      "median_MFE_A_R": 0.4148441269534684,
+      "median_MFE_B_R": 0.5038881988336931,
+      "median_MAE_A_pips": 16.59999999999968,
+      "median_MAE_B_pips": 14.400000000000546,
+      "share_MFE_A_ge_1R": 0.15873015873015872,
+      "share_MFE_B_ge_1R": 0.164021164021164
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -10.799999999997999,
+      "bootstrap_median_of_medians": -11.36000000000016,
+      "ci95_lower": -15.420874999998281,
+      "ci95_upper": -7.309999999999295,
+      "n_clusters_days": 140,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 93,
+      "H1_median_netA_obs": -10.499999999999408,
+      "H2_n": 96,
+      "H2_median_netA_obs": -15.265000000000306,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 75,
+        "median_netA_obs": -9.410000000000796,
+        "median_netB_obs": -7.91000000000216
+      },
+      "NewYork": {
+        "n": 20,
+        "median_netA_obs": -7.439999999999534,
+        "median_netB_obs": 0.3099999999976807
+      },
+      "Tokyo": {
+        "n": 76,
+        "median_netA_obs": -13.12000000000141,
+        "median_netB_obs": -4.220000000001546
+      },
+      "Sydney": {
+        "n": 18,
+        "median_netA_obs": -12.449999999998772,
+        "median_netB_obs": -10.550000000001068
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E1_N4_k1.0": {
+    "family": "E1",
+    "params": {
+      "N": 4,
+      "k": 1.0
+    },
+    "n_raw": 349,
+    "cancel": {
+      "GAP": 30,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 30,
+    "n_after_cancel": 319,
+    "n_ambiguous_A": 4,
+    "n_ambiguous_B": 3,
+    "n_eval": 315,
+    "outcome_A": {
+      "TP": 38,
+      "SL": 159,
+      "TIME": 118,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 54,
+      "SL": 136,
+      "TIME": 125,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 197,
+    "decisive_B": 190,
+    "winrate_decisive_A": 0.19289340101522842,
+    "winrate_decisive_B": 0.28421052631578947,
+    "median_net_obs_A": -10.709999999998477,
+    "median_net_obs_B": -6.59000000000116,
+    "median_net_obs_A_paired_subset": -10.709999999998477,
+    "median_net_cons_A": -10.909999999998476,
+    "median_net_stress_A": -11.199999999998477,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 38,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 54,
+      "A=SL|B=SL": 29,
+      "A=SL|B=TIME": 76,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 69,
+      "A=TIME|B=TIME": 49,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 315,
+      "median_netA_minus_netB_obs": -5.500000000000682,
+      "share_gt0": 0.4444444444444444,
+      "median_MFE_A_pips": 13.199999999997658,
+      "median_MFE_B_pips": 14.400000000000546,
+      "median_MFE_A_R": 0.3983039615073142,
+      "median_MFE_B_R": 0.4909752251585279,
+      "median_MAE_A_pips": 15.400000000002478,
+      "median_MAE_B_pips": 14.000000000001478,
+      "share_MFE_A_ge_1R": 0.13015873015873017,
+      "share_MFE_B_ge_1R": 0.2
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -10.709999999998477,
+      "bootstrap_median_of_medians": -10.509999999998465,
+      "ci95_lower": -14.054999999999783,
+      "ci95_upper": -6.0500000000016145,
+      "n_clusters_days": 184,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 154,
+      "H1_median_netA_obs": -8.509999999998863,
+      "H2_n": 161,
+      "H2_median_netA_obs": -15.509999999998659,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 123,
+        "median_netA_obs": -10.709999999998477,
+        "median_netB_obs": -8.21000000000075
+      },
+      "NewYork": {
+        "n": 48,
+        "median_netA_obs": -5.440000000001353,
+        "median_netB_obs": 0.21000000000004548
+      },
+      "Tokyo": {
+        "n": 116,
+        "median_netA_obs": -13.919999999999545,
+        "median_netB_obs": -8.520000000000762
+      },
+      "Sydney": {
+        "n": 28,
+        "median_netA_obs": -10.949999999998715,
+        "median_netB_obs": -0.9000000000004658
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E1_N4_k1.5": {
+    "family": "E1",
+    "params": {
+      "N": 4,
+      "k": 1.5
+    },
+    "n_raw": 200,
+    "cancel": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 13,
+    "n_after_cancel": 187,
+    "n_ambiguous_A": 1,
+    "n_ambiguous_B": 1,
+    "n_eval": 186,
+    "outcome_A": {
+      "TP": 17,
+      "SL": 107,
+      "TIME": 62,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 37,
+      "SL": 77,
+      "TIME": 72,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 124,
+    "decisive_B": 114,
+    "winrate_decisive_A": 0.13709677419354838,
+    "winrate_decisive_B": 0.32456140350877194,
+    "median_net_obs_A": -15.454999999998181,
+    "median_net_obs_B": -0.7600000000021259,
+    "median_net_obs_A_paired_subset": -15.454999999998181,
+    "median_net_cons_A": -15.65499999999818,
+    "median_net_stress_A": -15.999999999998419,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 17,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 37,
+      "A=SL|B=SL": 21,
+      "A=SL|B=TIME": 49,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 39,
+      "A=TIME|B=TIME": 23,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 186,
+      "median_netA_minus_netB_obs": -11.650000000000205,
+      "share_gt0": 0.3709677419354839,
+      "median_MFE_A_pips": 12.050000000000693,
+      "median_MFE_B_pips": 19.549999999999557,
+      "median_MFE_A_R": 0.34773994911023787,
+      "median_MFE_B_R": 0.5655452907990945,
+      "median_MAE_A_pips": 20.300000000000296,
+      "median_MAE_B_pips": 12.900000000000489,
+      "share_MFE_A_ge_1R": 0.10752688172043011,
+      "share_MFE_B_ge_1R": 0.23118279569892472
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -15.454999999998181,
+      "bootstrap_median_of_medians": -14.220000000000978,
+      "ci95_lower": -17.62000000000016,
+      "ci95_upper": -9.614999999998908,
+      "n_clusters_days": 132,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 86,
+      "H1_median_netA_obs": -12.615000000000443,
+      "H2_n": 100,
+      "H2_median_netA_obs": -18.065000000000886,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 76,
+        "median_netA_obs": -13.309999999999523,
+        "median_netB_obs": -3.8099999999982153
+      },
+      "NewYork": {
+        "n": 26,
+        "median_netA_obs": -11.490000000000398,
+        "median_netB_obs": 4.260000000000909
+      },
+      "Tokyo": {
+        "n": 72,
+        "median_netA_obs": -15.719999999999613,
+        "median_netB_obs": 1.9300000000008186
+      },
+      "Sydney": {
+        "n": 12,
+        "median_netA_obs": -18.84999999999949,
+        "median_netB_obs": -14.050000000000729
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E1_N6_k1.0": {
+    "family": "E1",
+    "params": {
+      "N": 6,
+      "k": 1.0
+    },
+    "n_raw": 135,
+    "cancel": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 13,
+    "n_after_cancel": 122,
+    "n_ambiguous_A": 1,
+    "n_ambiguous_B": 0,
+    "n_eval": 121,
+    "outcome_A": {
+      "TP": 13,
+      "SL": 57,
+      "TIME": 51,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 25,
+      "SL": 48,
+      "TIME": 48,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 70,
+    "decisive_B": 73,
+    "winrate_decisive_A": 0.18571428571428572,
+    "winrate_decisive_B": 0.3424657534246575,
+    "median_net_obs_A": -10.419999999999886,
+    "median_net_obs_B": -6.990000000000228,
+    "median_net_obs_A_paired_subset": -10.419999999999886,
+    "median_net_cons_A": -10.619999999999886,
+    "median_net_stress_A": -10.999999999999886,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 13,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 25,
+      "A=SL|B=SL": 7,
+      "A=SL|B=TIME": 25,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 28,
+      "A=TIME|B=TIME": 23,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 121,
+      "median_netA_minus_netB_obs": -4.599999999999227,
+      "share_gt0": 0.45454545454545453,
+      "median_MFE_A_pips": 13.699999999997203,
+      "median_MFE_B_pips": 19.000000000002615,
+      "median_MFE_A_R": 0.36507729241452835,
+      "median_MFE_B_R": 0.44606600879756253,
+      "median_MAE_A_pips": 19.899999999998386,
+      "median_MAE_B_pips": 14.500000000001023,
+      "share_MFE_A_ge_1R": 0.11570247933884298,
+      "share_MFE_B_ge_1R": 0.2231404958677686
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -10.419999999999886,
+      "bootstrap_median_of_medians": -10.565000000000602,
+      "ci95_lower": -16.91999999999966,
+      "ci95_upper": -0.4499999999990336,
+      "n_clusters_days": 98,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 46,
+      "H1_median_netA_obs": -8.605000000002422,
+      "H2_n": 75,
+      "H2_median_netA_obs": -12.100000000001364,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 45,
+        "median_netA_obs": -15.10999999999959,
+        "median_netB_obs": -7.91000000000216
+      },
+      "NewYork": {
+        "n": 26,
+        "median_netA_obs": -0.7399999999973852,
+        "median_netB_obs": -2.490000000001478
+      },
+      "Tokyo": {
+        "n": 33,
+        "median_netA_obs": 1.1800000000015007,
+        "median_netB_obs": -10.319999999999409
+      },
+      "Sydney": {
+        "n": 17,
+        "median_netA_obs": -18.89999999999973,
+        "median_netB_obs": -7.900000000001205
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E1_N6_k1.5": {
+    "family": "E1",
+    "params": {
+      "N": 6,
+      "k": 1.5
+    },
+    "n_raw": 114,
+    "cancel": {
+      "GAP": 9,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 9,
+    "n_after_cancel": 105,
+    "n_ambiguous_A": 1,
+    "n_ambiguous_B": 0,
+    "n_eval": 104,
+    "outcome_A": {
+      "TP": 9,
+      "SL": 50,
+      "TIME": 45,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 21,
+      "SL": 41,
+      "TIME": 42,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 59,
+    "decisive_B": 62,
+    "winrate_decisive_A": 0.15254237288135594,
+    "winrate_decisive_B": 0.3387096774193548,
+    "median_net_obs_A": -11.605000000000874,
+    "median_net_obs_B": -6.790000000000694,
+    "median_net_obs_A_paired_subset": -11.605000000000874,
+    "median_net_cons_A": -11.805000000000875,
+    "median_net_stress_A": -12.350000000000875,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 9,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 21,
+      "A=SL|B=SL": 7,
+      "A=SL|B=TIME": 22,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 25,
+      "A=TIME|B=TIME": 20,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 104,
+      "median_netA_minus_netB_obs": -6.249999999998579,
+      "share_gt0": 0.4326923076923077,
+      "median_MFE_A_pips": 13.749999999998863,
+      "median_MFE_B_pips": 19.650000000000034,
+      "median_MFE_A_R": 0.3785086188938632,
+      "median_MFE_B_R": 0.4377659562061703,
+      "median_MAE_A_pips": 20.350000000000534,
+      "median_MAE_B_pips": 14.500000000001023,
+      "share_MFE_A_ge_1R": 0.09615384615384616,
+      "share_MFE_B_ge_1R": 0.22115384615384615
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -11.605000000000874,
+      "bootstrap_median_of_medians": -12.955000000000215,
+      "ci95_lower": -18.85499999999997,
+      "ci95_upper": -1.820000000000034,
+      "n_clusters_days": 86,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 39,
+      "H1_median_netA_obs": -10.320000000002251,
+      "H2_n": 65,
+      "H2_median_netA_obs": -15.10999999999959,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 40,
+        "median_netA_obs": -15.309999999999125,
+        "median_netB_obs": -3.65999999999892
+      },
+      "NewYork": {
+        "n": 21,
+        "median_netA_obs": -0.48999999999761257,
+        "median_netB_obs": -2.490000000001478
+      },
+      "Tokyo": {
+        "n": 32,
+        "median_netA_obs": 2.2799999999996476,
+        "median_netB_obs": -11.31999999999992
+      },
+      "Sydney": {
+        "n": 11,
+        "median_netA_obs": -21.00000000000123,
+        "median_netB_obs": 5.399999999999773
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E2_W12_k1.5": {
+    "family": "E2",
+    "params": {
+      "W": 12,
+      "k": 1.5
+    },
+    "n_raw": 6106,
+    "cancel": {
+      "GAP": 653,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 653,
+    "n_after_cancel": 5453,
+    "n_ambiguous_A": 31,
+    "n_ambiguous_B": 28,
+    "n_eval": 5422,
+    "outcome_A": {
+      "TP": 785,
+      "SL": 2366,
+      "TIME": 2271,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 682,
+      "SL": 2435,
+      "TIME": 2286,
+      "AMBIGUOUS": 19
+    },
+    "decisive_A": 3151,
+    "decisive_B": 3117,
+    "winrate_decisive_A": 0.2491272611869248,
+    "winrate_decisive_B": 0.21880012832852103,
+    "median_net_obs_A": -6.609999999998795,
+    "median_net_obs_B": -7.389999999999295,
+    "median_net_obs_A_paired_subset": -6.310000000003047,
+    "median_net_cons_A": -6.809999999998794,
+    "median_net_stress_A": -7.100000000001387,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 785,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 682,
+      "A=SL|B=SL": 494,
+      "A=SL|B=TIME": 1171,
+      "A=SL|B=AMBIGUOUS": 19,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 1156,
+      "A=TIME|B=TIME": 1115,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 5403,
+      "median_netA_minus_netB_obs": 0.8000000000009777,
+      "share_gt0": 0.512678141773089,
+      "median_MFE_A_pips": 14.000000000001478,
+      "median_MFE_B_pips": 13.54999999999933,
+      "median_MFE_A_R": 0.42806080541433245,
+      "median_MFE_B_R": 0.413525296759926,
+      "median_MAE_A_pips": 14.399999999997704,
+      "median_MAE_B_pips": 14.849999999999852,
+      "share_MFE_A_ge_1R": 0.1700479527849502,
+      "share_MFE_B_ge_1R": 0.14754703061600885
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -6.609999999998795,
+      "bootstrap_median_of_medians": -9.020000000001728,
+      "ci95_lower": -12.219999999999954,
+      "ci95_upper": -3.9699999999989313,
+      "n_clusters_days": 288,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 2504,
+      "H1_median_netA_obs": -5.620000000001125,
+      "H2_n": 2918,
+      "H2_median_netA_obs": -8.054999999999795,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 2083,
+        "median_netA_obs": -8.209999999997908,
+        "median_netB_obs": null
+      },
+      "NewYork": {
+        "n": 1056,
+        "median_netA_obs": -2.690000000002433,
+        "median_netB_obs": null
+      },
+      "Tokyo": {
+        "n": 1945,
+        "median_netA_obs": -7.52000000000025,
+        "median_netB_obs": null
+      },
+      "Sydney": {
+        "n": 338,
+        "median_netA_obs": -14.149999999999784,
+        "median_netB_obs": null
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E2_W12_k2.5": {
+    "family": "E2",
+    "params": {
+      "W": 12,
+      "k": 2.5
+    },
+    "n_raw": 4022,
+    "cancel": {
+      "GAP": 369,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 369,
+    "n_after_cancel": 3653,
+    "n_ambiguous_A": 16,
+    "n_ambiguous_B": 14,
+    "n_eval": 3637,
+    "outcome_A": {
+      "TP": 525,
+      "SL": 1595,
+      "TIME": 1517,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 465,
+      "SL": 1606,
+      "TIME": 1555,
+      "AMBIGUOUS": 11
+    },
+    "decisive_A": 2120,
+    "decisive_B": 2071,
+    "winrate_decisive_A": 0.24764150943396226,
+    "winrate_decisive_B": 0.2245292129406084,
+    "median_net_obs_A": -7.399999999998817,
+    "median_net_obs_B": -6.990000000000228,
+    "median_net_obs_A_paired_subset": -7.289999999998818,
+    "median_net_cons_A": -7.5999999999988175,
+    "median_net_stress_A": -8.099999999998818,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 525,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 465,
+      "A=SL|B=SL": 325,
+      "A=SL|B=TIME": 794,
+      "A=SL|B=AMBIGUOUS": 11,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 756,
+      "A=TIME|B=TIME": 761,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 3626,
+      "median_netA_minus_netB_obs": 0.20000000000095497,
+      "share_gt0": 0.5035852178709321,
+      "median_MFE_A_pips": 14.500000000001023,
+      "median_MFE_B_pips": 14.100000000001955,
+      "median_MFE_A_R": 0.4222788353285741,
+      "median_MFE_B_R": 0.41784909909223966,
+      "median_MAE_A_pips": 15.000000000000568,
+      "median_MAE_B_pips": 15.399999999999636,
+      "share_MFE_A_ge_1R": 0.1707451196040693,
+      "share_MFE_B_ge_1R": 0.14462469067913114
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -7.399999999998817,
+      "bootstrap_median_of_medians": -7.81999999999884,
+      "ci95_lower": -10.610000000000841,
+      "ci95_upper": -3.510000000001046,
+      "n_clusters_days": 279,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 1654,
+      "H1_median_netA_obs": -6.20500000000091,
+      "H2_n": 1983,
+      "H2_median_netA_obs": -8.710000000000296,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 1435,
+        "median_netA_obs": -9.209999999999841,
+        "median_netB_obs": null
+      },
+      "NewYork": {
+        "n": 745,
+        "median_netA_obs": -3.6900000000015236,
+        "median_netB_obs": -1.5900000000000227
+      },
+      "Tokyo": {
+        "n": 1263,
+        "median_netA_obs": -7.720000000001205,
+        "median_netB_obs": null
+      },
+      "Sydney": {
+        "n": 194,
+        "median_netA_obs": -14.149999999999784,
+        "median_netB_obs": -15.699999999998658
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  },
+  "E3_W16": {
+    "family": "E3",
+    "params": {
+      "W": 16
+    },
+    "n_raw": 149,
+    "cancel": {
+      "GAP": 13,
+      "ATR_NA": 0,
+      "OFF_SESSION": 0
+    },
+    "n_cancelled_total": 13,
+    "n_after_cancel": 136,
+    "n_ambiguous_A": 0,
+    "n_ambiguous_B": 0,
+    "n_eval": 136,
+    "outcome_A": {
+      "TP": 30,
+      "SL": 82,
+      "TIME": 24,
+      "AMBIGUOUS": 0
+    },
+    "outcome_B": {
+      "TP": 31,
+      "SL": 83,
+      "TIME": 22,
+      "AMBIGUOUS": 0
+    },
+    "decisive_A": 112,
+    "decisive_B": 114,
+    "winrate_decisive_A": 0.26785714285714285,
+    "winrate_decisive_B": 0.2719298245614035,
+    "median_net_obs_A": -10.059999999999159,
+    "median_net_obs_B": -11.855000000000647,
+    "median_net_obs_A_paired_subset": -10.059999999999159,
+    "median_net_cons_A": -10.25999999999916,
+    "median_net_stress_A": -10.84999999999916,
+    "shadow_joint_matrix": {
+      "A=TP|B=TP": 0,
+      "A=TP|B=SL": 30,
+      "A=TP|B=TIME": 0,
+      "A=TP|B=AMBIGUOUS": 0,
+      "A=SL|B=TP": 31,
+      "A=SL|B=SL": 33,
+      "A=SL|B=TIME": 18,
+      "A=SL|B=AMBIGUOUS": 0,
+      "A=TIME|B=TP": 0,
+      "A=TIME|B=SL": 20,
+      "A=TIME|B=TIME": 4,
+      "A=TIME|B=AMBIGUOUS": 0,
+      "A=AMBIGUOUS|B=TP": 0,
+      "A=AMBIGUOUS|B=SL": 0,
+      "A=AMBIGUOUS|B=TIME": 0,
+      "A=AMBIGUOUS|B=AMBIGUOUS": 0
+    },
+    "shadow_paired": {
+      "n_pairs": 136,
+      "median_netA_minus_netB_obs": 0.30000000000001137,
+      "share_gt0": 0.5,
+      "median_MFE_A_pips": 13.89999999999958,
+      "median_MFE_B_pips": 12.600000000000477,
+      "median_MFE_A_R": 0.623715691542732,
+      "median_MFE_B_R": 0.6306516718874493,
+      "median_MAE_A_pips": 13.750000000001705,
+      "median_MAE_B_pips": 15.149999999999864,
+      "share_MFE_A_ge_1R": 0.2867647058823529,
+      "share_MFE_B_ge_1R": 0.3235294117647059
+    },
+    "bootstrap": {
+      "point_median_netA_obs": -10.059999999999159,
+      "bootstrap_median_of_medians": -11.220000000000864,
+      "ci95_lower": -13.6,
+      "ci95_upper": -7.599999999999772,
+      "n_clusters_days": 109,
+      "iters": 10000,
+      "seed": 1337,
+      "method": "cluster-per-hari multinomial, bootstrap percentile 2.5/97.5"
+    },
+    "half_split": {
+      "H1_n": 68,
+      "H1_median_netA_obs": -9.310000000001262,
+      "H2_n": 68,
+      "H2_median_netA_obs": -13.550000000001182,
+      "same_sign": true,
+      "sign": "-"
+    },
+    "failure_map": {
+      "London": {
+        "n": 28,
+        "median_netA_obs": -9.660000000000569,
+        "median_netB_obs": -11.460000000000637
+      },
+      "NewYork": {
+        "n": 5,
+        "median_netA_obs": -6.689999999998795,
+        "median_netB_obs": 0.41000000000100045
+      },
+      "Tokyo": {
+        "n": 44,
+        "median_netA_obs": -9.469999999999613,
+        "median_netB_obs": -8.819999999999352
+      },
+      "Sydney": {
+        "n": 59,
+        "median_netA_obs": -12.200000000001841,
+        "median_netB_obs": -14.3000000000005
+      }
+    },
+    "missing_sessions": [],
+    "n_event_without_outcome": 0,
+    "criteria": {
+      "i_median_net_obs_A_gt0": false,
+      "ii_ci_lower_gt0": false,
+      "iii_same_sign_h1_h2": true,
+      "iv_failure_map_complete": true
+    },
+    "verdict": "TOLAK",
+    "verdict_reason": "gagal: i_median_net_obs_A_gt0,ii_ci_lower_gt0"
+  }
+}

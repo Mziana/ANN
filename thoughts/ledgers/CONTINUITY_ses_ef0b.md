@@ -1,51 +1,108 @@
 ---
 session: ses_ef0b
-updated: 2026-10-14T01:39:54.377Z
+updated: 2026-10-14T09:56:19.358Z
 ---
 
 # Session Summary
 
 ## Goal
-Menjelaskan tabel replay tanpa-timer 26-Apr (atribusi E dan logika entry) dan mendorong evidence discovery R1/R2/R3/P2 ke GitHub main.
+Menutup R4-M15-native secara transparan sebagai **TOLAK 9/9**, mengoreksi dokumentasi metrik/exit, dan menghasilkan postmortem lintas-ronde untuk menentukan **stop atau pivot**, bukan sekadar commit lalu mengulang siklus gagal.
 
 ## Constraints & Preferences
-- Entry OPEN bar `t0+1` (BUY ask, SELL bid), race mulai `t0+2`, first-passage warisan R2; 1-posisi: tidak ada entry baru sebelum `busy_until`.
-- Scan WAJIB reuse `d1_events.py` folder R2 read-only; `side -> -side` satu-satunya ubahan P2-flipmurni, pagar R2 beku (SL=1,5xATR, TP=3,0xATR).
-- Push ke `https://github.com/Mziana/ANN` branch `main` langsung, jangan buat branch baru.
-- Jangan commit `events.jsonl` >100MB (limit GitHub); `__pycache__`/`*.log` diabaikan.
-- Klaim angka wajib dari output mentah di disk; tafsir asimetri pemanasan: KALAH=gugur kuat, MENANG=tanpa makna.
+- Jangan menerima hasil secara buta atau mengulang grid yang sama tanpa membedah kegagalan.
+- Bed 2024 sudah terkunci/burned; tidak boleh menjalankan ulang grid R4 dengan aturan exit berbeda tanpa persetujuan eksplisit dan bed baru.
+- Spec beku tidak boleh diedit; perubahan metrik harus labeled post-hoc di audit addendum.
+- Pisahkan `P(profit)`, `P(loss)`, `P(time)`, `TIME%`, dan `winrate_decisive`.
+- Mid-price hanya boleh untuk tes arah tanpa barrier, bukan untuk PnL realistis; `AGENTS.md` §19 melarang mid-price untuk entry/exit.
+- Pertahankan pemisahan coder, auditor, dan author; run tercemar tidak boleh dipromosikan.
+- Jangan `git add -A`; gunakan path eksplisit.
+- Jangan commit/push tanpa persetujuan owner.
+- File baru harus ASCII/LF dan bebas karakter nyasar.
 
 ## Progress
 ### Done
-- [x] Perbaiki `KeyError: 1777245000` di `replay_notimer.py` — akar: `raw` epoch UTC vs `time` jam dinding broker + gap weekend 49,07 jam (last `2026-04-24 23:57 UTC`, first `2026-04-27 01:01 UTC`); ganti `pos_of` ke string `time` + assert `t0_pos`.
-- [x] Perbaiki `race()` di `replay_notimer.py`: MFE/MAE dipotong sampai bar exit `fav[:f+1]`, betulkan arah adverse SELL (`adv = ask_h - entry`).
-- [x] Reproduksi tabel tanpa-timer: `R3=78 R2=34`, `R3 dibuka=10 dilewat=68 net -5,20 (W4 L6)`, `R2 dibuka=5 dilewat=29 net -12,84 (W1 L4)`.
-- [x] Jelaskan logika entry dari `d1_events.py:scan_e1`: E1 run N + displacement D + reversal body>=50%, E2 expansion `|close-close20|>=ATR14` + retrace<=40% 1-5 bar, E3 kompresi range30<=0,5x median + break 1,0 pip.
-- [x] Verifikasi atribusi E: `R3 jendela 78 Counter({'E2':78})`, `R2 jendela 34 Counter({E2/single:33, E3/single:1})`; 10/10 R3-flip=E2, 5/5 R2-asli=E2/single (t0_pos 111573,111582,111590,111624,111668).
-- [x] Staging git `git add -A` lalu `git reset` 4x `events.jsonl` agar tidak ikut push.
+- [x] R4-M15-native diselesaikan mengikuti spec: resample M15 2024, 9 sel, race, shadow pair, QC, evidence, dan audit independen.
+- [x] Vonis sah: **TOLAK 9/9 sel**; median net A negatif dan ujung atas CI seluruh sel negatif.
+- [x] Run R4 versi pip yang tercemar dikarantina di `evidence_TERCEMAR_tidak-sah/`.
+- [x] Run native ditulis oleh coder; `verify_r4.py` yang sebelumnya salah dibuang dan diganti rebuild auditor.
+- [x]_typo `SESSION_LOG.md` diperbaiki: `mengDCsankan`, `seed 1333`, dan `Command yang cavet`.
+- [x] `STATE.md`, `TASKS.md`, `PROGRESS.md`, dan `SESSION_LOG.md` diperbarui.
+- [x] Shadow pair diverifikasi: A dan B memakai entry/barrier sama dengan `sB = -sA`; MFE/MAE konsisten sebagai pasangan cermin.
+- [x]pooled WR lama terbukti salah label: `winrate_decisive = TP/(TP+SL)` dengan `TIME` dibuang.
+- [x] Definisi WR post-hoc ditetapkan: timeout dengan `gross > 0` = win, `gross < 0` = loss; tie dilaporkan terpisah.
+- [x] Audit addendum dibuat di `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`.
+- [x] `STATE.md` dikoreksi: impas nominal 33,33% dinyatakan salah; impas nyata 37,5–47,8%.
+- [x] Ditemukan cacat exit timeout BID/ASK di `r4_m15.py` baris 326.
+- [x] Ditemukan `TP/TP = 0` di 9/9 sel dan median MFE A jauh di bawah TP.
+- [x] Git status diperiksa; belum ada commit/push R4.
+- [x] Pemeriksaan lintas-ronde dimulai; script berhasil membaca R4 dan menemukan 9/9 median net negatif.
 
 ### In Progress
-- [ ] Update `STATE.md` tanggal 2026-10-14 agar lolos pre-commit hook, lalu commit + push staged evidence ke `main`.
+- [ ] Menyelesaikan postmortem lintas-ronde; `cross_round.py` baru mem-parsing schema R4, sedangkan R1/R2/R3/P2 memakai schema berbeda.
+- [ ] Mengubah hasil postmortem menjadi keputusan stop/pivot yang eksplisit.
+- [ ] Memutuskan apakah tp-response/first-passage diagnostic perlu dijalankan; jangan dijalankan sebagai selection.
+- [ ] Menunggu otorisasi commit/push.
+- [ ] Opsional: membuat erratum terpisah untuk salah ketik “delapan sel” tanpa mengubah spec beku.
 
 ### Blocked
-- `git commit` GAGAL oleh hook: `GAGAL: .ai/STATE.md belum diupdate hari ini (2026-10-14) Update STATE.md dulu sebelum commit.` — push belum terjadi.
+- Tidak ada bed bersih untuk konfirmasi aturan exit baru.
+- Schema summary R1/R2/R3/P2 belum berhasil dibandingkan otomatis.
+- Belum ada izin owner untuk commit atau push.
+- First-passage curve belum dijalankan dan belum boleh dianggap valid untuk memilih TP.
 
 ## Key Decisions
-- **Mapping waktu pakai string `time`, bukan epoch `raw`**: karena label `+0000` adalah jam dinding broker, epoch UTC sejati selisih 3 jam + libur weekend.
-- **Label E2 prosedural, bukan substantif**: replay buka entri pertama-di-file; sinyal E1/E3 semenit yang t0+pagar identik gugur sebagai dilewat, hasil baris sama.
-- **Exclude 4x `events.jsonl` (112-258MB) dari push**: `R1 258.64MB, R3 124.16MB, P2 116.69MB, R2 112.1MB` melebihi limit GitHub; `appendix_D8.sealed.json` tetap ikut.
+- **R4 tetap TOLAK 9/9**: median net dan CI gate tetap negatif; perubahan WR tidak menyentuh gate `i_median_net_obs_A_gt0` atau `ii_ci_lower_gt0`.
+- **WR lama tidak boleh disebut win rate biasa**: nilainya `TP/(TP+SL)` dengan `TIME` dibuang.
+- **Impas nominal 33,33% tidak valid**: RR terealisasi hanya 1,09–1,67 karena banyak timeout; impas observatif 37,5–47,8%, dan 9/9 sel gagal.
+- **A dan B mirror pada entry/lintasan, bukan pada PnL**: kaki dapat resolve pada bar berbeda; timeout SELL memakai BID dan BUY memakai ASK.
+- **E1 berarah terbalik tetap didukung**: `Edge_A = MFE/(MFE+MAE)` sekitar 0,372–0,462 pada 6/6 sel, sedangkan `Edge_B` 0,509–0,602.
+- **E2 simetris; E3 bukan sepenuhnya netral**: `Edge_A` sekitar 0,503 dan `Edge_B` sekitar 0,454.
+- **TP terlalu tinggi adalah gejala, bukan penyebab**: menurunkan TP tidak menghilangkan edge arah yang hilang dan dapat menguntungkan kaki cermin pada E1.
+- **Tidak ada branch atau rerun R4 sekarang**: aturan eksperimen baru harus memiliki persetujuan, preregistrasi, dan bed baru.
+- **Commit berarti menyimpan bukti cierre, bukan menerima kegagalan tanpa diagnosa**.
+- **Git commit harus path eksplisit**: sekitar 613 MB `events.jsonl` dan `events.parquet` tidak boleh masuk history.
 
 ## Next Steps
-1. Update minimal `.ai/STATE.md` (tanggal 2026-10-14) + catat hasil P2-flipmurni KALAH 8/8 ke `SESSION_LOG.md`/`TASKS.md`.
-2. `git commit -m "docs(sync): discovery R1/R2/R3/P2 evidence + state 2026-10-13/14"` lalu `git push origin main`, verifikasi di `github.com/Mziana/ANN`.
-3. Tunggu user paste brief replikasi R1 ke auditor eksternal, lalu vonis final R1.
+1. Manual-inspect schema dan output R1, R2, R3, serta P2; jangan menyimpulkan pola lintas-ronde hanya dari satu parser.
+2. Susun postmortem dalam tiga lapis: kualitas data, evaluation harness, dan kelas hipotesis/regime.
+3. Tetapkan stop/pivot gate sebelum ronde berikutnya; tanpa bed bersih dan hipotesis baru yang benar-benar berbeda, hentikan Discovery.
+4. Jika owner meminta first-passage curve, jalankan hanya sebagai diagnostik post-hoc dan jangan pilih TP dari hasilnya.
+5. Tambahkan atau perbarui addendum bila ditemukan error baru; jangan mengubah `r4_m15.py` atau spec beku tanpa ronde baru.
+6. Setelah owner menyetujui, commit hanya dokumen, spec, kode, log, manifest, QC, dan summary yang relevan; exclude event-level besar dan data karantina.
+7. Tidak push sebelum instruksi eksplisit.
 
 ## Critical Context
-- Error awal: `r["_t"], r["_t0pos"] = r["t0"], pos_of[int(dt.timestamp())]` → `KeyError: 1777245000`; cek `df['time'].iloc[0]=2026-01-01T23:00:00+0000 raw=1767315600`.
-- Bukti t0_pos: `2026-04-26T23:10+0000 pos 111573 raw 1777255800`; replay output baris R3 no1 `23:10 BUY entry 159.516 exit 159.556 TP-16 net +2,90`, R2 no4 `00:01 SELL entry 159.533 exit 159.495 TP-43 net +7,08`.
-- P2-flipmurni run selesai 2026-10-14 02:26 (`summary.json` ada) tapi belum masuk `SESSION_LOG.md`; anti-drift: `n total 90525 = R2, E2 eval 69538 = R2, E3 eval 507 = R2`.
-- Remote: `origin https://github.com/Mziana/ANN (fetch/push)`; `.gitignore` tidak mengabaikan `events.jsonl` sehingga harus `git reset` manual.
-- User lelah/ingin menyerah — sudah diberikan pesan istirahat + hotline Kemenkes 119 ext 8 sebelum request push.
+- Grid R4: E1 6 sel, E2 2 sel, E3 1 sel; bed 2024, 23.758 bar M15.
+- Median `netA_obs` R4: `−15.45..−6.61` pip; seluruh CI upper negatif.
+- Corrected `P_profit_A` dengan timeout: `27.96–42.98%`; corrected `P_profit_B`: `34.56–50.54%`; `TIME%`: `17.6–43.3%`.
+- Corrected WR harus selalu menampilkan definisi dan `TIME%`; angka net setelah biaya juga perlu dilaporkan karena timeout kecil dapat berubah dari win menjadi loss.
+- `race_leg` di `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\r4_m15.py` memakai:
+  - `entry = o[kt0 + 1]`
+  - `sl_px = SL_MULT * atr0`
+  - `tp_px = TP_MULT * atr0`
+  - `sB = -sA`
+  - `time_exit = C[:, RACE - 1] + np.where(up[:, 0], 0.0, SPR[:, RACE - 1])`
+- `wrA`/`wrB` di sekitar baris 607–608 hanya menghitung `TP/(TP+SL)`.
+- Pada E1_N3_k1.0, validasi menunjukkan `P(gross>0)_A + P(gross>0)_B = 80.20%`, kedua kaki rugi bersama sekitar 19.0%, dan kedua kaki menang bersama 0.0%; penyebabnya spread dan exit tidak selalu bersamaan.
+- `MFE_A ≈ MAE_B` dan `MFE_B ≈ MAE_A` di 9/9 sel; selisih sekitar −4.8% sampai −8.3%IFO yang terkait spread.
+- `Edge` lebih cocok untuk diagnosis arah daripada WR, tetapi klaim “kebal spread” masih perlu diuji karena MFE/MAE dipengaruhi quote adjustment.
+- `TP/TP = 0` di semua sel; median MFE hanya sekitar 0,64–0,82 SL.
+- Temuan audit lain: toleransi doji E1, spec menulis “delapan sel” padahal ada sembilan, ledger disegel sebelum edit kode terakhir, bootstrap balanced-cluster, `failure_map` null, determinisme hanya 1/9 sel, dan data gap UTC 21:00–21:45.
+- Error yang sudah ditangani:
+  - Filter awal memakai NaN padahal `cancel_reason == 'NONE'`.
+  - `IndexError: single positional indexer is out-of-bounds` pada `mirror_test.py`.
+  - `UnicodeEncodeError` cp1252 untuk `−` dan karakter CJK nyasar.
+  - Konversi ATR ke point sempat salah; harga harus dibagi `0.001`, bukan dikalikan 10.
+  - Assert `grossB == -grossA` untuk semua event salah karena barrier_exit berbeda waktu.
+- Run tercemar sebelumnya ditulis sendiri oleh assistant; run native R4 ditulis coder dan diaudit auditor terpisah.
+- `git status`: branch `main`, HEAD `893727b`; file inti masih uncommitted.
+- `events.jsonl` tidak diabaikan oleh `.gitignore`:
+  - R1 258,64 MB
+  - R2 112,10 MB
+  - R3 124,16 MB
+  - P2 116,69 MB
+  - R4 `events.parquet` sekitar 1,06 MB
+- Postmortem lintas-ronde belum boleh mengklaim semua ronde memiliki pola sama sampai schema R1/R2/R3/P2 diverifikasi.
 
 ## File Operations
 ### Read
@@ -62,11 +119,13 @@ Menjelaskan tabel replay tanpa-timer 26-Apr (atribusi E dan logika entry) dan me
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-P2-flipmurni.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_replikasi-discovery-R1-auditor.md`
-- `D:\ANN\.ai\backup\2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`
+- `D:\ANN\backup\2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`
 - `D:\ANN\README.md`
 - `D:\ANN\data`
+- `D:\ANN\notebooks\scalping\_eda_common.py`
 - `D:\ANN\reports\governance\2026-10-12\arsitek\spesifikasi-fingerprint.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
+- `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`
 - `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
 - `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence`
@@ -76,9 +135,36 @@ Menjelaskan tabel replay tanpa-timer 26-Apr (atribusi E dan logika entry) dan me
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d2_outcomes.py`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\run_stdout.log`
 - `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\summary.json`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\r4_m15.py`
 - `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef37.md`
+- `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef0b.md`
+- `D:\ANN\reports\governance\2026-10-14\arsitek\spesifikasi-discovery-R4-M15.md`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_manifest.json`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\events.parquet`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\qc.json`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\run_stdout.log`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\summary.json`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\README_KARANTINA.md`
 
 ### Modified
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\analisis_t0plus1.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit_scan.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\breakeven.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\cross_round.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\decompose.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\edge_ratio.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\mirror_test.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\r4_resample.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\r4_run.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\show_point.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\show_shadow.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\tf_cost_test.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\tp_check.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\verify_r4.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\wr_revision.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\wr_revisi.json`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\breakeven.json`
 - `D:\ANN\.ai\CONTEXT.md`
 - `D:\ANN\.ai\PROGRESS.md`
 - `D:\ANN\.ai\SESSION_LOG.md`
@@ -97,6 +183,13 @@ Menjelaskan tabel replay tanpa-timer 26-Apr (atribusi E dan logika entry) dan me
 - `D:\ANN\README.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
 - `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R2.md`
+- `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`
+- `D:\ANN\reports\governance\2026-10-14\arsitek\spesifikasi-discovery-R4-M15.md`
 - `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
 - `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
 - `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\run_flipmurni.py`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_R4.md`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\00_ledger_R4.md`
+- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\README_KARANTINA.md`
+- `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef0b.md`

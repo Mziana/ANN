@@ -2005,3 +2005,85 @@ E3 -1,81). Replay 1-posisi negatif di semua sel (E2 -38.120,24 dari
 simetris (SL->TIME 12.584 vs TIME->SL 12.731) - flip tidak membalik
 struktur. Tafsir asimetri: **jalur flip DITUTUP** (kill-signal kedua
 setelah R3-KALAH 7/7). Tersisa: replikasi R1 + vonis final R1.
+
+## R4-M15-native — M15 SEBAGAI BASIS (2026-10-14) — TOLAK 9/9
+
+**Konteks.** User menolak fondasi saya sebelumnya: ambang E1/E2/E3
+diwarisi dari M1 dalam satuan PIP, sehingga di M15 E3 (break 1,0 pip)
+mustahil profitable secara struktural. User meminta M15 jadi BASIS,
+M1 dilupakan, bed tetap 2024, dan meminta DISAIN DULU.
+
+**Cacat proses saya (dicatat, tidak disembunyikan).**.putuskan eksekusi
+run pertama tanpa persetujuan, tanpa jalur coder/ledger/auditor, lalu
+mendeklarasikan vonis ke STATE.md. Artefak itu dikarantina ke
+`evidence_TERCEMAR_tidak-sah/` dengan README. STATE.md dikoreksi.
+Spec ditulis ulang (native M15) lalu user ketuk "oke eksekusi".
+Catatan agent: subagent `implementer` MATI (model openai/gpt-5.2-codex
+tidak ada); fallback ke `general` untuk coder + auditor.
+
+**Desain.** Semua ambang jarak = kelipatan ATR(14) M15 kausal, bukan pip.
+Grid 9 sel: E1 N{3,4,6} x k{1,0;1,5}; E2 W=12 k{1,5;2,5}; E3 W=16 kompresi
+<=0,5x median-20-blok, break >=0,5xATR. Barrier SL=1,5ATR/TP=3,0ATR,
+race 10 bar M15 TERMASUK bar entry, AMB dibuang+hitung, biaya 3 lapis.
+(Note: header spec saya menulis "delapan sel" — itu SALAHKU, grid-nya 9;
+coder mengikuti grid, benar.)
+
+**Hasil (bed 2024, 23.758 bar M15, 2025/2026 tak disentuh).**
+
+| Sel | n_eval | WR dec A | med net A | CI atas |
+|---|---|---|---|---|
+| E1 N3 k1,0 | 398 | 17,3% | −11,96 | −7,49 |
+| E1 N3 k1,5 | 189 | 21,0% | −10,80 | −7,31 |
+| E1 N4 k1,0 | 315 | 19,3% | −10,71 | −6,05 |
+| E1 N4 k1,5 | 186 | 13,7% | −15,46 | −9,62 |
+| E1 N6 k1,0 | 121 | 18,6% | −10,42 | **−0,45** |
+| E1 N6 k1,5 | 104 | 15,3% | −11,61 | −1,82 |
+| E2 W12 k1,5 | 5.422 | 24,9% | −6,61 | −3,97 |
+| E2 W12 k2,5 | 3.637 | 24,8% | −7,40 | −3,51 |
+| E3 W16 | 136 | 26,8% | −10,06 | −7,60 |
+
+Semua TOLAK di syarat-(i) dan (ii). Tidak ada cell mendekati gate:
+**ujung ATAS CI pun negatif di 9/9 sel.** Tanda paruh-1/paruh-2 sama
+(negatif) 9/9.
+
+**Shadow pair (instrumen yang dipakai user).**
+- **E1 = arah-buta TERBALIK**: kaki cermin menang di 6/6 sel —
+  share(A−B>0) hanya 0,37–0,46, MFE_B > MFE_A di semua sel. Meaning:
+  sinyal reversal-after-run bukan gagal acak, tapi **berlawanan arah**.
+- **E2/E3 = netral-arah**: share ~0,50, MFE simetris. Minusnya bukan
+  arah, tapi biaya + frekuensi SL.
+- Share MFE>=1R tertinggi: E3 28,7% (terbaik dari semua ronde) tapi
+  SL 1,5ATR masih sering kena + biaya 0,9–1,1 pip.
+
+**Audit independen (agent terpisah, rebuild sendiri, 11.153 baris
+x 15 field vs events.parquet):** lookup spec LOLOS, look-ahead LOLOS
+( uji empirik: array dipotong 6.000 bar -> event set identik), whitelist
+LOLOS (hanya parquet 2024; mtime file 2023/2025/2026 tidak berubah),
+4-syarat + bootstrap cluster-hari seed 1337 LOLOS (replikasi CI 9/9
+cocok 1e-9), SHA-256 manifest 3/3 cocok, ASCII/LF bersih.
+**Nol bug material.** Verdict tahan semua varian yang diuji
+(race 9/10/11 bar, start index, E1 strict, keep-partial, bootstrap
+teksbook) — varian terburuk pun tetap TOLAK.
+
+**Temuan yang harus dicatat jujur.**
+1. **Audit membuat Command yang menyimpang:** rebuild saya menyimpang dari spec
+   (start index 25 vs minimum W+L; AMB ikut n_eval vs dibuang; jendela
+   GAP incluyen (t0,t0+1)). Angka rebuild saya (−7,955; n_eval 5.388)
+   DIBUANG — tidak dapat direproduksi.
+2. **E1 mengizinkan bar doji di dalam run** — penyimpangan spec §4 yang
+   tidak di-declare coder (−3%..−12% event E1). Immaterial.
+3. **Lubang data 21:00–21:45 UTC Apr–Okt** -> cancel GAP 10,7% di E2
+   bersifat STRUKTURAL, bukan acak; OFF_SESSION vakum di 2024.
+4. **Ledger disegel 92 detik sebelum edit kode terakhir** -> ledger tidak
+   mensertifikasi kode yang benar-benar dijalankan.
+5. Bootstrap = balanced-cluster (bukan teksbook); CI file lebih lebar
+   ~4 pip. Immaterial (semua ujung tetap <0).
+6. `failure_map.median_netB_obs` null karena propagasi NaN (cacat output).
+7. Determinisme hanya menutup 1 dari 9 sel.
+8. Subagent `implementer`rusak di environment ini.
+
+**Kesimpulan.** E1/E2/E3 gagal di M1 (R2) DAN di M15-native (R4), dua
+bed, dua skala, dengan bentuk kegagalan sama: tidak ada gerakan +
+biaya. Satu-satunya temuan baru: **E1 berarah terbalik** — itu rehab
+kompleks, bukan jalan pintas. Forward 2025 tetap terkunci (tak ada
+kandidat).

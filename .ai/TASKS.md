@@ -118,6 +118,10 @@
 - [x] **P2-flipmurni SELESAI 2026-10-14: KALAH 8/8** (side->-side, barrier
       R2 beku, bed 2026; med stacked -1,52..-1,89; 1-posisi negatif semua;
       anti-drift LOLOS). **Jalur flip DITUTUP.** Detail: SESSION_LOG.
+- [x] **R4-M15-native SELESAI 2026-10-14: TOLAK 9/9 sel** (M15 basis, ambang
+      ATR-based, bed 2024, 2025/2026 terkunci; med net −6,6..−15,5; ujung atas
+      CI pun negatif 9/9; audit independen nol bug material). Temuan baru:
+      **E1 berarah terbalik** (kaki cermin menang 6/6 sel E1); E2/E3 netral-arah.
 
 ## Sudah Dibatalkan / Diganti
 
