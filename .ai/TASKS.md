@@ -122,6 +122,19 @@
       ATR-based, bed 2024, 2025/2026 terkunci; med net −6,6..−15,5; ujung atas
       CI pun negatif 9/9; audit independen nol bug material). Temuan baru:
       **E1 berarah terbalik** (kaki cermin menang 6/6 sel E1); E2/E3 netral-arah.
+- [x] **R4 audit addendum 2026-10-14** (`Audit/addendum-R4-M15.md`): label
+      `winrate` sebenarnya `TP/(TP+SL)`; exit TIME SELL di BID vs BUY di ASK;
+      ambang impas nominal keliru (nyata 37,5–47,8%). Vonis tidak berubah.
+- [x] **R6-conditioning DITARIK 2026-10-14: NON-EXECUTABLE** — audit
+      independen menolak eksekusi (4 FATAL + 2 blocking, semua diverifikasi).
+      Spec tetap DRAF, tidak pernah dijalankan. Disposition: `Audit/
+      addendum-R6-conditioning.md`. Commit spec+brief `0205e43`.
+- [x] **Kelas hipotesis fixed-barrier M15: MATI-KELAS.** Dasar terukur:
+      realized breakeven + CI 95% cluster-per-hari → **0/9 sel significantly
+      positif, 5/9 significantly negatif**, median net_A negatif 9/9; ambang
+      `Edge >= 0,56` terbukti tidak cukup (sel Edge_B 0,602 tetap rugi,
+      corr(Edge_B, gap_pp) = −0,189). **Batas wajib:** conditioning BELUM
+      diuji dengan probe valid — R6 ditarik karena defective, bukan refute.
 
 ## Sudah Dibatalkan / Diganti
 

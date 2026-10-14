@@ -1,6 +1,6 @@
 # PROGRESS.md — Milestone
 
-**Update terakhir:** 2026-10-13
+**Update terakhir:** 2026-10-14 (R6 ditarik; kelas fixed-barrier M15 MATI-KELAS)
 
 ## Milestone 0: Setup Fondasi — SELESAI (100%)
 
@@ -106,6 +106,16 @@ vs render — batas keras dari user. Batas ">600 baris" belum tersentuh, tapi
 - [x] **R4-M15-native SELESAI 2026-10-14: TOLAK 9/9 sel** (M15 sebagai basis,
       ambang ATR bukan pip, bed 2024; audit independen nol bug material;
       E1 proven berarah terbalik, E2/E3 netral-arah)
+- [x] **R4 audit addendum 2026-10-14**: definisi WR direvisi (TIME dihitung
+      sebagai posisi untung/rugi saat timeout); impas nominal keliru, impas
+      observatif nyata 37,5–47,8%; cacat quote TIME SELL di BID
+- [x] **R6-conditioning DITARIK 2026-10-14: NON-EXECUTABLE** — 4 cacat FATAL
+      + 2 blocking dari audit independen; spec tidak pernah dijalankan.
+      39/52 bin mati struktural oleh n; ambang `Edge >= 0,56` terbukti tidak
+      cukup (sel Edge_B 0,602 tetap rugi)
+- [x] **Kelas hipotesis fixed-barrier M15: MATI-KELAS** — 0/9 sel significantly
+      positif, 5/9 significantly negatif pada realized breakeven dengan CI
+      cluster-per-hari. Conditioning belum diuji dengan probe valid.
 - [ ] Spesifikasi Metode Target v1 (definisi sukses trading) — setelah Discovery-R1
 
 ## Milestone 4: Baseline Model — BELUM DIMULAI

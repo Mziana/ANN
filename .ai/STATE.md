@@ -1,6 +1,6 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-14 (R4-M15-native: TOLAK 9/9 sel, audit LOLOS)
+**Update terakhir:** 2026-10-14 (R6-conditioning: DITARIK, NON-EXECUTABLE; kelas hipotesis fixed-barrier M15 MATI-KELAS)
 **Fase:** Milestone 1 (Data) + 2 (EDA) SELESAI. Milestone 3 (Metode) BERJALAN
 dan TERBLOKIR di persetujuan user.
 **Status ronde terakhir:** EDA-07 L3-1 selesai + re-audit LULUS PROSEDURAL +
@@ -40,6 +40,46 @@ berubah. Batasan: bed 2024 tidak boleh di-run ulang dengan aturan exit
 berbeda.
 Audit R2 = CATATAN; Amandemen-R2-1 SUDAH diterapkan 2026-10-13
 (disetujui user paket).
+
+**R6-conditioning DITARIK 2026-10-14 — TIDAK PERNAH DIJALANKAN.** Spec R6
+ditolak eksekusi oleh audit independen: 4 cacat FATAL + 2 blocking, semua
+diverifikasi ulang dari evidence beku. Spec tetap DRAF di `arsitek/`.
+ disposition: `reports/governance/2026-10-14/Audit/addendum-R6-conditioning.md`.
+
+Empat cacat fatal: (D4) 39 dari 52 bin mati struktural oleh n — E1 1.313/tercil
+438 dan E3 136/tercil 45 tidak pernah bisa lewat G1, E2 hanya punya 2 sel
+sehingga G5 mustahil; hanya 13 bin pooled yang hidup dan 86%-nya E2;
+(D1) argumen §0 salah karena exit TIME 40,89% membuat "impas tepat di 1/3"
+tidak berlaku dan ambang 35,2% melanggar A7.5; (D1/K5) angka P&L spec salah
+skala (count x median, bukan sum); (D7) G6 inert, P(>3 bin lolos | null) ~ 0.
+
+**Cacat tambahan yang tidak ada di laporan auditor (B3):** ambang G2
+`Edge >= 0,56` **sudah terbukti tidak cukup**. Kaki B (E1 dicerminkan)
+sudah punya Edge 0,560 / 0,602 / 0,567 / 0,575 dan keempatnya tetap rugi
+(gap -2,2..-9,0 pp, median net -0,76..-6,99 pip). Korelasi `Edge_B` vs
+`gap_pp` = **-0,189**: makin tinggi Edge, makin buruk P&L terealisasi.
+Edge memprediksi URUTAN median net (r = +0,773) tapi median net negatif di
+seluruh 9 sel — jadi Edge adalah skor peringkat, bukan ambang kelayakan.
+Akar masalahnya Edge berbasis median, sedangkan impas ditentukan mean.
+
+**Posisi evidence untuk penutupan kelas (B5):** realized breakeven kaki A
+dengan CI 95% cluster-per-hari (10.000 boot, seed 1337) —
+**0 / 9 sel significantly positif, 5 / 9 significantly negatif**, seluruh
+9 sel `median_net_A` negatif (-6,61..-15,45 pip). Empat sel yang "belum
+terbukti" semuanya E1 dengan n 104-315, Edge_A < 0,5, dan median net
+-10,4..-11,6 pip. Sel terdekat impas (`E1_N6_k1.0`, gap -0,39 pp) adalah
+artefak mean-vs-median: WR-nya kebetulan impas tapi median per trade -10,42 pip.
+
+**Kelas hipotesis "fixed-barrier M15 pada bar M1 pair JPY": MATI-KELAS.**
+Dasar: 0/9 positif signifikan, 5/9 negatif signifikan, median net seragam
+negatif, dan ambang kelayakan sudah terbukti gagal pada data beku sendiri.
+**Batasan wajib:** ini BUKAN berarti "conditioning terbukti tidak berguna".
+R6 ditarik karena defective, bukan karena refute. Tidak ada probe valid
+terhadap hipotesis conditioning yang pernah dijalankan — yang terbukti
+adalah spec yang ada tidak mampu mengujinya. Ronde berikutnya butuh
+persetujuan eksplisit owner dan harus mengubah struktur kelas (horizon,
+window, rezolusi, atau instrumen), bukan filter di atas barrier yang sama.
+
 **Progress keseluruhan:** ~60% (data+EDA selesai, metode belum)
 
 > **Cara baca file ini (per 2026-10-13).** Bagian atas = status terkini (wajib

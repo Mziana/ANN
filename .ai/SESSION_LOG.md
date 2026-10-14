@@ -1776,7 +1776,8 @@ siap paste ke coder. Berikutnya: hasil coder MASUK → gerbang.
 - Artefak: T-L3-0_arah.csv 153 (F48323D2, pos 120/neg 33) + T-L3-0_peta98.csv 98 (1F58D4DF, pos 78/neg 20, diff kosong) + FIG-17_peta_arah.png (CE7E4F5C) + _l30_manifest.csv 6/6 cocok + run_l30.log (EXITCODE=0). ASSERT_LOG 343; KESIMPULAN_L30 terkunci.
 - C3 presisi: 5 Tokyo negatif eksak (-0.0473/-0.0549/-0.7446/-0.0279/-1.5868, INVERS menempel); 2 baris kandidat round_d London G3=False CI memuat 0 (targetnya LOLOS via rv15/rv60 pos). File beku untouched (penjaga baris 260/6767/1315/1335/86 sama).
 - 3 bug/asumsi salah tertangkap assertion mesin pra-hasil dan diperbaiki (kernel cwd -> find_project_root; print loud kwarg; filter r[wakil] bool; asumsi London absen di level target). Tanpa artefak parsial.
-- Laporan S5: eports/eda/2026-10-12/laporan-coder-eda07-l30.md. HEAD tak bergerak, nol stage/commit. Berikutnya: AUDITOR independen L3-0, arsitek putusan buka L3-1. L3-1 DILARANG dimulai.
+- Laporan S5:
+eports/eda/2026-10-12/laporan-coder-eda07-l30.md. HEAD tak bergerak, nol stage/commit. Berikutnya: AUDITOR independen L3-0, arsitek putusan buka L3-1. L3-1 DILARANG dimulai.
 x L3-0 gerbang LOLOS + brief audit terbit
 
 **Update 2026-10-12 - Asisten: L3-0 LOLOS gerbang, brief audit terbit.** Dihitung ulang: arah-set sama persis G3-pass 153, split 120/33, 5 Tokyo negatif eksak, 0 round_d London, peta98 98 cocok wakil+tanda, hash 6 dari 6 cocok, NB 7/7 nol error, EXITCODE=0, beku tak berubah. Koreksi presisi diterima: absen London hanya level baris. Brief auditor L3-0 terbit, target Audit/reaudit-l30.md. L3-1 tetap terkunci.
@@ -2087,3 +2088,78 @@ bed, dua skala, dengan bentuk kegagalan sama: tidak ada gerakan +
 biaya. Satu-satunya temuan baru: **E1 berarah terbalik** — itu rehab
 kompleks, bukan jalan pintas. Forward 2025 tetap terkunci (tak ada
 kandidat).
+---
+
+## Sesi 2026-10-14 (b) - R6-conditioning DITARIK + kelas fixed-barrier MATI-KELAS
+
+**Fokus:** Audit spec R6 (conditioning), verifikasi ulang seluruh klaim auditor,
+temuan tambahan, dan penutupan kelas hipotesis.
+
+**Urutan kerja.**
+1. Commit R4-M15 (`31a46bc`), eksplisit dan eksklusif: artefak governance/
+   evidence kecil saja. `events.jsonl`, `events.parquet`, karantina tidak masuk.
+   Pre-commit sempat gagal 2x: `ruff-format` mengubah `r4_m15.py` 99 baris
+   (evidence harus immutable) -> `pyproject.toml` exclude `reports/research`,
+   file dipulihkan dari index; karakter asing di SESSION_LOG dibersihkan.
+   `run_stdout.log` tetap ignored, tidak dipaksa-add.
+2. Draf spec R6 conditioning (169 bar, ASCII bersih) + brief audit independen.
+   Commit `0205e43`. User memilih **audit spec dulu** sebelum coder.
+3. Audit independen: **TIDAK LAYAK DIEKSEKUSI** - 4 cacat FATAL + 2 blocking.
+
+**Verifikasi ulang klaim auditor (§27 - yang tanpa bukti kalah).**
+Semua benar. Angka aktual dari `events.parquet`:
+- K5 dekomposisi P&L: spec salah skala. Spec `TP +56.654 / SL -102.038`
+  adalah `jumlah_event x median`, bukan `sum`. **sum** = TP +66.797,
+  SL -121.519, TIME +28.107 (cocok), total gross -26.615, net -36.511.
+  Arah kesalahan tidak konservatif: bucket SL dikecilkan sekitar 16%.
+- K3: "median 23,9%" sebenarnya **pooled** 23,94%; median sejati 9 sel 19,29%.
+- D4: n per keluarga E1 1.313 (tercil 438), E2 9.059 (3.020), E3 136 (45).
+  **39 dari 52 bin mati struktural**; hanya 13 bin pooled yang hidup, 86% E2.
+- K1/K2: rumus 1/3 dan (SL+c)/(TP+SL) benar secara matematis.
+- K6: baseline acak 13,50 pip tidak ada di evidence R4 mana pun (dihitung
+  arsitek di sesi terpisah, disalin spec tanpa sumber).
+
+**Cacat tambahan yang tidak ada di laporan auditor (B3).**
+Ambang G2 `Edge >= 0,56` **sudah terbukti tidak cukup**. Kaki B (E1 dicerminkan,
+sudah dihitung R4) punya Edge 0,560 / 0,602 / 0,567 / 0,575 dan keempatnya
+tetap rugi: gap -2,2 sampai -9,0 pp, median net -0,76 sampai -6,99 pip.
+`corr(Edge_B, gap_pp) = -0,189` - makin tinggi Edge, makin buruk P&L nyata.
+`corr(Edge_B, median_net_B) = +0,773` - Edge memprediksi URUTAN median net.
+Kedua-duanya benar: Edge adalah **skor peringkat**, bukan **ambang kelayakan**,
+karena median net negatif di seluruh 9 sel. Akar masalah: Edge berbasis median,
+sedangkan impas ditentukan mean win/loss. A7.5 sudah melarang approach nominal.
+
+**Pengukuran untuk penutupan (B5).** Realized breakeven kaki A per sel,
+CI 95% cluster-per-hari, 10.000 boot, seed 1337:
+**0 / 9 sel significantly positif, 5 / 9 significantly negatif**,
+seluruh 9 sel `median_net_A` negatif (-6,61 sampai -15,45 pip).
+Empat sel yang belum terbukti = semua E1, n 104-315, Edge_A < 0,5,
+median net -10,4 sampai -11,6 pip. Sel terdekat impas `E1_N6_k1.0`
+(gap -0,39 pp) adalah **artefak mean-vs-median**: WR-nya impas tapi median
+per trade -10,42 pip dan Edge_A 0,408. Bukan sinyal, kebetulan momen.
+
+**Vonis.** R6 ditarik sebagai **NON-EXECUTABLE** - bukan `INKONSISTEN`,
+bukan `MATI-KELAS` dari R6, karena R6 tidak pernah jalan.
+Kelas hipotesis "fixed-barrier M15 pada bar M1 pair JPY": **MATI-KELAS**.
+
+**Batas wajib yang dicatat (§20 anti-halusinasi).**
+Ini BUKAN berarti "conditioning terbukti tidak berguna". Spec ditarik karena
+defective, bukan karena refute. Tidak ada probe valid terhadap hipotesis
+conditioning yang pernah dijalankan; yang terbukti adalah spec yang ada tidak
+mampu mengujinya. Ronde berikutnya butuh persetujuan eksplisit owner dan
+harus mengubah **struktur kelas** (horizon, window, rezolusi, atau instrumen),
+bukan filter di atas barrier yang sama.
+
+**Disposition:** `reports/governance/2026-10-14/Audit/addendum-R6-conditioning.md`
+(267 bar, ASCII bersih). Spec R6 **tidak diubah** - masih DRAF di `arsitek/`.
+2023/2025/2026 tidak dibuka. Tidak ada run backtest baru.
+
+**Catatan proses yang harus jujur dicatat.**
+- Diskusi awal sesi sempat salah arah (rekomendasi pivot H4, klaim "sinyal
+  bergerak setengah entry acak"). Keduanya sudah diuji dan **DIBATALKAN**:
+  horizon tetap tidak memperbaiki; baseline acak searah 13,50 pip dan MFE_A
+  R4 0,89-1,07x baseline = gerakan normal.
+- Ada beberapa bug di skrip verifikasi sementara (fraksi vs persen pada
+  cetakan CI; kolom `date` vs `day`). Angka akhir sudah diverifikasi ulang.
+- Substansi spec R6 bagian 0, 3, 4, 6, 7, 8 seluruhnya bermasalah; sisa spec
+  (warisan R4) tidak diaudit ulang karena di luar delta.
