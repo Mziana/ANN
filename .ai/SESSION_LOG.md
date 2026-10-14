@@ -1798,3 +1798,210 @@ x L3-0 gerbang LOLOS + brief audit terbit
 **Vonis B-4 2026-10-13 (arsitek dirangkap asisten, S1A): GO cabang (a).** S-2d 5 blob COCOK + HEAD/staged bersih; brief eksternal DINYATAKAN MOOT. Putusan reports/governance/2026-10-12/arsitek/putusan-l31-final.md (EA1BC4FD, ASCII/LF). V-1 GO = minta izin user utk spec pemodelan pra-registrasi (BUKAN paper-trade); syarat: disiplin pra-registrasi, metrik per-jenis, pagar T-5, skrutini LB_bin 25/25, tanpa model-lolos-gate = tanpa paper-trade. V-2 register 68 beku / 35 tutup. V-3 R1-R4 ronde berikut + I1-I4 mengikat. V-4 T-5 + S8A. Ronde L3 DITUTUP. Menunggu: persetujuan user.
 
 **Spec fingerprint 2026-10-13 (arsitek, DRAF menunggu izin user).** File arsitek/spesifikasi-fingerprint.md (6B0A9663, ASCII/LF). Scope: 31 LOLOS berarah; 29 fitur kausal beku verbatim; sidik-sebelum (desil-lift 2 semester) + sidik-sesudah (lanjutan vs balik + bersih-biaya); vonis biner GO iff >=3 kandidat aturan trade (ambang terbuka veto user). Tanpa tambah fitur/label; tanpa intip test; tanpa klaim P&L.
+
+**Info broker 2026-10-13 (user):** Finex, komisi 1 USD/lot, lot min 0,01. Dicatat di CONTEXT S6. Catatan: per-side vs round-turn belum konfirmasi (asumsi per-side sementara). Estimasi kasar: 1 USD/lot = ~0,15 pip (kurs ~150, tergantung kurs) — kecil vs spread terukur ~0,65 pip, tapi tetap masuk rumus biaya 3 lapis.
+
+
+**Rekonsiliasi dokumentasi 2026-10-13 (read-only, tanpa eksperimen).** Dibaca penuh: README, STATE, CONTEXT, TASKS, PROGRESS, SESSION_LOG, putusan-l31-final, spesifikasi-fingerprint, dokumen desain 9 Okt (613 baris). Empat file state dikoreksi supaya tidak saling bertentangan; gate check_foreign_chars hijau 5/5.
+
+Empat masalah dokumentasi yang dilaporkan user + koreksinya:
+1. README sebut fingerprint masih draf -> sekarang: DIPENSIUNKAN (arsip).
+2. STATE bagian lama masih punya Langkah Berikutnya era EDA-04 -> diganti, + header penanda ARSIP PROVENANSI supaya AI pembaca tidak salah rujukan.
+3. CONTEXT masih v1.3 / 2026-10-05, Fase 1 Training, metode menunggu EDA -> v1.4 / 2026-10-13, fase Riset Milestone 3, §4 dilabeli rencana bukan status, §2 GitHub AKTIF, §8.3 konflik spread, §12 daftar ulang.
+4. TASKS/PROGRESS metadata tertinggal 2026-10-07 -> keduanya 2026-10-13.
+
+Klaim usang lain yang ditemukan & dikoreksi: src/ bukan 0 byte (terukur 8 modul / 2.035 baris); clean_data bukan 1.349.857 bar tapi 1.347.847 (D1 hapus interpolasi); resample/build_features/build_labels/build_eadapter sudah selesai bukan [ ]; fetch MT5 bukan belum mulai; Blocked bukan kosong (menunggu persetujuan user); .env.example masih 0 byte (terverifikasi); models/ + backtest/ memang belum ada.
+
+CATATAN JUJUR: angka lama STATE.md (src/ 1.775 baris; build_features 400/400) tidak cocok hitungan fisik. Penyebab belum diperiksa -> ditandai BELUM TERVERIFIKASI, jangan kutip keduanya tanpa sumber. Jumlah test juga tidak di-run ulang (147 itu catatan 2026-10-05, bukan angka terkini).
+
+Belum dikerjakan (menunggu user): 4 keputusan 18 dokumen desain untuk spec Discovery-R1, damakan spread (2,3x), konfirmasi komisi per-side vs round-turn.
+
+**Persetujuan user 2026-10-13 (pasca-compaction):** SETUJU inventarisasi 8 pola + 1 variabel latar M15 sebagai LAMPIRAN DESKRIPTIF Discovery-R1 (tanpa vonis, tanpa ambang). 3 pagar mengikat: (1) deskriptif saja, tanpa pemenang/ambang; (2) definisi 8 pola ditulis SEBELUM data dibuka; (3) M15 diformalkan sebagai SATU variabel latar per kandidat. Masih terbuka: 4 keputusan S18 dokumen desain, otoritas spread, konfirmasi komisi per-side vs round-turn.
+
+**Spec Discovery-R1 DITULIS 2026-10-13 (arsitek, DRAF).** File reports/governance/2026-10-13/arsitek/spesifikasi-discovery-R1.md. Isi: R-1..R-7 (R-7 lampiran 8 pola+M15 TERKUNCI atas persetujuan user; R-1..R-6 usulan menunggu ratifikasi), D-1 grid operasional E1/E2/E3 + kapasitas min 300, D-2 split + anomaly/SA-03 keluar, D-3 biaya 3 lapis (spread terukur, komisi 0,3 pip asumsi per-side), D-4 ledger + Q0-Q5 + kriteria KANDIDAT, D-5 confirmation + G1-G7, D-6 P0-P2, D-7 evidence, D-8 lampiran deskriptif, D-9 sukses/berhenti, D-10 anti-rescue H4, D-13 ratifikasi. NOL otorisasi eksekusi. Menunggu: ratifikasi user.
+
+**RATIFIKASI 2026-10-13 (user):** oke setuju = SETUJU R-1..R-6 + R-7 (D-13 spec Discovery-R1). Spec DRAF naik menjadi SPEC EKSEKUSI. Blocker persetujuan TERTUTUP. Berikutnya (desain langkah 3): AUDITOR eksternal audit spec, lalu coder discovery 2024. Asisten susun brief audit.
+
+**AUDIT SPEC MASUK 2026-10-13 (auditor eksternal):** VERDICT GAGAL. 3 HIGH (H1 A2 definisi M15 mustahil, H2 A3 family 252 vs 6, H3 A7 kontradiksi M15 primer vs deskriptif) + 6 MEDIUM + 5 LOW. A8 COCOK bersih; inti A4 + sisi harga + angka spread/komisi COCOK. Perintah auditor: amandemen spec, re-audit 3 butir, baru coder. H3 diwarisi dari kontradiksi persetujuan user log:1820 � butuh user. Menunggu: putusan arsitek + pilihan user H1/H2/H3.
+
+**PUTUSAN ARSITEK 2026-10-13 (S1A, pasca-verifikasi §27 langkah 1):** ketiga HIGH diverifikasi BENAR ke teks spec (H1: bar M15 "yang memuat t0 (selesai)" mustahil pada decision tepat setelah t0 close; H2: family 6 sel vs 252 varian selectable + net-observed tak terdefinisi vs horizon/ladder; H3: D-4.2 vs D-8 saling meniadakan, diwarisi persetujuan log:1820). Vonis GAGAL DITERIMA — jaring pengaman bekerja sebelum coder jalan. Tiga opsi diajukan + rekomendasi paket A-A-Kunci; MEDIUM/LOW dilipat ke amandemen tanpa bebankan user (veto tetap terbuka).
+
+**PERSETUJUAN PAKET 2026-10-13 (user):** "oke saya ikut rekomendasi mu" = A-A-Kunci: H3(a) M15 strict deskriptif tanpa konteks primer; H1(a) bar M15 terakhir selesai ≤ t0; H2 kunci setting H+10/TP2,5/SL2,5 + horizon/ladder lain deskriptif.
+
+**AMANDEMEN-1 DITERAPKAN 2026-10-13 (arsitek, 14 edit):** spec 398 baris — status EKSEKUSI+AMANDEMEN-1; tabel R-0 MENGIKAT + tabel A-H1/A-H2/A-H3; E1 bersarang diakui M4; E2/E3 label satu-sel + keterbatasan diterima M5; D-2 denominator beku tanpa re-entry + hapus jendela 2026 ganda L3 + hapus SA-03 ganda M9; D-3.1 entry OPEN t0+1 + horizon dari t0 close M3; D-3.3 literal config by_session M7 + slippage ASUMSI + multiplier 2,0 tidak dipakai M8; D-4.2 R1 tanpa konteks primer H3; Q1 setting beku H+10 + Q2 paket beku TP2,5/SL2,5 tanpa pemilihan H2/M6 + gerbang kapasitas Q0; D-4.4 kriteria KANDIDAT 4-syarat (pooled median>0 + CI95 cluster-hari + tanda sama H1/H2 + failure map) H2/M1; D-8 otoritas R-7 L1; D-8.2 bar M15 terakhir selesai + murni inventarisasi H1/H3; D-9 typo; D-12 putaran 2/3 + deviasi evidence L5; D-13 re-audit fokus 3 butir. Verifikasi grep: tidak ada frasa lama hidup di luar catatan historis. Brief re-audit `.ai/assistant/prompts/2026-10-13_reaudit-spec-R1-auditor.md` disusun. TASKS Blocked + STATE + PROGRESS diupdate. Menunggu: user paste brief re-audit ke auditor eksternal; bila LULUS + tanpa veto → coder discovery 2024.
+
+**RE-AUDIT FOKUS MASUK 2026-10-13 (auditor eksternal): VERDICT LULUS.** Ketiga HIGH lulus; tanpa cacat fatal baru; 5 catatan non-blocking C1–C5 (C1 seed bootstrap tak ditetapkan; C2 batas family correction tak eksplisit; C3 metode correction tak dinamai; C4 tabel M15-bias permukaan baca; C5 konvensi resample M1→M15 tak eksplisit). Arsitek verifikasi spot-check sitasi ke teks spec (D-8.2 320-326, Q1/Q2 207-224, D-4.4 236-247) — COCOK. (Catatan jujur: laporan auditor mengandung artefak karakter asing di beberapa baris — substansi + nomor baris terverifikasi, tidak memengaruhi verdict.) Vonis arsitek: LULUS DITERIMA; spec + Amandemen-1 SAH sebagai basis eksekusi. Disposisi C1–C5 diusulkan sebagai Amandemen-2 minor (5 pengetatan satu-baris, semuanya menghapus derajat bebas, tanpa angka alternatif): C1 seed beku pra-run; C2 E1=1 family isi 6 + E2/E3 masing-masing 1 family isi 1; C3 metode = CI tanpa p-value, kontrol multiplicity lewat penguncian; C4 tabel lampiran DISEGEL sampai vonis KANDIDAT beku; C5 resample via src/data/resample.py. Menunggu: veto user + persetujuan Amandemen-2, lalu brief coder discovery 2024.
+
+**PERSETUJUAN AMANDEMEN-2 2026-10-13 (user):** "setuju Amandemen-2" paket penuh, tanpa veto.
+
+**AMANDEMEN-2 DITERAPKAN 2026-10-13 (arsitek, 7 edit):** spec 421 baris — status +A2; tabel A-C1..A-C5; D-4.2 family E1=6/E2=1/E3=1; D-4.4 seed 1337 beku pra-run + metode tanpa p-value; D-8.2 resample via src/data/resample.py; D-8.3 tabel DISEGEL sampai vonis beku; D-13 → coder. Verifikasi grep: 5 pengetatan di tempat (baris 45-49, 212, 260-262, 344-345, 355). Brief coder `.ai/assistant/prompts/2026-10-13_eksekusi-discovery-R1-coder.md` disusun (ledger dulu + manifest pra-run, 2024 saja minus anomali, kontrak entry/exit/sisi, biaya literal, Q0→Q5, kriteria 4-syarat, segel lampiran, larangan, format pulang §5). TASKS/STATE/PROGRESS diupdate. Rantai governance ronde ini SELESAI sampai coder pulang. Menunggu: user paste brief coder ke coder eksternal; setelah pulang → auditor replikasi dari nol → arsitek vonis TOLAK/KANDIDAT/BELUM JELAS.
+
+**CODER PULANG 2026-10-13 (laporan §5): TOLAK-sementara E1/E2/E3.** 8 source (d1 216 + d2 394 + d3 135 + d4 218 + run 144 baris, semua < 400; ruff hijau) + output (events.jsonl 271 MB, summary.json, run_stdout.log, seal.txt, appendix segel 52,9 MB). Q0 semua 8 sel lolos (1.142–104.339); pooled median net-obs ≈ −3,6 semua sel, CI negatif; H1/H2 negatif konsisten; vektor-vs-skalar IDENTIK; 2 run deterministik segel sama; cancel 2.097 semua GAP; AMBIGUOUS 2,8%; SL:TP ≈ 1,7:1. Catatan coder: E2 104.339 event longgar; spread maks 55,6 pip (ekor, median kebal); E3-H1 n kecil. Saran coder: tutup R1 sebagai kegagalan informatif; R2 hanya atas perubahan arsitek. Verifikasi arsitek (S-V, tanpa eksekusi): evidence 13 file ADA; urutan benar manifest 14:52:01 + ledger 14:52:18 < source/output 14:59–15:26; koherensi −3,6 ≈ −(SL 2,5 + biaya ~1,1) = mayoritas-SL, koheren. Vonis final DITAHAN sampai replikasi (D-5). Brief replikasi `.ai/assistant/prompts/2026-10-13_replikasi-discovery-R1-auditor.md` disusun (6 butir, tanpa impor artefak coder). TASKS/STATE/PROGRESS diupdate. Menunggu: user paste brief replikasi ke auditor eksternal.
+
+**KOREKSI ARSITEK 2026-10-13 (kesalahan sendiri, diakui):** user benar — rancangan awal (EDA-06 `_build_eda06.py:59,74-75,166-167`; EDA-07 `_build_eda07.py:77`) memakai SL/TP BERBASIS ATR (SL = k × ATR M5(14) kausal bar-selesai, dibekukan saat entri; k ∈ {0,75; 1,0; 1,5}, RR ∈ {1,0; 1,4; 2,0}) berdampingan dengan barrier tetap 50/70 point. Penguncian A-H2 saya (TP/SL TETAP 2,5 pip = 25 point) MENYIMPANG dari preseden proyek: (a) bukan ATR, (b) bahkan lebih tipis dari barrier tetap EDA-06 (50/70 point). Terukur 2026-10-13: mean ATR(14) M1 2024 = 2,74 pip → SL R1 = 0,91× ATR (noise-level). Vonis TOLAK R1 SAH untuk yang diuji (barrier tetap 25 point), tetapi TIDAK menguji desain ATR original. Bukan tuning bila diuji di ronde baru: R2 = event E1/E2/E3 sama + barrier ATR resep EDA-06, pra-registrasi k/RR, di 2025 segar. Menunggu: pilihan user — baca vonis EDA-06 dulu untuk kunci k/RR, atau user tetapkan langsung dari pengalaman.
+
+**VONIS EDA-06 DIBACA 2026-10-13 (opsi A, arsitek):** sumber `T-06-7_gerbang_tercile.csv` (144 irisan, terverifikasi konsisten dengan laporan coder: 23/144 LOLOS). Fakta: (1) entri EDA-06 UNCONDITIONAL stride-5, bukan event — yang diukur mekanika barrier, bukan edge event; (2) NOL irisan berekspektansi positif (E_normal>0: 0/144) — LOLOS = izin lanjut, bukan edge; (3) ranking median delta: ATR_k1.5_rr2 terbaik (2,49; 5/12 lolos), lalu FIX_100_140 (2,74; 6/12); terburuk FIX_30_45 (8,03; 0/12) dan ATR_k0.75_rr1 (7,19; 0/12) — pola: stop LEBAR kalah LEBIH SEDIKIT; (4) SMOKING GUN: FIX_30_45 (tetangga terdekat kunci R1 25pt) 0/12 — R1 mengunci lingkungan terburuk EDA-06; (5) LOLOS menumpuk Tokyo/London tercile-3 (vol tinggi), NewYork gagal K2; (6) EDA-06 memakai 2023–2025 (`_build_eda06.py:69,147`) → ranking k/RR terkontaminasi 2024 DAN 2025; satu-satunya bed segar = 2026-holdout (tak pernah dimuat). Terukur: mean ATR M5(14) 2024 = 6,74 pip → k=1,5 ≈ SL 101 point / TP 202 point (~4× stop R1). Rekomendasi arsitek: R2 = event E1/E2/E3 + SATU paket ATR k1,5/RR2,0 kausal-beku, diuji di 2026-holdout minus anomali. Menunggu: persetujuan user atas paket + bed uji.
+
+**PERSETUJUAN R2 2026-10-13 (user):** "oke saya terima usulanmu" = event E1/E2/E3 + barrier ATR k1,5/RR2,0 + bed 2026-holdout.
+
+**SPEC DISCOVERY-R2 DITULIS 2026-10-13 (arsitek, DRAF, 151 baris).** File `reports/governance/2026-10-13/arsitek/spesifikasi-discovery-R2.md`. Isi: R2-1..R2-6 (event warisi R1; SATU paket ATR SL=1,5xATR M5(14)/TP=2xSL kausal-beku resep EDA-06; bed 2026-holdout 269.846 bar minus anomali 19.119 → usable ~250.727, paruh kalender, E3 estimasi ~500-600; biaya+eksekusi+kriteria 4-syarat sama dengan R1 seed 1337; Q2 tanpa ladder; evidence folder R2 sendiri; lampiran hitung-ulang + segel baru, segel R1 utuh; justifikasi EDA-06; larangan termasuk tanpa 2024/2025/2023 + tanpa buka segel R1). NOL otorisasi eksekusi. R1 independen (replikasi → vonis). Menunggu: ratifikasi "SETUJU R2".
+
+**RATIFIKASI R2 2026-10-13 (user):** "setuju" = SETUJU R2 paket penuh, tanpa veto. Spec naik SPEC EKSEKUSI (R2-1..R2-6 MENGIKAT). Brief audit R2 `.ai/assistant/prompts/2026-10-13_audit-spec-R2-auditor.md` disusun (hanya delta B1–B8: resep ATR, satu paket, bed segar, paruh, E3 tipis, segel, caveat confirmation, akurasi D2-9; warisan R1 tidak diaudit ulang). TASKS/STATE/PROGRESS diupdate. Menunggu: user paste brief audit R2 ke auditor eksternal ( + brief replikasi R1, dua jalur independen).
+
+**AUDIT R2 PULANG 2026-10-13: CATATAN** (B1/B3/B5/B6/B8 LULUS;
+B2/B4/B7 GAGAL wording; C1–C5 catatan; 2026 tidak disentuh).
+Dijelaskan ke user bahasa sehari-hari; user ingatkan kesimpulan itu
++ tulis "setuju" = setujui paket Amandemen-R2-1.
+**AMANDEMEN-R2-1 DITERAPKAN 2026-10-13:** B2 (setting beku +
+larangan horizon, D2-6) + B4 (paruh exact 01-01..05-18 /
+05-19..10-02, D2-3) + B7 (kontaminasi 2023+2024+2025, D2-6) + C1
+(cakupan verbatim + semantik barrier, D2-2/D2-5) + C2/C3/C4 (D2-9)
++ C5 (basis persen 92,9%/~70%, D2-3). Tanpa perubahan angka
+(k=1,5/RR=2,0/H+10/2026-holdout/seed 1337 tetap). Spec 7.727 →
+10.307 byte. Brief re-audit fokus
+`.ai/assistant/prompts/2026-10-13_reaudit-spec-R2-auditor.md` +
+brief coder `.ai/assistant/prompts/2026-10-13_eksekusi-discovery-R2-coder.md`
+(prasyarat re-audit LULUS) disusun. TASKS/STATE/PROGRESS diupdate.
+Menunggu: user paste re-audit ke auditor, lalu brief coder ke coder.
+
+**RE-AUDIT FOKUS R2 PULANG 2026-10-13: LULUS 8/8** (B2/B4/B7 +
+C1–C5 tertutup, bukti baris; tanpa cacat FATAL baru; 2 catatan
+kosmetik — "additionally" di spec:125 + "verbatim" di judul
+D2-2/self-audit — tanpa amandemen atas saran auditor).
+**Verifikasi arsitek (§27 langkah 1):** size 10.307 byte + SHA-256
+C05D5E4F…654C5 COCOK persis; sapu 6 kemunculan horizon/H+10 —
+tidak ada yang mengizinkan non-H+10 mengangkat kandidat; C5
+92,91% + 70,0% hitung-ulang cocok; rantai C4 12/12 dari tabel
+auditor sendiri; otoritas amandemen di log terkonfirmasi.
+(169 baris terhitung lokal vs "202 baris" auditor = artefak metode
+hitung; hash+byte cocok = objek identik.)
+**Keputusan: 2 catatan kosmetik DIBIARKAN** — sunting apa pun
+mengubah hash yang baru disertifikasi dan membatalkan verdict
+LULUS demi nol nilai substantif. **Prasyarat coder TERPENUHI.**
+TASKS/STATE/PROGRESS diupdate. Menunggu: user paste brief coder
+R2 ke coder eksternal.
+
+**CODER R2 PULANG 2026-10-13: TOLAK-sementara E1/E2/E3 (8/8 sel).**
+8 sel: median −1,32..−1,72, ci_lo negatif semua, med_h1/med_h2
+negatif semua; TIME-share 0,71–0,84 (ekspektasi C2 terkonfirmasi);
+E3 n_eval=507 (lolos gerbang 300, dalam estimasi 500–600);
+2 run identik (segel R2 2575473C… sama di kedua run); segel R1 tak
+tersentuh; coder tidak overreach (final = arsitek).
+**Verifikasi arsitek (§27 langkah 1) — DITERIMA sebagai
+TOLAK-sementara:** 12 file ADA; ledger 19:51:03 + manifest
+19:52:46 SEBELUM output run1 19:52:55+/run2 19:53:52+; manifest pin
+spec beku C05D5E4F + config 1127514518AA (hash file kini cocok =
+tak berubah sejak R1) + parquet 2026 7F267BB94005; Q0 exact
+(90525 event → 84890 evaluable = 5635 buang 4265+1360+10+0;
+n_raw/n_eval per sel jumlah pas; res_eval per sel jumlah ke n);
+kriteria diterapkan benar (s1/s2 false, s3/s4 true → TOLAK semua);
+hit-rate TP 1,7–4,3% / SL 12–24% / TIME 71–84% koheren barrier
+~77/153 point; sesi 32330+28780+22919+6496 = 90525 pas.
+**Artefak kosmetik:** string log/ledger "~766 point" = display ×10;
+ground truth events.jsonl sl_pips=1,5×atr tepat (5,82→8,73/17,46)
+— tanpa re-run, dicatat untuk auditor.
+**Putusan J1–J5: TERIMA SEMUA** (J1 race t0+2..t0+11, H+10 = 10 bar
+race; J2 MFE/MAE race deskriptif; J3 Q0=n_eval; J4 cluster
+hari-UTC; J5 gap epoch mentah t0+1..t0+20).
+**Vonis final DITAHAN sampai replikasi auditor LULUS** (pola R1;
+permintaan coder agar arsitek vonis kini DITOLAK prosedural).
+Brief replikasi R2
+`.ai/assistant/prompts/2026-10-13_replikasi-discovery-R2-auditor.md`
+disusun (J1–J5 mengikat + butir barrier-wajib + angka pembanding).
+TASKS/STATE/PROGRESS diupdate. Menunggu: user paste brief replikasi
+R2 ke auditor eksternal.
+
+**PENILAIAN ARSITEK atas percakapan user–coder (2026-10-13):**
+Coder menjawab "berapa point TP/SL" dari distribusi events.jsonl
+(median SL ~70pt / TP ~141pt, mean 8,3/16,6 pip, IQR SL 4,6–10,3 /
+TP 9,3–20,7) + erratum terbuka "766 point" = display ×10 (konsisten
+dengan temuan verifikasi arsitek independen: sl_pips=1,5×atr tepat;
+ledger/manifest tak diubah — perilaku benar). Analisis batas MFE
+(75pt tersentuh 13,7% vs butuh ~55% di 1:1; tabel sentuh 47/70/105
+dari kolom beku + koreksi tanda mae + batas "keduanya tersentuh
+1,7% = urutan tak-bisa-diketahui") = bacaan deskriptif yang sah.
+**Penolakan coder atas "lomba TP70 tanpa horizon di data 2026"
+BENAR dan dipertahankan arsitek:** file berakhir di menit ke-10
++ urutan-sentuh level baru tak ada di file → mengambilnya =
+buka-ulang 2026 = double-dip; 2026 terbakar untuk pertanyaan
+barrier. Klaim EDA-06 (RR 1,0/1,4 pra-registrasi kalah vs 2,0)
+cocok rantai D2-9. Tawaran draft pra-registrasi R3 = responsif,
+bukan eksekusi — sah. Rekomendasi arsitek: R3 untuk ide TP≈75
+TIDAK disarankan (ceiling 15,3% vs butuh ~55% sudah menjawab di
+meja hitung; EDA-06 pra-uji kalah) — kecuali user punya hipotesis
+genuin baru. Tak ada perubahan state governance dari percakapan
+ini (vonis final tetap ditahan sampai replikasi).
+
+**REPLIKASI R2 PULANG 2026-10-13: LULUS tanpa arbitrase.**
+Auditor implementasi-ulang dari nol (tanpa impor artefak coder;
+kode coder + 4 record JSON dibaca hanya untuk butir 4).
+Toleransi dinyatakan eksplisit: count 0 / median-CI-paruh 0,01 pip /
+res_eval 5 per 69.538 / share 0,1 pp / hash manifest 0 — semua
+lolos. Butir 1–7 COCOK semua: urutan pra-run + 12/12 hash manifest;
+8/8 sel identik n/median/ci/h1/h2 (sampai ~1e-12); biaya literal +
+Off 0 bar; barrier sl=1,5×atr / tp=3×atr + erratum ×10
+dikonfirmasi (mean ATR 5,1059 → SL 76,59 point, bukan 766);
+segel R2 cocok + segel R1 tak tersentuh + M15 hanya lewat seal;
+scope bersih (nol 2023/2024/2025, nol p-value); seed 1337 pra-run +
+25/25 baris INFO run1 vs run2 identik. Satu-satunya selisih: 5
+event E2 TIME vs SL — terbukti FP di bawah 1 ULP (margin 1e-15..
+1e-14 vs ULP 2,842e-14), hit_TP 100% cocok, median/CI/paruh tak
+bergerak. Catatan C-R2-1..C-R2-7 non-blocking.
+**Verifikasi arsitek (§27 langkah 1) — DITERIMA:** cek silang ke
+disk (segel 2575473C… cocok; sel E1 summary.json identik tabel
+auditor; s1/s2 false + s3/s4 true → TOLAK benar semua).
+**Koreksi terbuka (kesalahan brief saya, C-R2-3):** hit-rate aktual
+TP 1,33–4,34% / SL 14,60–24,26% — batas bawah brief lama
+("TP 1,7– / SL 12–") salah; restatement-level, TANPA dampak vonis
+(kriteria memakai median/CI/paruh, semuanya negatif tegas).
+**VONIS FINAL R2: TOLAK E1/E2/E3 (0/8 lolos 4-syarat).**
+Segel D-8 R2 tetap TERTUTUP (syarat buka = vonis KANDIDAT beku;
+tak ada KANDIDAT). Pertanyaan barrier-ATR jalur event-first
+DITUTUP (§8A: ronde berakhir dengan vonis no-go). Keterbatasan
+tercatat: E3 41,1% event punya gap di jendela kompresi 630 bar
+(C-R2-5; warisan pra-registrasi R1, identik di kedua pihak, tak
+diubah). TASKS/STATE/PROGRESS diupdate. Tersisa: replikasi R1 +
+vonis final R1. (Untuk auditor: SESSION_LOG saya catat sendiri —
+tidak perlu sentuh file ini.)
+
+**KEPUTUSAN USER 2026-10-13: R3-PEMANASAN di bed 2026 (override arsitek).**
+User menilai data terbatas/berharga + urutan bed keliru (2026 terpakai
+terlalu dini; seharusnya lama→baru). Arsitek MENERIMA dengan syarat
+asimetri: run ulang-2026 = DIAGNOSTIK non-vonis (folder evidence terpisah,
+label PEMANASAN, folder R2 + segel tak tersentuh). GAGAL di data contekan
+= ide gugur kuat (hemat bed 2025); MENANG = tanpa makna (artefak seleksi),
+tetap wajib lulus di bed baru untuk vonis apa pun. Prinsip lama→baru
+diadopsi untuk ronde berikut. Angka R3 DIKUNCI user 2026-10-13:
+SL 1,0×ATR / TP 1,5×ATR + side dinegasi, sisanya beku R2.
+Brief pemanasan `.ai/assistant/prompts/2026-10-13_pemanasan-R3-coder.md`
+ditulis (folder evidence `discovery-R3-pemanasan`, tanpa D-8/segel,
+tafsir asimetri di badan brief). Menunggu: user paste ke coder.
+
+**PEMANASAN R3 PULANG 2026-10-14: KALAH di 7/7 sel evaluable**
+(median −1,82..−2,24, seluruh CI di bawah nol, kedua paruh negatif;
+TP ~11% vs SL ~31%; E3 DROP Q0 n=146). Tafsir asimetri berlaku:
+ide paket flip+resize GUGUR KUAT → bed 2025 HEMAT.
+**Verifikasi arsitek byte-level:** 177.623 evaluable, flip-salah 0
+(`side==-side_scan` semua), sl==1,0×ATR 0 salah, tp==1,5×ATR 0 salah
+— dua perubahan diminta TERVERIFIKASI exact. **Drift tak-diminta:**
+E2 162.592 vs R2 69.538 (2,34×), E3 146 vs 507, ATR_NA 7.517 vs
+4.265, E1 ±1% — scan bukan replika exact (ambiguitas prose spec:
+resep ATR-M1, batas loop pullback, inklusivitas batas; backlog
+hardening spec dicatat). **Pelanggaran prosedural:** coder membaca
+folder R2 (read-only, diakui sendiri) — untuk pemanasan DITERIMA
+dengan catatan (di ronde vonis = gagal). Kill-signal tetap berdiri:
+KALAH seragam & dalam di semua sel → ide mati, tak perlu bedah R4
+untuk paket ini. Tersisa: replikasi R1 + vonis final R1.
+
+**PEMANASAN P2 PULANG 2026-10-14: KALAH di 8/8 sel.**
+Side->-side sesudah scan, barrier R2 (SL 1,5xATR / TP 3,0xATR) beku,
+bed 2026-holdout; run 02:26 WIB (`summary.json` + `run_stdout.log` ADA,
+`events.jsonl` 116,69 MB di disk, tak ikut push >100 MB).
+Stacked med_net per sel -1,52..-1,89 (E1/N4-D2.5 -1,82; N4-D3.5 -1,89;
+N5-D2.5 -1,82; N5-D3.5 -1,89; N6-D2.5 -1,62; N6-D3.5 -1,52; E2 -1,52;
+E3 -1,81). Replay 1-posisi negatif di semua sel (E2 -38.120,24 dari
+17.075 buka; E3 -198,06; E1 kecil-negatif). Anti-drift LOLOS: n total
+90.525 = R2; E2 n_eval 69.538 = R2; E3 n_eval 507 = R2. Cermin vs R2
+simetris (SL->TIME 12.584 vs TIME->SL 12.731) - flip tidak membalik
+struktur. Tafsir asimetri: **jalur flip DITUTUP** (kill-signal kedua
+setelah R3-KALAH 7/7). Tersisa: replikasi R1 + vonis final R1.

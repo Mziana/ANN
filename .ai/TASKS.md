@@ -1,6 +1,6 @@
 # TASKS.md — Task Board
 
-**Update terakhir:** 2026-10-07
+**Update terakhir:** 2026-10-13 (rekonsiliasi dokumentasi)
 
 ## In Progress
 
@@ -12,14 +12,14 @@
 - [x] Phase A-5: `docs/PROJECT_MAP.md` dibuat (2026-10-05)
 - [x] **PHASE A SELESAI** — lanjut Phase B
 - [x] Gate pre-commit dibetulkan: hapus hook `mixed-line-ending`, tambah `scripts/run_tests.py` (2026-10-05)
-- [ ] **Commit Phase A** (menunggu review user)
+- [x] **Commit Phase A** (selesai — sudah ada di riwayat git, commit awal `9f996b5`+)
 - [x] Phase B: `fetch_data.py`, `config.py`, 2 `__init__.py`, 22 test — 7/7 verifikasi lolos (2026-10-05)
 - [x] Fetch full 2023-2026: **1.347.847 bar M1** (2026-10-05)
 - [x] Investigasi DST 2023-2026: **broker tidak ikut DST, offset tetap +3**
 - [x] `validate_data.py`: 2 jendela anomali ditandai sebagai peringatan, bukan error
 - [x] `src/data/validate_data.py` + 33 test — **LOLOS 4 tahun, 0 error** (2026-10-05)
 - [x] Config spread `by_year` (2023=3,0) — dasar p99 2023 = 8,5 pip
-- [ ] **`src/data/clean_data.py`** — raw -> `data/processed/M1/` (Parquet)
+- [x] **`src/data/clean_data.py`** — raw -> `data/processed/M1/` (Parquet)
 - [ ] Catatan: kalau `validate_data.py` tambah fungsi, pecah check vs render
 - [x] Gate karakter asing `scripts/check_foreign_chars.py` (2026-10-05) — ditulis
       AI, bukan file asing; catatan lama "perlu keputusan user" sudah usang
@@ -29,18 +29,23 @@
 
 ## Todo (Prioritas Tinggi)
 
-- [ ] Phase B: `src/data/fetch_data.py` — fetch M1 per tahun -> `data/raw/M1/`
-- [ ] Phase B: `fetch_data.py` WAJIB simpan `broker_time_raw` (timestamp broker mentah) bersama kolom UTC (keputusan user 2026-10-05)
-- [ ] Phase B: `validate_data.py` WAJIB uji offset historis vs anchor UTC yang dikenal sebelum fitur session dipakai
-- [ ] Phase B: `src/data/clean_data.py` — raw -> processed (Parquet)
-- [ ] Tambah `src/__init__.py` per subpackage (`data`, `features`, `models`, `backtest`, `utils`)
-- [ ] `tests/test_fetch_data.py` — minimal 3 test, tanpa API live
-- [ ] EDA: distribusi return, volatilitas per sesi, karakter per regime
+> Direkonsiliasi 2026-10-13. Yang bertanda [x] di bawah sudah selesai dan
+> tercatat di "Done"/bagian Fase B — bukan sisa pekerjaan.
+
+- [x] Phase B: `src/data/fetch_data.py` — fetch M1 per tahun -> `data/raw/M1/`
+- [x] Phase B: `fetch_data.py` WAJIB simpan `broker_time_raw` (timestamp broker mentah) bersama kolom UTC (keputusan user 2026-10-05)
+- [x] Phase B: `validate_data.py` WAJIB uji offset historis vs anchor UTC yang dikenal sebelum fitur session dipakai
+- [x] Phase B: `src/data/clean_data.py` — raw -> processed (Parquet)
+- [ ] Tambah `src/__init__.py` per subpackage — `data`/`features`/`utils` SUDAH ada
+      (2026-10-13); `models`/`backtest` belum ada karena foldernya belum dibuat
+- [x] `tests/test_fetch_data.py` — ada, tanpa API live
+- [x] EDA: distribusi return, volatilitas per sesi, karakter per regime
+      (EDA-00..07 selesai + audit + vonis 2026-10-12/13)
 
 ## Todo (Prioritas Sedang)
 
-- [ ] `src/features/build_features.py` + `build_labels.py`
-- [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1)
+- [x] `src/features/build_features.py` + `build_labels.py`
+- [x] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1)
 - [ ] `src/models/baseline.py` (rule-based + logistic regression)
 - [ ] `src/backtest/backtest.py` (spread + slippage + komisi WAJIB)
 - [ ] `src/backtest/audit.py` (8 section AGENTS.md §18)
@@ -48,9 +53,9 @@
 
 ## Todo (Prioritas Rendah)
 
-- [ ] Isi `README.md` (masih kosong)
+- [x] Isi `README.md` (entry-point AI/manusia, ditulis 2026-10-13)
 - [x] Isi `CHANGELOG.md` (2026-10-05) — Fixed/Added/Changed/Removed/Known issues
-- [ ] Isi `.env.example` (masih kosong)
+- [ ] Isi `.env.example` (MASIH KOSONG — terverifikasi 0 byte 2026-10-13)
 - [x] `src/utils/config.py` loader YAML (2026-10-05) — RULES.md §10 terpenuhi,
       dipakai `fetch_data`, `validate_data`, `clean_data`
 - [ ] Dashboard `dashboard/`
@@ -68,24 +73,75 @@
 - [x] Onboarding AI baru + inventarisasi (2026-10-05)
 - [x] Verifikasi simbol MT5 = `USDJPY` (2026-10-05)
 - [x] Verifikasi timezone broker = UTC+3 offset SAAT INI (2026-10-05)
-- [~] Offset broker HISTORIS: belum terverifikasi — wajib dicek saat validate data
+- [x] Offset broker HISTORIS: **TERVERIFIKASI seasonal** GMT+2/GMT+3 (2026-10-05;
+      Finex seasonal page + Support, 8/8 tanggal cocok aturan DST AS; schedule di
+      `configs/data.yaml`, logika di `src/data/broker_time.py`, data di-fetch ulang)
+- [~] Offset **dua jendela anomali** (2024-10-28..11-01, 2026-03-10..03-27;
+      19 hari = 26.198 bar = 1,94%) BELUM TERVERIFIKASI — gejalanya digit jam mundur
+      1 jam. Dilarang dipakai sebagai input fitur sesi sebelum dikonfirmasi ke Finex
+- [~] SA-03: regime 2023-H1 berbeda (185.248 bar = 13,74%; 1.431 bar/hari, tanpa
+      break 60 menit). Belum dijelaskan — catat, jangan dipakai tanpa catatan
 - [x] Patch `broker_timezone` di `checkpoints/checkpoint_07` & `09d` -> `Etc/GMT-3` (2026-10-05)
 - [x] Verifikasi ketersediaan data = 1.348.135 bar M1 (2026-10-05)
 
 ## Blocked
 
-- (kosong — tidak ada blocker aktif)
+- **CODER PULANG 2026-10-13: TOLAK-sementara E1/E2/E3** (nol sel lolos
+  4-syarat; median pooled ≈ −3,6, CI negatif, tanda H1/H2 negatif
+  konsisten; deterministik 2 run; segel `5bc324aa…67df963`).
+  Evidence terverifikasi ADA + berurutan benar (manifest 14:52:01 +
+  ledger 14:52:18 SEBELUM output 15:25–15:26; 13 file). Cek koherensi
+  arsitek: median −3,6 ≈ −(SL 2,5 + biaya ~1,1) = mayoritas-SL, koheren
+  internal. Brief replikasi auditor
+  `.ai/assistant/prompts/2026-10-13_replikasi-discovery-R1-auditor.md`
+  sudah disusun (replikasi dari nol, 6 butir) — **menunggu user paste
+  ke   auditor eksternal.** Setelah LULUS replikasi: arsitek vonis final
+  TOLAK/KANDIDAT/BELUM JELAS (D-5).
+- **R2 TERTUTUP 2026-10-13: VONIS FINAL TOLAK E1/E2/E3.** Rantai
+  penuh: spec DIRATIFIKASI → audit CATATAN → Amandemen-R2-1
+  (B2/B4/B7 + C1–C5, disetujui user) → re-audit LULUS 8/8 → coder
+  TOLAK-sementara 8/8 (J1–J5 TERIMA) → replikasi auditor LULUS
+  tanpa arbitrase (7/7 COCOK; selisih 5 event E2 = FP < 1 ULP,
+  terbukti) → vonis final TOLAK (0/8 lolos 4-syarat). Segel D-8 R2
+  tetap TERTUTUP. Koreksi catatan: hit-rate aktual TP 1,33–4,34% /
+  SL 14,60–24,26% (batas bawah brief lama salah; restatement-level,
+  tanpa dampak vonis). Keterbatasan tercatat: E3 41,1% event punya
+  gap di jendela kompresi (warisan pra-registrasi, tak diubah).
+  Empat keputusan §18 dokumen desain masih terbuka:
+  (1) E1/E2/E3 satu-satunya ruang ronde pertama, (2) 2024 cari / 2025 uji /
+  2026 terkunci, (3) jalur P0->P1->P2 dengan izin user tiap pindah,
+  (4) semua bukti masuk repo sebelum auditor mulai.
+  Draf `spesifikasi-fingerprint.md` **dipensiunkan** (kalah lengkap vs dokumen
+  desain 9 Okt; jalankan dua jalur = dua rantai governance aktif). Tersimpan
+  sebagai arsip, tidak dieksekusi.
+- Tidak ada blocker teknis/eksternal. MT5 terhubung, data 4 tahun tersedia.
+- [x] **P2-flipmurni SELESAI 2026-10-14: KALAH 8/8** (side->-side, barrier
+      R2 beku, bed 2026; med stacked -1,52..-1,89; 1-posisi negatif semua;
+      anti-drift LOLOS). **Jalur flip DITUTUP.** Detail: SESSION_LOG.
 
 ## Sudah Dibatalkan / Diganti
 
-- [~] Fetch data MT5 — bukan "blocked", tapi **belum mulai** karena `src/` kosong.
+- [~] Fetch data MT5 — **SELESAI, catatan lama usang.** 2026-10-13 terverifikasi:
+  `data/raw/M1/` berisi 4 file tahun (2023-2026), 1.347.847 bar.
+- [~] Draf `arsitek/spesifikasi-fingerprint.md` — **DIPENSIUNKAN 2026-10-13**,
+  diganti Discovery-R1 berbasis dokumen desain 9 Oktober. Arsip, jangan dijalankan.
 
 ## Catatan Verifikasi
 
 - Checkpoint 06-09d, `git init`, dan setup environment **terbukti sudah dijalankan**
   (output-nya ada di working tree). Status lama "belum" sudah usang.
-- `src/` hanya berisi `__init__.py` 0 byte. Semua modul inti belum ada.
+- ~~`src/` hanya berisi `__init__.py` 0 byte. Semua modul inti belum ada.~~
+  **USANG — dikoreksi 2026-10-13.** Terukur: 8 modul, 2.035 baris
+  (`data/broker_time.py` 150, `data/clean_data.py` 198, `data/fetch_data.py` 283,
+  `data/resample.py` 280, `data/validate_data.py` 431,
+  `features/build_features.py` 321, `features/build_labels.py` 327,
+  `utils/config.py` 45) + 3 `__init__.py` 1 baris. `models/` dan `backtest/`
+  memang belum ada — itu memang belum dibuat, bukan "terlupa".
+  Catatan: angka lama "1.775 baris" di STATE.md **tidak cocok** dengan hitungan ini;
+  metode hitung bisa berbeda (baris logis vs baris fisik). BELUM CAKAP mana yang
+  benar — jangan kutip keduanya.
 - `trade_allowed=False` di terminal MT5: akun belum login untuk trading.
+- HEAD `2112f94` = sama dengan `origin/main` (push 2026-10-13 berhasil).
 
 ## Fase B — Pipeline Data (2026-10-05)
 
@@ -96,8 +152,8 @@
 - [x] `src/data/validate_data.py` + test + laporan validasi (2026-10-05)
 - [x] `src/data/clean_data.py` + test (2026-10-05) — 103 test hijau
 - [x] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — 2026-10-05, 147 test hijau
-- [ ] `src/features/build_features.py`
-- [ ] `src/features/build_labels.py`
+- [x] `src/features/build_features.py` — B1 TERTUTUP 2026-10-07 (37 test, audit closed)
+- [x] `src/features/build_labels.py` — B2 TERTUTUP 2026-10-08 (60 test, re-audit 5/5)
 
 ### Catatan clean_data
 
@@ -448,3 +504,33 @@ eports/eda/2026-10-12/laporan-coder-eda07-l30.md.
       paper-trade; 5 syarat mengikat incl. skrutini LB_bin 25/25);
       V-2 register 68 beku / 35 tutup; V-3 R1-R4 + I1-I4; V-4 T-5/S8A.
       Ronde L3 DITUTUP. Menunggu: persetujuan eksplisit user.
+- [x] Draf `arsitek/spesifikasi-fingerprint.md` DITULIS 2026-10-13
+      (`6B0A9663`, 2226 B, ASCII/LF; 31 LOLOS berarah, 29 fitur kausal beku,
+      sidik-sebelum desil-lift + sidik-sesudah bersih-biaya, ambang 3 kandidat)
+      — **DIPENSIUNKAN 2026-10-13** (lihat entri berikut)
+- [x] Dokumen desain 9 Okt DIBACA PENUH 2026-10-13 (613 baris):
+      `.ai/backup/2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`.
+      Isi kunci: 3 keluarga event E1 (balik)/E2 (pullback)/E3 (kompresi);
+      7 gerbang G1-G7 tanpa voting; biaya 3 lapis; jalur P0->P1->P2 dengan
+      izin user tiap pindah; §16 kriteria sukses + "terbukti tidak ada yang
+      membayar biaya" = keberhasilan sah; §15.1 prasyarat (status H4b) SUDAH
+      terpenuhi; §18 = 4 keputusan yang menunggu user
+- [x] Draf fingerprint DIPENSIUNKAN 2026-10-13 — alasannya: dokumen desain
+      9 Okt lebih lengkap (3 event keluarga + 7 gerbang + jalur P0-P2), dan
+      menjalankan keduanya = dua rantai governance aktif, yang dilarang.
+      Spec Discovery-R1 (berbasis dokumen 9 Okt) yang akan menggantikannya —
+      BELUM ditulis, menunggu persetujuan user
+- [x] Info broker dicatat 2026-10-13: Finex, komisi 1 USD/lot, lot min 0,01
+      -> `CONTEXT.md` §6. Per-side vs round-turn BELUM dikonfirmasi (asumsi
+      per-side sementara).
+- [ ] Damakan spread: `configs/data.yaml` — spread mean terukur ~0,65 pip vs
+      `spread.default:1.5` (beda 2,3x). Usulan: pakai terukur per-sesi + stres
+      p95/p99, buang `default:1.5`/`by_year[2023]:3.0`. Butuh persetujuan user
+      karena mengubah config global.
+- [ ] Tulis `Spesifikasi Metode Target v1` (definisi sukses trading) —
+      menunggu spec Discovery-R1 lebih dulu (urutan benar)
+- [ ] Damakan spread: configs/data.yaml — opsi (a) pakai terukur per-sesi +
+      stres p95/p99, buang `default:1.5`/`by_year[2023]:3.0`; butuh persetujuan
+      user karena mengubah config global
+- [ ] Tutup `komisi` di config (rumus biaya 3 lapis) — butuh konfirmasi
+      per-side vs round-turn dari user

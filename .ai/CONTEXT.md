@@ -3,9 +3,17 @@
 > Memori jangka panjang AI agent.
 > Update saat ada perubahan besar (bukan setiap sesi).
 >
-> Versi: 1.3
-> Update: 2026-10-05
+> Versi: 1.4
+> Update: 2026-10-13
 > Proyek: USDJPY Trading Bot
+
+> **PENTING (2026-10-13).** Section §4 "Fase Proyek" dan §5 "Strategi" di
+> bawah memakai bahasa fase LAMA (Training/Graduation/Live). Itu fase
+> **Trading**, bukan fase **Riset** — keduanya beda. Posisi riset terkini
+> yang otoritatif ada di `.ai/STATE.md` bagian atas + `.ai/PROGRESS.md`.
+> Ringkas: EDA selesai 2026-10-12, vonis arsitek GO untuk lanjut ke spec
+> pemodelan pra-registrasi (bukan paper-trade), dan spec itu **menunggu
+> persetujuan user**. Fase Training (§4) belum dimulai sama sekali.
 
 ---
 
@@ -16,7 +24,8 @@ Kalau cuma ingat 12 hal:
 ### Proyek
 1. Tujuan: bot USDJPY scalping (M1-M15) berbasis ANN + rule-based.
 2. Stack: Python 3.11, PyTorch, MT5 Finex, pandas, YAML.
-3. Fase: Training (Demo Bebas) - kumpulkan 500+ trade.
+3. Fase: **Riset — Milestone 3 (Metode)**, blokir menunggu persetujuan user.
+   Fase Trading (Training/Graduation/Live di §4) BELUM dimulai.
 
 ### Trading
 4. Lot selalu minimum (0.01). Tidak ada risk %.
@@ -64,12 +73,12 @@ Bukan tujuan:
 | Config | YAML |
 | Logging | standard logging |
 | Test | pytest |
-| Format | Black, Ruff |
+| Format | Ruff (Black dihapus 2026-10-05) |
 | Editor | VS Code + AI coding |
 | OS | Windows |
 | Shell | PowerShell |
-| Data | 3 tahun (2023-sekarang) |
-| GitHub | Belum dipakai |
+| Data | 4 tahun (2023-2026), 1.347.847 bar M1 |
+| GitHub | **AKTIF** — `github.com/Mziana/ANN`, branch `main` (push pertama 2026-10-13) |
 
 ---
 
@@ -115,7 +124,12 @@ Saat ini: Fase Fondasi -> Data, cukup 1 AI (Freebuff).
 
 ## 4. Fase Proyek
 
-Fase saat ini: Fase 1 (Training).
+Fase Trading saat ini: **BELUM DIMULAI**. §4 ini hanya rencana, bukan status
+aktif. Untuk status riset yang sebenarnya, baca `.ai/PROGRESS.md`.
+
+Status Riset (per 2026-10-13): Milestone 1 (Data) dan 2 (EDA) selesai.
+Milestone 3 (Metode) sedang berjalan dan **terblokir** di persetujuan user
+untuk spec Discovery-R1. Milestone 4-9 belum mulai.
 
 ### Fase 1 - Training (Demo Bebas)
 - 500+ trade data.
@@ -140,8 +154,12 @@ Fase saat ini: Fase 1 (Training).
 Fokus: Scalping M1-M15, USDJPY saja.
 Pendekatan: Hybrid (ANN + rule-based).
 
-Status metode: BELUM DITENTUKAN.
-Dipilih SETELAH EDA. Bukan opini.
+Status metode: **MASIH BELUM DITENTUKAN** — dan ini disengaja.
+Dasar pilihan sudah pindah dari EDA ke dokumen desain event-first
+(`.ai/backup/2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`): tiga keluarga
+event E1 (balik)/E2 (pullback)/E3 (kompresi), 7 gerbang G1-G7, jalur
+P0 (putar ulang data lama) -> P1 (bayangan real-time) -> P2 (paper 0,01 lot).
+Empat keputusan §18 dokumen itu masih menunggu persetujuan user.
 
 Belum diputuskan:
 - Library backtest.
@@ -149,11 +167,15 @@ Belum diputuskan:
 - TF utama.
 - Sesi prioritas.
 - Metode sinyal (EMA, SMC, Fibo, dll).
+- Spread: angka mana yang otoritatif (§8.3) — 2,3x selisih belum|datumai.
 
 ---
 
 ## 6. Risk Framework
 
+- Broker: Finex (MT5). Komisi 1 USD per 1,0 lot (info user 2026-10-13;
+  per-side vs round-turn BELUM dikonfirmasi — asumsikan per-side sampai
+  ada klarifikasi). Lot minimum 0,01.
 - Risk per trade: TIDAK ADA (lot min).
 - SL: 1,5-3 x ATR(14).
 - TP: 1:1,5 (Asia) / 1:2 (London/NY).
@@ -186,7 +208,16 @@ Detail: RULES.md Â§18.
 | 2026-10-05 | Backtest folder per tanggal |
 | 2026-10-05 | Workflow multi-AI (1-3 AI) |
 | 2026-10-05 | Onboarding AI baru (Prompt 0) |
+| 2026-10-07 | H1-H5 dikunci (H1 KUATKAN, H2-H5 bersyarat S1-S8, H6+ DITOLAK) |
+| 2026-10-08/09 | Vonis: H1 GUGUR, H2 GUGUR FINAL, H3 GUGUR (S4b), H4 TAHAN, H5 GUGUR FINAL, H4b GUGUR, R-2 GUGUR |
+| 2026-10-09 | Fondasi-B TERTUTUP (D-1/D-2/D-3 DISAHKAN, D-4 SELESAI) |
+| 2026-10-12 | EDA-07 L3-1: register 68 LOLOS / 35 GUGUR; simulasi LA = biaya mendominasi (G4=False semua) |
 | 2026-10-13 | Asisten merangkap arsitek (formal, S1A ASSISTANT_RULES; preseden Amandemen C) |
+| 2026-10-13 | Repo GitHub aktif `github.com/Mziana/ANN` branch `main`, commit `2112f94` (bukan "belum dipakai") |
+| 2026-10-13 | Vonis B-4 = GO: spec pemodelan pra-registrasi, BUKAN paper-trade |
+| 2026-10-13 | Draf `spesifikasi-fingerprint.md` DIPENSIUNKAN -> diganti Discovery-R1 |
+| 2026-10-13 | Metode dipusatkan pada dokumen desain event-first (E1/E2/E3, gerbang G1-G7, jalur P0-P2) |
+| 2026-10-13 | Broker Finex: komisi 1 USD/lot, lot min 0,01 (per-side vs round-turn belum jelas) |
 
 ---
 
@@ -211,12 +242,26 @@ Tambahan terverifikasi (2026-10-05):
 ### 8.2 Belum Diverifikasi
 
 - Finex punya cent account: **BELUM DIKONFIRMASI**. `trade_allowed=False` adalah indikasi belum login trading, bukan bukti adanya akun cent. Perlu cek manual di terminal.
-- Spread per sesi (Tokyo/London/NY) di config: **ANGKA ASUMSI**, belum diukur dari data.
 - Spread multiplier berita (FOMC/CPI/NFP/BoJ): **ANGKA ASUMSI**.
 - Spread `sunday_open: 5.0`: **ANGKA ASUMSI**, belum diukur.
 - Freebuff + Hermes bisa browse: belum diuji di sesi ini.
 
-Aksi: ukur spread per sesi dari data M1 (setelah fetch), lalu update `configs/data.yaml`.
+### 8.3 Terukur 2026-10-06/12 — tapi OTAORITAS TERPUTUS
+
+- Spread per sesi **SUDAH DIUKUR dari data M1 4 tahun** (item lama "belum
+  diukur" di §8.2 sudah usang). Mean ~0,65 pip: London ~0,6 · NewYork ~0,7 ·
+  Tokyo ~0,6 · Sydney ~0,8. Stres p95 0,8-1,5. Tidak ada ekor tersembunyi
+  (sudah dicek M1 vs M5 max). Tercatat di `configs/data.yaml` sebagai
+  `spread.cost_basis` + `spread.stress_bands`.
+- **KONFLIK TERSISA (per 2026-10-13, belum diputuskan):** config punya dua
+  sumber angka yang berbeda 2,3x —
+  `spread.default: 1.5` & `by_year[2023]: 3.0` (konservatif, dari p99)
+  vs `cost_basis.default: 0.65` (mean terukur).
+  Blok yang lebih lama **TIDAK diganti** saat fragmen baru diterapkan 2026-10-06.
+  Sampai user memutuskan, **backtest WAJIB menyebut kode mana yang dipakai.**
+- Spread live 0,8 pip (tik 2026-10-05) berada di antara keduanya.
+- Offset dua jendela anomali + SA-03: lihat `.ai/STATE.md` bagian "Peringatan
+  Waktu Broker" — BELUM TERVERIFIKASI, dilarang jadi input fitur sesi.
 
 ---
 
@@ -284,14 +329,24 @@ reports/backtest/
 
 ---
 
-## 12. Yang Belum Ada
+## 12. Yang Belum Ada (per 2026-10-13)
 
-- Data fetch MT5 (belum dijalankan)
-- docs/architecture.md
-- Metode strategi
-- Model & backtest
-- 500+ trade data
-- GitHub repo (belum)
+DAFTAR LAMA SUDAH USANG — data fetch sudah dijalankan (1.347.847 bar),
+GitHub repo sudah aktif (`main` `2112f94`). Yang benar-benar belum ada:
+
+- `docs/architecture.md`
+- **Metode strategi** — masih kosong; dasar riset (dokumen desain
+  event-first) sudah dibaca, spec Discovery-R1 belum ditulis
+- **Modul model & backtest** — `src/models/` dan `src/backtest/` belum ada
+  sama sekali (terverifikasi 2026-10-13). `reports/backtest/` masih kosong:
+  nol run backtest sampai sekarang
+- **Hasil backtest** — nol. Belum ada satu pun angka P&L
+- **Isi `.env.example`** — masih 0 byte (terverifikasi)
+- 500+ trade data (kriteria Fase 1)
+- Spec pemodelan Discovery-R1 + Spesifikasi Metode Target (menunggu izin user)
+
+Status `trade_allowed=False` (akun belum login trading) tetap sama sejak
+2026-10-05 dan tidak menghalangi riset.
 
 ---
 

@@ -1,38 +1,53 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-13
-**Fase:** EDA-06 SELESAI + EDA-07 SELESAI (G2/I1/I2/L30/L3-1, 10–12 Okt 2026)
-+ reaudit LULUS + vonis arsitek L3-1 MASUK 2026-10-13
-(`arsitek/putusan-l31-final.md`; register 68 LOLOS / 35 GUGUR, ronde L3
-DITUTUP); spec fingerprint DRAF menunggu izin user; Spesifikasi Metode
-Target (definisi sukses trading) BELUM ditulis — itu berikutnya.
-**Fase:** Fase 1 TERTUTUP + Lapisan 3-H3 TERTUTUP (2026-10-08, putusan
-arsitek 4 butir, C8 `478fc831`); H3 GUGUR via S4b (filter dilarang, S4 MOOT);
-H1–H2/H4–H5 TERKUNCI tapi BELUM divonis; jalur vonis dipilih 2026-10-08
-(desain dua-batch: Batch-1 H1+H2, Batch-2 H4+H5); spec Batch-1 MASUK
-2026-10-08 (`spesifikasi-lapisan3-H1H2.md`, hash `fc29f6fa`, gerbang LOLOS,
-Q1 real-time = vonis H1, Q2 ratifikasi H2); eksekusi coder Batch-1 SELESAI
-2026-10-09 (`coder/hasil-lapisan3-H1H2.md`, hash `1550209f`, gerbang LOLOS;
-S1 9/9 bit-exact; S-H1/S-H2 = GUGUR keluaran formula, BUKAN vonis);
-eksekusi coder Batch-2 SELESAI 2026-10-09 (`coder/hasil-lapisan3-H4H5.md`,
-hash `f06a8e27`, gerbang LOLOS; S-H4 = TAHAN / S-H5 = GUGUR keluaran formula,
-BUKAN vonis; DEV-B2-1..4 terbuka); re-audit auditor SELESAI 2026-10-09
-(`Audit/reaudit-lapisan3-H4H5.md`, 707 baris, blob `8a4d2109`, gerbang LOLOS;
-verdict LULUS DENGAN TEMUAN — angka penentu bit-exact, 2 MEDIUM non-penentu,
-S-B 13+1 VIOLATED, 4 eskalasi); putusan arsitek H4/H5 MASUK 2026-10-09
-(`arsitek/putusan-lapisan3-H4H5.md`, 410 baris, blob `e02a203b`, gerbang LOLOS;
-vonis resmi H4 TAHAN + H5 GUGUR FINAL; Batch-2 TERTUTUP); Lapisan 0–1 selesai dan ter-commit;
-B2 SELESAI; menunggu arah user fase berikut
-**Progress keseluruhan:** ~60%
+**Update terakhir:** 2026-10-14 (catat hasil P2-flipmurni)
+**Fase:** Milestone 1 (Data) + 2 (EDA) SELESAI. Milestone 3 (Metode) BERJALAN
+dan TERBLOKIR di persetujuan user.
+**Status ronde terakhir:** EDA-07 L3-1 selesai + re-audit LULUS PROSEDURAL +
+vonis arsitek L3-1 MASUK 2026-10-13 (`arsitek/putusan-l31-final.md`).
+Register beku 68 LOLOS / 35 GUGUR. Ronde L3 DITUTUP.
+**Vonis B-4 = GO cabang (a):** lanjut ke **spec pemodelan pra-registrasi**
+(BUKAN paper-trade, BUKAN live). Ronde berikutnya Discovery-R1, berbasis
+`.ai/backup/2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`.
+**Draf `spesifikasi-fingerprint.md` DIPENSIUNKAN** (arsip, jangan dijalankan).
+**Yang menunggu user (satu jalur tersisa):** paste brief replikasi
+R1 ke AUDITOR (vonis final R1 menunggu ini).
+**R2 TERTUTUP 2026-10-13: VONIS FINAL TOLAK E1/E2/E3** (replikasi
+auditor LULUS tanpa arbitrase; 8/8 sel gagal 4-syarat; segel D-8 R2
+tetap TERTUTUP — tak ada KANDIDAT).
+**P2-flipmurni SELESAI 2026-10-14: KALAH 8/8** (side->-side, barrier R2
+beku, bed 2026; med stacked -1,52..-1,89; replay 1-posisi negatif semua
+sel; anti-drift LOLOS n=90.525). **Jalur flip DITUTUP** (kill-signal
+kedua setelah R3-KALAH 7/7).
+Audit R2 = CATATAN; Amandemen-R2-1 SUDAH diterapkan 2026-10-13
+(disetujui user paket).
+**Progress keseluruhan:** ~60% (data+EDA selesai, metode belum)
+
+> **Cara baca file ini (per 2026-10-13).** Bagian atas = status terkini (wajib
+> dibaca). Section "Yang Sedang Dikerjakan", "Yang Sudah Selesai",
+> "Keputusan Terverifikasi", dan "Peringatan Waktu Broker" di bawah =
+> **ARSIP PROVENANSI** — isinya benar sebagai catatan kapan terjadi, tapi
+> beberapa bullet masih memakai bahasa tahap lama. Tidak boleh dipakai untuk
+> memutuskan langkah berikutnya. Yang otoritatif untuk langkah berikutnya:
+> bagian "Langkah Berikutnya" paling bawah file ini + `.ai/TASKS.md`.
 
 ## Ringkasan Eksekutif
 
 Semua checkpoint (01, 05-09d) **SUDAH SELESAI**. State file lama menandai
 sebagian besar sebagai belum — itu sudah usang dan sudah dikoreksi di sini.
-Environment siap, MT5 terhubung, data historis terbukti tersedia.
-**`src/` berisi 1.775 baris** (`validate_data.py` 540, `fetch_data.py` 363,
-`resample.py` 351, `clean_data.py` 258, `broker_time.py` 196,
-`utils/config.py` 65, ditambah dua `__init__.py` satu baris).
+Environment siap, MT5 terhubung, data historis terbukti tersedia (4 tahun,
+1.347.847 bar M1), dan repo GitHub sudah aktif (`main` `2112f94`).
+
+**`src/` berisi 2.035 baris di 8 modul** (terukur ulang 2026-10-13):
+`data/validate_data.py` 431 · `features/build_labels.py` 327 ·
+`data/fetch_data.py` 283 · `data/resample.py` 280 · `features/build_features.py`
+321 · `data/clean_data.py` 198 · `data/broker_time.py` 150 · `utils/config.py`
+45, plus tiga `__init__.py` satu baris.
+**Catatan metodologi:** angka lama di versi file ini ("1.775 baris", dan
+nama `build_features.py` "400/400") **tidak cocok** dengan hitungan fisik
+baris di atas. Penyebabnya belum saya periksa — mungkin metode hitung berbeda
+(baris logis vs fisik) atau file berubah. Perlakukan kedua angka sebagai
+**belum terverifikasi** dan jangan kutip keduanya tanpa menyebut sumber.
 
 ## Yang Sedang Dikerjakan
 
@@ -240,29 +255,45 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Yang Belum
 
+> Direkonsiliasi 2026-10-13. Yang masih [ ] di bagian "Yang Sudah Selesai"
+> ATAU di bawah ini sudah usang bila bertanda ~~coret~~.
+
 - [x] Phase B: `src/data/fetch_data.py` + `src/utils/config.py` + `__init__.py` + 22 test
 - [x] Test 1 bulan (2026-10-01 s/d 10-06) → 3.134 bar, **7/7 verifikasi LOLOS**
 - [x] Fetch full 2023-01-01 s/d 2026-10-05 -> 1.347.847 bar M1
 - [x] `src/data/validate_data.py` (cek gap, baris, offset historis)
 - [x] `src/data/clean_data.py` (raw -> Parquet, tanpa interpolasi)
 - [x] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1, bucket jam broker)
-- [ ] `src/data/resample.py` (M1 -> M5/M15/M30/H1/H4/D1) — berikutnya
-- [ ] **Akhir Milestone 1**: pecah `validate_data.py` (543 baris) jadi check vs
-      render — batas keras dari user, bukan opsional lagi
-- [x] Modul `src/features/`: build_features.py SELESAI (400/400, 37 test,
-      audit TERTUTUP-bersyarat 2026-10-07)
-- [ ] Modul `src/features/`: build_labels.py (B2 — wajib rencana split dulu)
-- [ ] Modul `src/models/`, `src/backtest/`
-- [ ] EDA (distribusi return, volatilitas per sesi, regime)
-- [ ] Pemilihan metode strategi (menunggu EDA)
-- [ ] Backtest + audit
-- [ ] 500+ trade data (kriteria Fase 1)
+- [x] ~~`src/data/resample.py` — berikutnya~~ (USANG: sudah selesai 2026-10-05)
+- [ ] **Akhir Milestone 1**: pecah `validate_data.py` (431 baris terukur) jadi check
+      vs render — batas keras dari user. Batas ">600 baris" belum tersentuh,
+      tapi batas "akhir Milestone 1" sudah lewat. MEMBUKA FILE NYATA.
+- [x] Modul `src/features/`: build_features.py SELESAI (B1 TERTUTUP 2026-10-07)
+- [x] Modul `src/features/`: build_labels.py SELESAI (B2 TERTUTUP 2026-10-08)
+- [ ] Modul `src/models/`, `src/backtest/` — **folder belum ada sama sekali**
+      (terverifikasi 2026-10-13)
+- [x] ~~EDA (distribusi return, volatilitas per sesi, regime)~~ (USANG: EDA-00..07
+      selesai + audit + vonis, 2026-10-12/13)
+- [ ] **Pemilihan metode** — TIDAK "menunggu EDA" lagi (EDA sudah selesai).
+      Sekarang menunggu **persetujuan user atas 4 keputusan §18 dokumen desain
+      9 Okt** untuk menulis spec Discovery-R1
+- [ ] Backtest + audit — belum dimulai; `reports/backtest/` masih kosong (nol run)
+- [ ] 500+ trade data (kriteria Fase 1) — belum tercapai
+- [ ] Isi `.env.example` (masih 0 byte)
+- [ ] Damakan spread di `configs/data.yaml` (mean 0,65 vs default 1,5 — 2,3x)
+- [ ] Tutup Spread authority + komisi (per-side vs round-turn belum jelas)
 
 ## Blocker
 
-- Tidak ada blocker eksternal.
-- MT5 terminal terhubung (`connected=True`), simbol dan history data terbukti tersedia.
-- `trade_allowed=False` — akun belum login untuk trading (tidak menghalangi fetch data).
+- **Blocker aktif = menunggu AUDIT AUDITOR atas spec** (sejak
+  ratifikasi 2026-10-13).
+  Brief audit sudah disusun; user paste ke auditor eksternal, bawa
+  pulang laporan; arsitek putuskan LULUS/GAGAL lalu coder discovery
+  2024. Tanpa laporan audit, coder tidak jalan (§15 desain langkah 3).
+- Tidak ada blocker eksternal/teknis. MT5 terhubung (`connected=True`), data
+  4 tahun tersedia, test suite hijau per catatan terakhir.
+- `trade_allowed=False` — akun belum login untuk trading (tidak menghalangi
+  riset; juga tidak relevan karena belum ada strategi live).
 
 ## Keputusan Terverifikasi (2026-10-05)
 
@@ -280,18 +311,35 @@ Environment siap, MT5 terhubung, data historis terbukti tersedia.
 
 ## Langkah Berikutnya
 
-1. **Lapisan 2 EDA — Langkah 4:** tulis `notebooks/scalping/eda_02_volatility.ipynb`
-   (Q2 volatilitas per jam dinding broker + Q3 per sesi UTC + pengukuran spread
-   p50/p95/p99/maks dan %>3 pip per sesi × jam × tahun) → **fragmen YAML yang BELUM
-   diterapkan** ke `configs/data.yaml` → laporan mini → STOP untuk review user.
-2. **Langkah 4b (terpisah):** review fragmen spread (fragmen + diff vs config +
-   dampak hilir) → putusan user: terapkan / tunda / tolak.
-3. Notebook 03–05 sesuai Rancangan EDA v3 Final, lalu audit adversarial Klenz dan
-   penguncian hipotesis.
-4. Pemilihan metode strategi — setelah EDA lulus audit (tugas terpisah).
+> Ditulis ulang 2026-10-13. Versi lama (yang masih diarsipkan di bawah daftar ini
+> sebelumnya) menunjuk "Langkah 4 = tulis nb02" — itu **sudah selesai
+> 2026-10-06**. Kalau kamu membaca langkah lama itu, abaikan.
+
+1. **Tunggu 4 keputusan user atas §18 dokumen desain 9 Oktober:**
+   (1) E1/E2/E3 sebagai satu-satunya ruang ronde pertama — tanpa menambah pola ke-4;
+   (2) 2024 untuk mencari, 2025 untuk menguji, 2026 terkunci, 2023-H2 uji tambahan;
+   (3) jalur P0 (putar ulang data lama) -> P1 (bayangan real-time, tanpa order)
+   -> P2 (paper 0,01 lot), tiap pindah butuh izin user;
+   (4) semua bukti (perintah, output, hash) masuk repo sebelum auditor mulai.
+2. **Tulis `spec Discovery-R1`** di `reports/governance/2026-10-13/arsitek/` —
+   cara kerja bernomor: unit = KEJADIAN-XXX, jendela SEBELUM/SAAT/SESUDAH,
+   MFE/MAE pip, pasangan barrier TP/SL, biaya event-time, analisis
+   kapan-jangan-masuk, uji stabilitas, lalu vonis biner. Ronde pertama maksimal
+   3 keluarga event, 1 kandidat per keluarga. Ledger discovery ditulis
+   SEBELUM run.
+3. **Damaikan spread di `configs/data.yaml`** (usul: pakai terukur per-sesi +
+   stres p95/p99, buang `default:1.5` / `by_year[2023]:3.0`) — perlu persetujuan
+   user karena mengubah config global.
+4. **Tutup komisi** di rumus biaya 3 lapis (butuh konfirmasi per-side vs
+   round-turn dari user).
+5. **Baru setelah itu**: `Spesifikasi Metode Target v1` (definisi sukses trading
+   yang bisa diuji), lalu eksekusi Discovery-R1, re-audit, vonis GO/NO-GO.
+6. **STOP setelah serah-terima.** Satu putaran = satu vonis (S8A). Tidak
+   boleh mengusulkan ronde investigasi berikutnya tanpa persetujuan user.
 
 **Status terperinci tiap tahap:** `reports/eda/progress/laporan_tahap_*.md`
-(tahap 0 reuse-check, 1 pin deps, 2 nb00, 3 nb01).
+(tahap 0 reuse-check, 1 pin deps, 2 nb00, 3 nb01) dan
+`reports/governance/<tanggal>/`.
 
 ## Venv — satu kanonik (2026-10-06)
 

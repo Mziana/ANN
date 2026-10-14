@@ -1,0 +1,53 @@
+{
+ "created_utc": "2026-10-13T12:52:46Z",
+ "sha256": {
+  "00_ledger_prarun.md": {
+   "hex": "17529f02737080ffa5f0a327e0eb82d3532b9531463de863ea56a971fddd9b8f",
+   "bytes": 7581
+  },
+  "d1_events.py": {
+   "hex": "0805b9f85550c201e84e6461654f2106aacd64f67b00f3bedc10c1611f20d3d1",
+   "bytes": 8619
+  },
+  "d2_outcomes.py": {
+   "hex": "295fe97cda65231fceb559750336987e75d42be10397dca252593cbf0ca737b8",
+   "bytes": 12826
+  },
+  "d3_stats.py": {
+   "hex": "4d940c36635752487da1a646775370044aa80717f0f5a1c9653e58b90ccd4b09",
+   "bytes": 3973
+  },
+  "d4_appendix.py": {
+   "hex": "6c825f1663d06659a08808ff1919d20b4506de6e3bc8de8d8fbdae4875c499b2",
+   "bytes": 7299
+  },
+  "run_discovery.py": {
+   "hex": "a99c824dbe99ad6e4670f155da6332e60d7a99f0a4359bc01daa792d4820d17d",
+   "bytes": 7143
+  },
+  "D:/ANN/data/processed/M1/usdjpy_m1_2026.parquet": {
+   "hex": "7f267bb94005a34e07bf524e0275f04798e48c60fe2109f22ba5d0213ac02ba5",
+   "bytes": 5112347
+  },
+  "D:/ANN/configs/data.yaml": {
+   "hex": "1127514518aaf23cd48acac3e4f482159d14a25f37d05168b4444f2c38709dad",
+   "bytes": 7320
+  },
+  "D:/ANN/src/data/resample.py": {
+   "hex": "54fc73693b0faba7724ef3463df91acc46f944ef654ebf6fe14b8f5ca846efac",
+   "bytes": 11797
+  },
+  "D:/ANN/notebooks/scalping/_eda_common.py": {
+   "hex": "82f02ceb19754c79fbe1d9e6e3d87fc3c0c6e02201843512efdddac9917c6559",
+   "bytes": 4067
+  },
+  "D:/ANN/reports/governance/2026-10-13/arsitek/spesifikasi-discovery-R2.md": {
+   "hex": "c05d5e4fe94a364baa6bcb56863a7e5cc6507b8e0cdf9d9bdde12639a80654c5",
+   "bytes": 10307
+  },
+  "D:/ANN/scripts/_build_eda06.py": {
+   "hex": "5bf6cb6a3dda9a92a86ec8a3621cbd10649866daec412993ba760facc97b1cf4",
+   "bytes": 50959
+  }
+ }
+}

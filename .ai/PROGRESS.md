@@ -1,6 +1,6 @@
 # PROGRESS.md — Milestone
 
-**Update terakhir:** 2026-10-07
+**Update terakhir:** 2026-10-13
 
 ## Milestone 0: Setup Fondasi — SELESAI (100%)
 
@@ -27,31 +27,89 @@
 - [x] Black dihapus, hanya ruff + ruff-format
 - [x] Buat `docs/PROJECT_MAP.md`
 
-## Milestone 1: Data Pipeline
+## Milestone 1: Data Pipeline — SELESAI
 
 - [x] Fetch data MT5 M1 per tahun -> `data/raw/M1/usdjpy_m1_<year>.csv`
 - [x] Validasi data (gap, jumlah baris, duplikat, OHLC, spread) — **LOLOS 4 tahun**
-- [ ] Clean data -> `data/processed/M1/` (Parquet)
-- [ ] Simpan Parquet ke `data/processed/M1/` (menunggu clean_data.py)
-- [ ] Resample M1 -> M5/M15/M30/H1/H4/D1 (setelah M1 tervalidasi)
+- [x] Clean data -> `data/processed/M1/` (Parquet) — tanpa interpolasi
+- [x] Simpan Parquet ke `data/processed/M1/` (1.347.847 bar, folder di-gitignore)
+- [x] Resample M1 -> M5/M15/M30/H1/H4/D1
+- [x] `src/features/build_features.py` (B1 TERTUTUP 2026-10-07) + `build_labels.py`
+      (B2 TERTUTUP 2026-10-08)
+- [ ] **Akhir Milestone 1**: pecah `validate_data.py` (431 baris terukur) jadi check
+vs render — batas keras dari user. Batas ">600 baris" belum tersentuh, tapi
+      batas "akhir Milestone 1" SUDAH lewat. Perluiputuskan: masih relevan atau
+      resmi dicoret. MEMBUKA FILE NYATA.
 
-## Milestone 2: Eksplorasi (EDA)
+## Milestone 2: Eksplorasi (EDA) — SELESAI
 
-- [ ] Distribusi return
-- [ ] Volatilitas per sesi (Tokyo/London/NY)
-- [ ] Karakter per regime
-- [ ] Pengukuran spread aktual per sesi (isi `configs/data.yaml`)
+- [x] Distribusi return (nb01, 23/23 assertion)
+- [x] Volatilitas per sesi (nb02, 30/30) + fragmen spread -> `configs/data.yaml`
+- [x] Autokorelasi (nb03, 31/31) — klaim lama "|ACF| ≤ 0,012" DIBATALKAN (maks
+      0,022639); sign-ACF lag-1 negatif di semua sel
+- [x] Swing/level + placebo (nb04, 30/30) — TEMUAN NEGATIF: hit-rate reversal
+      level (0,469-0,490) TIDAK melampaui placebo (0,499-0,505)
+- [x] Regime + laporan EDA (nb05, audit LULUS DENGAN SISA 1 LOW)
+- [x] Biaya & breakeven (nb06) + label-fitur + I-1 + I-2 (EDA-07)
+- [x] Pengukuran spread aktual per sesi -> `spread.cost_basis` / `spread.stress_bands`
 
-## Milestone 3: Metode
+## Milestone 3: Metode — IN PROGRESS (blokir persetujuan user)
 
-- [ ] Hipotesis dari EDA
-- [ ] Uji kandidat
-- [ ] Pilih metode (TIDAK sebelum EDA selesai)
+- [x] Hipotesis H1-H5 dipra-registrasi + vonis (lihat "Update 2026-10-13" bawah)
+- [x] Uji kandidat H1-H5 + H3 + H4b (semua divonis; lihat ringkasan)
+- [x] Register 68 LOLOS / 35 GUGUR (TABEL M3, EDA-07 L3-1)
+- [x] Vonis B-4 = **GO cabang (a)**: lanjut ke spec pemodelan pra-registrasi
+      (BUKAN paper-trade)
+- [x] **Spec Discovery-R1 ditulis + DIRATIFIKASI user (R-1..R-7)**
+      2026-10-13 — `reports/governance/2026-10-13/arsitek/`
+- [x] **Audit auditor atas spec = GAGAL** 2026-10-13 (3 HIGH H1/H2/H3 +
+      6 MEDIUM + 5 LOW; ketiganya benar terverifikasi arsitek ke teks spec)
+- [x] **Amandemen-1 diterapkan** (paket A-A-Kunci disetujui user):
+      D-4.2 tanpa konteks primer, setting beku H+10/TP2,5/SL2,5 + kriteria
+      KANDIDAT 4-syarat, D-8.2 bar M15 terakhir selesai, D-8 otoritas R-7,
+      entry open t0+1, literal config + slippage ASUMSI, denominator beku,
+      E1 bersarang / E2-E3 satu-sel diakui, D-13 re-audit fokus
+- [x] **Re-audit fokus = LULUS ketiga butir (H1/H2/H3)** 2026-10-13
+      (sitasi diverifikasi arsitek; tanpa cacat fatal baru; 5 catatan
+      C1–C5 non-blocking) — spec + Amandemen-1 SAH sebagai basis eksekusi
+- [x] **Amandemen-2 diterapkan** (disetujui user paket 2026-10-13):
+      seed 1337 beku, family E1=6/E2=1/E3=1, tanpa p-value, segel
+      lampiran, resample.py — spec 421 baris SAH penuh
+- [x] **Coder discovery 2024 PULANG: TOLAK-sementara E1/E2/E3**
+      2026-10-13 (evidence 13 file, urutan pra-run benar, koheren internal)
+- [ ] **Replikasi auditor dari nol** (brief disusun, menunggu user paste)
+- [ ] Vonis final arsitek TOLAK/KANDIDAT/BELUM JELAS (setelah replikasi)
+- [x] **Spec Discovery-R2 ditulis + DIRATIFIKASI paket (R2-1..R2-6)**
+      2026-10-13 — event E1/E2/E3 + barrier ATR k1,5/RR2,0 + bed
+      2026-holdout (269.846 bar minus anomali 19.119)
+- [ ] **Audit auditor atas spec R2** — PULANG 2026-10-13: CATATAN
+      (B1/B3/B5/B6/B8 LULUS; B2/B4/B7 GAGAL wording; C1–C5 catatan)
+- [x] **Amandemen-R2-1 diterapkan** 2026-10-13 (disetujui user paket):
+      3 perbaikan + 5 pengetatan, tanpa perubahan angka
+- [x] **Re-audit fokus auditor atas Amandemen-R2-1 — LULUS 8/8**
+      2026-10-13 (hash spec C05D5E4F…654C5 cocok; tanpa cacat FATAL;
+      2 catatan kosmetik tanpa amandemen; prasyarat coder TERPENUHI)
+- [x] **Coder discovery 2026-holdout PULANG: TOLAK-sementara 8/8**
+      2026-10-13 (median −1,32..−1,72; TIME-share 0,71–0,84; E3
+      n_eval=507; 2 run identik; evidence 12 file + urutan pra-run
+      + koherensi exact terverifikasi; J1–J5 TERIMA SEMUA)
+- [x] **Replikasi auditor R2: LULUS tanpa arbitrase** 2026-10-13
+      (7/7 butir COCOK; median/CI/paruh identik ~1e-12; satu-satunya
+      selisih 5 event E2 = FP < 1 ULP, terbukti; C-R2-1..C-R2-7
+      non-blocking dicatat)
+- [x] **VONIS FINAL R2: TOLAK E1/E2/E3** 2026-10-13 (0/8 sel lolos
+      4-syarat; segel D-8 tetap tertutup; pertanyaan barrier-ATR
+      jalur event-first DITUTUP)
+- [ ] Draf `spesifikasi-fingerprint.md` DIPENSIUNKAN (arsip)
+- [x] **P2-flipmurni SELESAI 2026-10-14: KALAH 8/8** (jalur flip ditutup;
+      med stacked -1,52..-1,89; replay 1-posisi negatif semua sel)
+- [ ] Spesifikasi Metode Target v1 (definisi sukses trading) — setelah Discovery-R1
 
-## Milestone 4: Baseline Model
+## Milestone 4: Baseline Model — BELUM DIMULAI
 
 - [ ] Rule-based
 - [ ] Logistic regression
+- [ ] Modul `src/models/`, `src/backtest/` belum ada (terverifikasi 2026-10-13)
 
 ## Milestone 5: ANN
 
@@ -76,15 +134,19 @@
 
 - [ ] Modal kecil
 
-## Kemajuan Fase B — Data (per 2026-10-05)
+## Kemajuan Fase B — Data (per 2026-10-05; angka dikoreksi 2026-10-13)
 
 - [x] Fetch MT5 M1 2023-2026 -> 1.347.847 bar CSV (raw, immutable)
 - [x] `fetch_data.py` — timezone UTC+3, spread POINT vs PIP, epoch mentah
 - [x] `validate_data.py` — 0 error, 5 peringatan, 4 tahun
-- [x] `clean_data.py` — Parquet 1.349.857 bar, 2.010 gap kecil terisi
-- [ ] `resample.py` — M1 -> M5/M15/M30/H1/H4/D1
+- [x] `clean_data.py` — Parquet **1.347.847 bar, 0 gap diisi** (angka lama
+      "1.349.857 bar, 2.010 gap terisi" dari SEBELUM keputusan D1 2026-10-05
+      yang menghapus interpolasi — sudah usang, lihat "Catatan clean_data" TASKS)
+- [x] `resample.py` — M1 -> M5/M15/M30/H1/H4/D1
 
-Regresi: 103 test hijau. Gate `pre-commit run --all-files` 12/12.
+Jumlah test: **angka terakhir yang tercatat = 147 hijau (per 2026-10-05)**, lalu
+bertambah di ronde berikutnya. TIDAK di-run ulang pada 2026-10-13 (rekonsiliasi
+ini read-only) — jadi "147" bukan angka terkini, jangan dikutip sebagai gospel.
 
 ### Update 2026-10-05 (audit Phase B)
 
@@ -186,3 +248,21 @@ eports/eda/2026-10-12/laporan-coder-eda07-l30.md.
       LB_bin 25/25). V-2 register 68 beku / 35 tutup.
 - [ ] Menunggu persetujuan eksplisit user (S8A butir 3) sebelum
       ronde spec pemodelan.
+
+### Update 2026-10-13 (rekonsiliasi dokumentasi, read-only)
+
+- [x] Baca penuh: README, STATE, CONTEXT, TASKS, PROGRESS, SESSION_LOG,
+      `putusan-l31-final.md`, `spesifikasi-fingerprint.md`, dokumen desain
+      9 Okt (613 baris)
+- [x] Empat file state dikoreksi agar tidak saling bertentangan:
+      TASKS (metadata + checkbox usang + Blocked), PROGRESS (metadata +
+      Milestone 1-4 + angka Fase B), CONTEXT (versi/tanggal + fase +
+      spread + keputusan + §12), STATE (arsip + Yang Belum + Langkah)
+- [x] Temuan dokumentasi konkret (semua sudah dikoreksi di file):
+      README masih sebut "fingerprint masih draf" -> jadi **DIPENSIUNKAN**;
+      STATE bagian lama punya "Langkah Berikutnya" yang menunjuk EDA-04 (sudah
+      selesai 2026-10-06); CONTEXT masih "Fase 1 Training" + "metode menunggu
+      EDA" (keduanya sudah lewat); TASKS/PROGRESS metadata tertinggal 2026-10-07
+- [x] Konfirmasi empiris saat rekonsiliasi: `src/` = 8 modul/2.035 baris
+      (bukan 0 byte); `models/`+`backtest/` memang belum ada;
+      `.env.example` masih 0 byte; HEAD `2112f94` == `origin/main`

@@ -33,7 +33,27 @@ di `data/raw/`, lalu jalankan generator `scripts/_build_eda*.py`.
 
 ## Status singkat (2026-10-13)
 
-- EDA-07 L3-1 selesai + reaudit + vonis arsitek: 68 pola LOLOS / 35 GUGUR.
-- Simulasi biaya: biaya mendominasi (G4=False semua target LA).
-- Berikutnya (menunggu izin user): spec pendalaman fingerprint +
-  Spesifikasi Metode Target.
+- **Milestone 1 (Data) + 2 (EDA) selesai.** Data 4 tahun (1.347.847 bar M1),
+  resample sampai D1, fitur + label selesai dan ter-audit.
+- **Milestone 3 (Metode) berjalan, terblokir** di persetujuan user.
+- EDA-07 L3-1 selesai + re-audit + vonis arsitek: register 68 pola LOLOS /
+  35 GUGUR. Ronde L3 ditutup.
+- Vonis B-4 = **GO**: lanjut ke *spec pemodelan pra-registrasi* — **belum**
+  paper-trade, **belum** live, dan belum ada satu pun run backtest.
+- Metode dipusatkan pada dokumen desain event-first
+  (`.ai/backup/2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`): tiga
+  keluarga event E1/E2/E3, 7 gerbang G1–G7, jalur P0→P1→P2.
+- Draf `spesifikasi-fingerprint.md` **dipensiunkan** (arsip, jangan dijalankan).
+
+**Yang menunggu user:** 4 keputusan §18 dokumen desain, dan damakan spread di
+`configs/data.yaml` (terukur ~0,65 pip vs config 1,5 pip).
+
+## Cara membaca status tanpa tersesat
+
+| Mau tahu | Buka |
+|---|---|
+| Posisi proyek SEKARANG | `.ai/STATE.md` bagian atas |
+| Yang harus dikerjakan berikutnya | `.ai/STATE.md` → "Langkah Berikutnya" (paling bawah) |
+| Peta pekerjaan | `.ai/TASKS.md` |
+| Kemajuan per tahap | `.ai/PROGRESS.md` |
+| Kronologi +vonis tiap ronde | `reports/governance/<tanggal>/` |

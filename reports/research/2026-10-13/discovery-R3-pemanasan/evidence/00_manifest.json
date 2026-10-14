@@ -1,0 +1,22 @@
+{
+  "run": "discovery-R3-pemanasan (flip + resize), PEMANASAN NON-VONIS",
+  "created_utc": "2026-10-13T17:35:18Z",
+  "ledger_sha256": "d8a4ba56de93c2f47c90bc5c16ee86f729dcad92c0c98155b17d943281e0f89f",
+  "inputs_sha256": {
+    "m1_2026": "7f267bb94005a34e07bf524e0275f04798e48c60fe2109f22ba5d0213ac02ba5",
+    "data.yaml": "1127514518aaf23cd48acac3e4f482159d14a25f37d05168b4444f2c38709dad",
+    "resample.py": "54fc73693b0faba7724ef3463df91acc46f944ef654ebf6fe14b8f5ca846efac",
+    "spec-R2": "c05d5e4fe94a364baa6bcb56863a7e5cc6507b8e0cdf9d9bdde12639a80654c5",
+    "brief-R3": "e3fee14ba1afb71471bd9da468d0961ae872fc0ac6cfc7fc2a8d5e45d59a62b3",
+    "eda06": "5bf6cb6a3dda9a92a86ec8a3621cbd10649866daec412993ba760facc97b1cf4",
+    "build_features": "6549a657adc9eae45d50aae4d6d44ed1353804e37b10f2b59254ada471d5b5a6"
+  },
+  "frozen": {
+    "k_atr_sl": 1.0,
+    "rr_tp_per_sl": 1.5,
+    "horizon_bars": 10,
+    "seed": 1337,
+    "q0_gate": 300,
+    "negate_side": true
+  }
+}

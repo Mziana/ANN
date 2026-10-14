@@ -1,0 +1,22 @@
+{
+ "data/processed/M1/usdjpy_m1_2024.parquet": {
+  "sha256": "69b2c026d3ac52d47b2d29e6bb80a1747f32a46cc611ef7bebbdb3f74e213cac",
+  "bytes": 7186113
+ },
+ "configs/data.yaml": {
+  "sha256": "1127514518aaf23cd48acac3e4f482159d14a25f37d05168b4444f2c38709dad",
+  "bytes": 7320
+ },
+ "src/data/resample.py": {
+  "sha256": "54fc73693b0faba7724ef3463df91acc46f944ef654ebf6fe14b8f5ca846efac",
+  "bytes": 11797
+ },
+ "notebooks/scalping/_eda_common.py": {
+  "sha256": "82f02ceb19754c79fbe1d9e6e3d87fc3c0c6e02201843512efdddac9917c6559",
+  "bytes": 4067
+ },
+ "reports/governance/2026-10-13/arsitek/spesifikasi-discovery-R1.md": {
+  "sha256": "c85340ef08af5f753cf49dbcc83be3ea197a457eb9f1ef4f1a80a9165f379d14",
+  "bytes": 21307
+ }
+}

@@ -1,144 +1,102 @@
 ---
 session: ses_eedd
-updated: 2026-10-12T20:03:03.461Z
+updated: 2026-10-13T17:48:01.381Z
 ---
 
 # Session Summary
 
 ## Goal
-Menyelesaikan reaudit independen L3-1 baseline-vs-null secara read-only hingga vonis LOLOS/GAGAL prosedural + temuan berperingkat + S6 + rekomendasi terserah-terima di `reaudit-l31.md`.
+Menjalankan pemanasan diagnostik R3 (flip side + SL=1.0xATR/TP=1.5xATR) di bed 2026-holdout yang sama hingga 2 run deterministik byte-identik + laporan §5 non-vonis.
 
 ## Constraints & Preferences
-- Auditor independen, bukan coder L3-1; read-only dari CSV beku + source, tanpa eksekusi builder/notebook.
-- Harness di temp, DILARANG tulis ke repo kecuali serah-terima; Workdir `D:\ANN`; Bahasa Indonesia; STOP setelah serah-terima.
-- Setiap syarat berpasangan perintah mentah + output; tanpa bukti = BELUM DIVERIFIKASI; bedakan komputasi/provenance/kosmetik.
-- Patuhi B-3 + Amandemen C (67 diskret Brier margin 0,001 + menang H1&H2 + akurasi; 36 LB_rng MSE 1% + menang per-semester + MAE); patuhi S3-3/S8A (tanpa P&L/backtest/edge/vonis dagang; tanpa fitur/label baru).
-- Kontrak lama tetap mengikat: holdout 2026 tidak dimuat, split train 2023H2-2024H2 / test 2025H1+2025H2 tanpa shuffle lintas batas, label VERBATIM run 9.
+- Status PEMANASAN DIAGNOSTIK — BUKAN RONDE VONIS; tafsir asimetris: KALAH=gugur kuat hemat bed 2025, MENANG=tanpa makna sirkuler
+- Satu-satunya resep teknis = spec R2 + brief R2; bila konflik spec R2 menang, lapor jangan improvisasi
+- Hanya DUA perubahan vs R2: (1) side→-side satu operasi sesudah scan, (2) SL=1.0xATR TP=1.5xATR RR 1.5:1; tanpa varian lain, tanpa indikator, tanpa ladder
+- Ledger pra-run + manifest SHA-256 di folder BARU SEBELUM run pertama, tanpa itu run gagal
+- Larangan: baca/sentuh `discovery-R2/evidence/` + segel R1/R2, tanpa 2023/2024/2025 untuk evaluasi, tanpa re-run TP-75/unlimited-horizon di bed 2026, tanpa p-value seleksi
+- Kontrak eksekusi R2 D2-5 verbatim: entry OPEN t0+1, race t0+2..t0+11, TIME exit close t0+11, bar-kembar=AMBIGUOUS_SEQUENCE buang, urutan buang GAP→ANOMALY_CROSS→ATR_NA→OFF_SESSION
+- Biaya 3 lapis literal config sesi entry, komisi 0.3 pip, slippage asumsi cons 0.2 / stress 0.3; spread.default/by_year/multiplier DILARANG
+- Q0=300, evaluasi HANYA H+10, tanpa RV/TAU/M15/D-8/segel; bootstrap median 10000 resample cluster hari-broker seed 1337; paruh-1 2026-01-01..05-18 / paruh-2 2026-05-19..10-02
+- Disiplin kode: fungsi <50 baris, file <400 baris, tanpa `print()` produksi, tanpa `except: pass`, ruff check+format hijau
 
 ## Progress
 ### Done
-- [x] Eksekusi coder L3-1 pasca-Amandemen C via `D:\ANN\scripts\_build_eda07_l31.py` → `notebooks/scalping/eda_07_l31_baseline.ipynb` (8 sel, 0 error, nbconvert EXIT=0, ASSERT_LOG 1268, KESIMPULAN_L31 terkunci).
-- [x] TABEL M3 103 terkunci: LOLOS 68 / GUGUR 35 (diskret 56/11 Brier; kontinu 12/24 MSE); `metrik_jenis` {brier,mse}; `M1` True 103/103; `punya_round_d_invers` sum=12.
-- [x] Bukti integritas: jangkar T-07-1 200/200, register 98 native + 5 Tokyo, C-3 twin 5/5 identik angka+vonis, split max-train<min-test, hash 5/5 input sama SEBELUM, S8B 11/11 utuh, K24 24/24.
-- [x] 3 perbaikan builder terdokumentasi: FIG-18 kolom `columns[16]/[17]` → nama eksplisit `metrik_null_pooled`/`metrik_mod_pooled`; `lol_c` kelebihan `)` → SyntaxError; C-3 twin `wakil != round_d` kosong → IndexError → posisi-register 98..102 + `iloc[0]` native vs `iloc[1]` Tokyo.
-- [x] Artefak + laporan S5: `T-L3-1_baseline.csv` 103 (`45D03482…`), `FIG-18_baseline.png` 77.791B (`50DAA261…`), `_l31_manifest.csv` (`599C7FFD…`), `run_l31.log` EXIT=0 (`0A4E5D4F…`), builder `BD5B1241…`, NB `67F5FE62…`, laporan `laporan-coder-eda07-l31.md`; HEAD `b18992b5e57d45c125aacf3ca868c2f9e135d9d1`, staged nol.
-- [x] Gerbang asisten L3-1 LOLOS dengan satu catatan format log (2026-10-13); audit dimulai: baca `2026-10-13_gerbang-hasil-l31.md` + `putusan-l30-audit.md` (B-1..B-4).
+- [x] Q&A R2 ke user: distribusi SL median 7.04 pip / TP median 14.08 pip; MFE>=7.5 pip hanya 13.7% vs butuh ~55% win-rate RR~1; koreksi erratum display 766/1532 point → benar 70/141 point (kode pip benar)
+- [x] Verifikasi tabel sentuh dari `events.jsonl` R2: T=47pt atas 25.9%/bawah 34.9%/keduanya 5.4%/tak-sentuh 44.6%; T=70pt 15.3%/19.9%/1.7%/66.5%; T=105pt 7.4%/9.0%/0.5%/84.1%; koreksi bug mae negatif
+- [x] Baca otoritas R3: spec-R2, brief-R2, data.yaml, spec-R1, resample.py, broker_time.py, build_features.py, _build_eda06.py:500-533
+- [x] Recon READ-ONLY TEMP: total 269846 bar = spec, anomali 19119 = spec, usable 250727, gap 255, ATR-ok 238300 (88.3%), ATR mean 5.1059 median 4.2429 q25 2.7571 q75 6.4000 min 0.3929 max 77.4000, R3 SL-mean 5.1059 pip (51pt) TP-mean 7.6588 pip (77pt), sesi usable London 87348 Tokyo 79248 NewYork 65113 Sydney 19018 Off 0, resample M1→M15 18026 bucket m1_sum 269846
+- [x] Tulis ledger pra-run `discovery-R3-pemanasan/evidence/00_ledger_prarun.md` + `00_manifest.json` (ledger_sha256 `d8a4ba56de93c2f47c90bc5c16ee86f729dcad92c0c98155b17d943281e0f89f`, created 2026-10-13T17:35:18Z, frozen k_sl 1.0 rr 1.5 H10 seed 1337 Q0 300 negate True)
+- [x] Bangun harness R3: `d1_events.py` (scan E1 6sel + E2 1sel + E3 1sel + negate_side + exclusions), `d2_outcomes.py` (race_buy/sell + layer_costs), `d3_stats.py` (Q0/bootstrap/paruh), `run_discovery.py` (orkestrasi + broker_day-4h + cost_maps + cancel_records)
 
 ### In Progress
-- [ ] Reaudit L3-1: baca kontrak AGENTS.md S18/S20 + spesifikasi-lapisan3 + amandemen + laporan coder + gerbang (sebagian selesai).
-- [ ] S-0: verifikasi HEAD, staged, SHA256 6 file L3-1 + format.
-- [ ] Hitung ulang independen (a)-(k) via harness TEMP + konfirmasi catatan `run_l31.log` UTF-16LE + `NativeCommandError`.
-- [ ] Tulis `reports/governance/2026-10-12/Audit/reaudit-l31.md` + STOP.
+- [ ] Perbaiki SyntaxError `d1_events.py:61` (`spec["end']` → `spec["end"]`) lalu ruff check+format hijau, run 2x deterministik + verifikasi hash, laporan §5 + kalimat tafsir
 
 ### Blocked
-- (none)
+- SyntaxError memblokir ruff/run: `d1_events.py:61:57 missing closing quote`, efek domino lines 63-65 + 68
 
 ## Key Decisions
-- **B-3 + Amandemen C mengikat bersama**: 67 diskret M3 B-3 utuh, 36 kontinu M3-kontinu C-2; Brier/akurasi DILARANG untuk LB_rng.
-- **Perbaikan builder bukan improvisasi spec**: FIG-18 kolom-nama, kurung `lol_c`, C-3 twin posisi-register; intent arsitek tak berubah, angka M3 tak tersentuh.
-- **Log UTF-16LE + wrapper NativeCommandError = temuan format**: isi utuh, keterbacaan tercemar; perbaikan T-6 redirect langsung tak dijalankan (per gerbang, wajib konfirmasi/bantah auditor).
-- **Audit read-only harness TEMP**: tanpa eksekusi builder/notebook; bedakan komputasi/provenance/kosmetik.
+- **R3 di bed 2026 yang sama**: Otorisasi brief pemanasan diagnostik, bukan double-dip vonis; hasil menang diabaikan, kalah hemat bed 2025
+- **ATR resep EDA-06 verbatim + anomali excluded dari M5**: Menjamin kausal-beku tanpa look-ahead, span_ok ≤100min + toleransi merge 15min
+- **E2 ATR-M1 judgment TR 3-komponen + guard 60s**: Dicatat di ledger run karena spec hanya kunci ATR-M5, filter expansion butuh definisi eksplisit
+- **Recon di TEMP luar repo**: Membaca saja, tidak menulis artefak, agar hash input ledger murni pra-run
+- **Tidak hitung ulang unlimited-horizon TP70**: `events.jsonl` berakhir kbar≤10 + `t_mfe/t_mae` waktu ekstrem bukan first-touch; ambil harga >menit-11 = buka mentah 2026 = tuning terlarang
 
 ## Next Steps
-1. Selesaikan baca S-0: `.ai/AGENTS.md` (S18,S20), `spesifikasi-lapisan3.md`, `putusan-l30-audit.md` B-3, `amandemen-l31-metrik.md` C-1..C-4, `laporan-coder-eda07-l31.md`, `verifications/2026-10-13_gerbang-hasil-l31.md`.
-2. S-0: ukur HEAD + `git diff --cached --name-only` + SHA256 6 file (builder, NB, CSV, FIG-18, manifest, run log) + cek ASCII/LF vs UTF-16LE/CRLF.
-3. Harness TEMP hitung ulang: (a) 103=98+5, 67+36; (b) M3=vonis 103/103; (c) margin diskret min 0,00306 + kontinu min 11,2% + distribusi; (d) menang-H1&H2; (e) twin 5/5; (f) invers=12; (g) split train<test; (h) TLAB/YCODE/kontinu vs source run 9; (i) manifest path+hash; (j) FIG-18 cakupan; (k) S3-3/S8A.
-4. Konfirmasi/bantah catatan asisten log UTF-16LE + nilai dampaknya.
-5. Serahkan `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l31.md` (vonis prosedural + temuan berperingkat + S6 + rekomendasi + daftar LOLOS-per-jenis angka) lalu STOP.
+1. Edit `d1_events.py:61` quote + pastikan tidak ada typo lain, jalankan `ruff check` dan `ruff format --check`
+2. Jalankan `run_discovery.py` 2x, verifikasi `events.jsonl` + `summary.json` byte-identik via SHA-256, simpan `run_stdout.log`
+3. Hitung diagnostik Q0/Q1/Q2/Q4/Q5 per sel (median net-obs/cons/stress, CI cluster-hari, paruh, failure map, cancel sequential) tanpa vonis
+4. Tulis laporan §5 + tempel 2 kalimat tafsir asimetris verbatim + serah-terima ke arsitek
 
 ## Critical Context
-- Hasil L3-1: LOLOS 68/GUGUR 35; diskret 56/11, kontinu 12/24; T-5 menandai 12 baris/7 target; FIG-18 dua panel tak-sebanding.
-- Hash: builder `BD5B12415937FD071BADA1937D1A58DC0E87F345F6F8D8C12E83125AA74D47F3`; NB `67F5FE628712B763B41F3577D11E591CBD6436EA1285E8E5105F08435D6E7C4F`; CSV on-disk `45D034823AFC05EE04FFA0B64133984A447EBF48ABD37E365D76276EE1C19792` (pasca CRLF→LF; manifest pra-normalisasi `2D46…`); FIG `50DAA2612C0699BA8C29D415C0768F77C3B2BD3D65F88ABCBB390137D782C952`; log `0A4E5D4FBDDF79FC1765BE791B73A5BB8E0BD19FDCB8E0BD19FDCB8E65FC1A0369ABF3AA91F`; manifest `599C7FFDFC8BEA8C292E21CDD80C6A309F5C019049AB69C3C9FBF095A680238D`.
-- Jangkar: strata B=185.248, N_ENT=184.731, T-07-1 260 baris, TLAB 200 target waktu, split UTC train 1688339340000000000..1735673400000000000 test 1735776660000000000..1767210840000000000.
-- Error tertangkap pra-hasil: `File "<sel04>", line 278 SyntaxError: unmatched ')'` (lol_c); `IndexError: single positional indexer is out-of-bounds` di `RE[...wakil != round_d].iloc[0]` (run log baris 336-337/372-374); final EXIT=0.
-- HEAD `b18992b5e57d45c125aacf3ca868c2f9e135d9d1`, staged nol ronde ini, lock `.eda07_l31_build.lock` absent, builder 0 CR 0 non-ASCII.
-- B-2 T-5 pagar mengikat: 4 Tokyo pos via rv60/atr_m5 + 2 London = magnitudo-volatilitas, DILARANG jadi presumi; CSV wajib `punya_round_d_invers`.
+- Bed 2026: `usdjpy_m1_2026.parquet` 269846 bar, time `2026-01-01T23:00:00+0000`→`2026-10-02T20:57:00+0000`, anomali UTC 2026-03-10..03-27 (19119 bar)
+- Hash input: data.yaml `11275145...`, resample.py `54fc7369...`, spec-R2 `c05d5e4f...`, brief-R3 `e3fee14b...`, eda06 `5bf6cb6a...`, build_features `6549a657...`, m1_2026 `7f267bb9...`
+- R2 baseline: 84890 evaluable, Q0 8/8 lolos, vonis sementara 8/8 TOLAK median -1.32..-1.72 TIME 71-84%, SL-first 17.0% TP-first 2.1%
+- Konvensi 1 pip=10 point; R3 mean SL ~51pt TP ~77pt vs R2 median 70/141pt
+- Fingerprint sesi: `Tokyo:Asia/Tokyo:9-18|London:Europe/London:8-16|New York:America/New_York:8-17|Sydney:Australia/Sydney:8-16|priority=London>NewYork>Tokyo>Sydney`
+- Biaya literal: obs London 0.61 NewYork 0.69 Tokyo 0.62 Sydney 0.80 +0.3 komisi; p95 London 0.8 NewYork 1.2 Tokyo 0.9 Sydney 1.5 +0.3 slip +0.3 komisi; fallback default 0.65
 
 ## File Operations
 ### Read
-- `C:/Users/Fajar/AppData/Local/Temp/opencode/eda07/run8.log`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel01_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel02_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel03_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel04_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel05_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel06_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel07_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel10_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel11_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel12_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel14_code.txt`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\l31_run9\sel15_code.txt`
-- `D:\ANN`
 - `D:\ANN\.ai\AGENTS.md`
-- `D:\ANN\.ai\ASSISTANT_RULES.md`
-- `D:\ANN\.ai\PROGRESS.md`
-- `D:\ANN\.ai\SESSION_LOG.md`
-- `D:\ANN\.ai\STATE.md`
-- `D:\ANN\.ai\TASKS.md`
-- `D:\ANN\.ai\assistant\prompts`
-- `D:\ANN\.ai\assistant\prompts\2026-10-12_adendum-l31-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-12_eksekusi-l30-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-12_eksekusi-l31-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-12_investigasi-i1-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-12_penyelesaian-i2-coder.md`
-- `D:\ANN\.ai\assistant\verifications\2026-10-13_gerbang-hasil-l31.md`
-- `D:\ANN\journal\daily\2026-10-09.md`
-- `D:\ANN\notebooks\scalping`
+- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
+- `D:\ANN\configs\data.yaml`
+- `D:\ANN\data`
+- `D:\ANN\data\processed\M1`
 - `D:\ANN\notebooks\scalping\_eda_common.py`
-- `D:\ANN\reports\eda\2026-10-12`
-- `D:\ANN\reports\eda\2026-10-12\T-L3-0_peta98.csv`
-- `D:\ANN\reports\eda\2026-10-12\_gate_G2_alarm.csv`
-- `D:\ANN\reports\eda\2026-10-12\eda07_progress.log`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-g2.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-i1.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l30.md`
-- `D:\ANN\reports\governance\2026-10-10\arsitek\amandemen-eda07-alarm.md`
-- `D:\ANN\reports\governance\2026-10-10\arsitek\spesifikasi-eda07-label-fitur.md`
-- `D:\ANN\reports\governance\2026-10-12`
-- `D:\ANN\reports\governance\2026-10-12\Audit`
-- `D:\ANN\reports\governance\2026-10-12\Audit\reaudit-l30.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\amandemen-l31-metrik.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-eda07-audit.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-eda07-g2.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-eda07-i1.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-eda07-i2.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\putusan-l30-audit.md`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\spesifikasi-lapisan3.md`
-- `D:\ANN\scripts`
-- `D:\ANN\scripts\_build_eda07.py`
-- `D:\ANN\scripts\_build_eda07_i1.py`
-- `D:\ANN\scripts\_build_eda07_i2.py`
-- `D:\ANN\scripts\_build_eda07_l30.py`
-- `D:\ANN\thoughts`
-- `D:\ANN\thoughts\ledgers`
-- `D:\ANN\thoughts\shared`
-- `D:\ANN\scripts\_build_eda07_l31.py`
-- `D:\ANN\notebooks\scalping\eda_07_l31_baseline.ipynb`
-- `D:\ANN\reports\eda\2026-10-12\T-L3-1_baseline.csv`
-- `D:\ANN\reports\eda\2026-10-12\FIG-18_baseline.png`
-- `D:\ANN\reports\eda\2026-10-12\_l31_manifest.csv`
-- `D:\ANN\reports\eda\2026-10-12\run_l31.log`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l31.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l31-konflik-B3.md`
+- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
+- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R2.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d1_events.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d2_outcomes.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d3_stats.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d4_appendix.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\run_discovery.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d2_outcomes.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\run_discovery.py`
+- `D:\ANN\scripts\_build_eda06.py`
+- `D:\ANN\src\data\broker_time.py`
+- `D:\ANN\src\data\resample.py`
+- `D:\ANN\src\features\build_features.py`
 
 ### Modified
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\h1_recompute.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit-l31\h2_log_nb_verbatim.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\run_i2.bat`
-- `D:\ANN\.ai\PROGRESS.md`
-- `D:\ANN\.ai\SESSION_LOG.md`
-- `D:\ANN\.ai\TASKS.md`
-- `D:\ANN\journal\daily\2026-10-09.md`
-- `D:\ANN\reports\eda\2026-10-10\laporan-coder-eda07-g2.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-i1.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-i2.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l30.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l31-konflik-B3.md`
-- `D:\ANN\reports\eda\2026-10-12\laporan-coder-eda07-l31.md`
-- `D:\ANN\scripts\_build_eda07.py`
-- `D:\ANN\scripts\_build_eda07_i1.py`
-- `D:\ANN\scripts\_build_eda07_i2.py`
-- `D:\ANN\scripts\_build_eda07_l30.py`
-- `D:\ANN\scripts\_build_eda07_l31.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_recon.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\r3_recon.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d1_events.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d2_outcomes.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d3_stats.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d4_appendix.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\run_discovery.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d1_events.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d2_outcomes.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d3_stats.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d4_appendix.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\run_discovery.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\00_ledger_prarun.md`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d1_events.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d2_outcomes.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d3_stats.py`
+- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\run_discovery.py`
