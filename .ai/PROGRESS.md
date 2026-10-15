@@ -279,3 +279,71 @@ eports/eda/2026-10-12/laporan-coder-eda07-l30.md.
 - [x] Konfirmasi empiris saat rekonsiliasi: `src/` = 8 modul/2.035 baris
       (bukan 0 byte); `models/`+`backtest/` memang belum ada;
       `.env.example` masih 0 byte; HEAD `2112f94` == `origin/main`
+
+### Update 2026-10-15 (fix M1-M5 kontrak broker + self-audit 3x, TERTUTUP)
+
+- [x] M1 angka spread di `configs/broker.yaml` + `docs/broker-contract-finex.md`
+      ditulis ulang dari hitung independen; spike 55,60 dipindah dari Sydney
+      ke NewYork (ternyata 2024-12-24)
+- [x] M2 `EDA/README.md` - 5 nilai dolar terinterpolasi PowerShell dipulihkan
+- [x] M3 `EDA/02-volatility.md` - status keputusan lama ditandai sudah diterapkan
+- [x] M4 section konflik spread basi ditulis ulang sebagai tertutup
+- [x] M5 provenance angka "68 assertion PASS" ditambahkan
+- [x] X1 3 kata tergarbling (`hariWednesday`, `bisabisa`, `terHopital`)
+- [x] X2 7 karakter Mandarin bocor ke teks tulisan sendiri (U+5E74, U+7528/U+6237,
+      U+6839/U+6E90, U+5C5E/U+6027) - semua dibetulkan
+- [x] Gate baru: 80 pemeriksaan dokumen-vs-data, 0 gagal
+- [x] Negative control gate: 3 angka dikorup -> 3/3 tertangkap (gate terbukti berguna)
+- [x] Regresi 254/254 passed · `git diff --check` bersih · YAML valid
+- [x] Self-audit 3x adversarial selesai; 6 cacat di kerja sendiri terdokumentasi
+- [x] Komisi per side vs round-turn - SELESAI 2026-10-15, user konfirmasi
+      **$1,00/lot per sisi** (= $2,00 round-turn); blocker biaya dihapus
+- [x] Spec kontrak Finex - SELESAI 2026-10-15: kontrak 100.000, base USD,
+      pip 0,01, min 0,01, maks 50 lot/order, leverage 1:500 (user) +
+      cocok silang anchor EDA-06
+- [ ] Keputusan arsitek: samakan konsumen `broker.yaml` vs turunkan jadi dokumentasi
+
+Catatan metodologi: verifikasi pertama sempat memakai `add_labels()` - fungsi
+yang SAMA dengan notebook, jadi hanya membuktikan determinisme. Ditulis ulang
+independen dengan `zoneinfo` + `numpy.quantile` + kolom `spread_pips` mentah.
+
+### Update 2026-10-15 (blueprint EDA-06 v9.3 FINAL + brief coder, menunggu Pre-Flight)
+
+- [x] Blueprint EDA-06 `candle_anatomy_regime` FINAL v9.3 (10 iterasi v8.1->v9.3,
+      tiap putaran diaudit adversarial + counter-audit; semua klaim counter
+      terakhir diverifikasi hitungan: 2 benar+1 temuan tambahan, 1 salah, 1 setuju).
+      File: `thoughts/shared/designs/2026-10-15-eda06-blueprint-v93.md`
+- [x] Keputusan terkunci: biaya 0,95 pip flat (spread x1 + komisi x2; rumus lama
+      spread x2 = hitung ganda, DICABUT) · Net TP min 2,85 · R:R >=1,0 momentum
+      saja · OR = 4 bar M15 setelah daily open (referensi sesi DIHAPUS) ·
+      trigger >= bar ke-5 · K=16 setelah entry · partisi R + minus 19 hari anomali ·
+      placebo 1000 set x 2 track (reversal dir dari sisi open, momentum coin flip;
+      SL identik via pseudo extremes N=3) · FDR core {1,2,3,4a1} q=0,10 ·
+      power rule CI mean > 5 pip · side-consistency 'wrong_side' (real + placebo)
+- [x] Brief coder diterbitkan (Pre-Flight Cek 1-6 sebagai gate; reuse
+      `broker_time`/`resample`; venv kanonik; arsip 06-07 frozen)
+- [ ] Pre-Flight Checklist coder — MENUNGGU coder (belum ada laporan masuk)
+- [ ] Penyelarasan biaya repo ke 0,95 (broker.yaml skenario mid 1,60 + docs +
+      CONTEXT §15 masih rumus lama) — PENDING, belum dieksekusi
+- [x] Pre-Flight coder MASUK (3 blocking, semua BENAR): F1 jam [21,22] vs data —
+      DST audit 2026-10-05 (`data.yaml:271-281`) + ukuran coder 255@22/129@23/0@21
+      → open normal = [22,23], 21 = tanda anomali · F2 ambang mikro mustahil
+      (min terukur 1,37/0,59) · F3 Sel 1/2/3 memang tak pernah didefinisikan
+- [x] Putusan arsitek + Amandemen-1 diterbitkan (A1/A2/A3 + Sel 1 tetap diuji,
+      Sel 3 diprediksi UNDERPOWERED) — MENUNGGU ratifikasi user 3 butir
+- [x] Anggaran data: R pakai 384 (pertama); sisa 441 bersih (V 2025 = 259,
+      P 2026 = 182) utk walk-forward (V) + OOS kunci (P); H1-2023 stratum B
+      dikecualikan (stress saja)
+- [x] Amandemen-1 TERBIT (`thoughts/shared/designs/2026-10-15-eda06-amandemen-1.md`):
+      A1 YA · A2 modif-user (split 4a1t/4a1s, core 5 sel, trending=komplemen,
+      null regime-matched, Cek 4 direvisi) · A3 YA (hipotesis cadangan)
+- [ ] Nod A4 + lampu hijau LANGKAH 2 — MENUNGGU user
+- [x] A4 DIPUTUS (modifikasi user, benar): FS-01→V (bukan P — P pristine,
+      satu sentuh test ANN-01); hierarki R-terkunci / V-workhorse / P-segel
+- [x] LAMPU HIJAU LANGKAH 2 (2026-10-15): coder jalan, blueprint v9.3 + Amandemen-1
+- [x] Blueprint v9.4 = konsolidasi IDENTIK (kanonik tunggal; grep: nol angka lama di aturan aktif)
+- [ ] LANGKAH 2 coder BERJALAN: notebook Sel 1–7 + event parquet + vonis §8A per sel
+- [x] LANGKAH 2 SELESAI + vonis CLOSED: Sel 1 UNDERPOWERED (n=51, +4.33,
+      CI [−5.50,+15.51] lebar 21; win 0.27, +45.0/−13.8, ekor −99.75) ·
+      Sel 2/3/4x TIDAK TAHU (12/0/3/7/2/20) · nol core LOLOS → TIDAK LANJUT TV-01
+- [ ] Commit 3 artefak aditif — MENUNGGU user

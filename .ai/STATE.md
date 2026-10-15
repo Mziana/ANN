@@ -1,6 +1,6 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-14 (R6-conditioning: DITARIK, NON-EXECUTABLE; kelas hipotesis fixed-barrier M15 MATI-KELAS)
+**Update terakhir:** 2026-10-15 (EDA-06 CLOSED: Sel 1 UNDERPOWERED, Sel 2/3/4x TIDAK TAHU; TIDAK LANJUT TV-01; commit 3 artefak menunggu user. R6 tetap DITARIK)
 **Fase:** Milestone 1 (Data) + 2 (EDA) SELESAI. Milestone 3 (Metode) BERJALAN
 dan TERBLOKIR di persetujuan user.
 **Status ronde terakhir:** EDA-07 L3-1 selesai + re-audit LULUS PROSEDURAL +
@@ -107,6 +107,75 @@ nama `build_features.py` "400/400") **tidak cocok** dengan hitungan fisik
 baris di atas. Penyebabnya belum saya periksa — mungkin metode hitung berbeda
 (baris logis vs fisik) atau file berubah. Perlakukan kedua angka sebagai
 **belum terverifikasi** dan jangan kutip keduanya tanpa menyebut sumber.
+
+## Blueprint EDA-06 v9.3 — FINAL (2026-10-15)
+
+Blueprint `candle_anatomy_regime` FINAL setelah 10 iterasi (v8.1->v9.3), tiap
+putaran diaudit adversarial + counter-audit. File:
+`thoughts/shared/designs/2026-10-15-eda06-blueprint-v93.md`.
+Terkunci: biaya 0,95 flat (rumus lama spread x2 = hitung ganda, dicabut) ·
+Net TP 2,85 · R:R momentum-only · OR = 4 bar M15 setelah daily open ·
+trigger >= bar ke-5 · K=16 setelah entry · partisi R minus 19 hari anomali ·
+placebo 1000x2 track · FDR core {1,2,3,4a1} q=0,10 · power CI mean > 5 pip ·
+side-consistency 'wrong_side' (real + placebo). Discovery-R1 BATAL (satu rantai).
+Brief coder diterbitkan; menunggu Pre-Flight Checklist (Cek 1-6).
+PENDING: penyelarasan biaya repo ke 0,95 (broker.yaml/docs/CONTEXT §15).
+Tidak ada iterasi blueprint lagi — masalah berikut = masalah kode.
+Pre-Flight 2026-10-15: F1 [21,22] gugurkan winter (bukti ganda: DST audit
+`data.yaml:271-281` + 255@22/129@23/0@21 → [22,23]) · F2 ambang mikro mustahil ·
+F3 Sel 1/2/3 undefined (lubang nyata). Amandemen-1 (A1/A2/A3) MENUNGGU
+ratifikasi. Anggaran: R 384 (pertama); sisa V 259 + P 182 = 441 utk
+walk-forward (V) + OOS kunci (P).
+Amandemen-1 TERBIT (`thoughts/shared/designs/2026-10-15-eda06-amandemen-1.md`):
+A1 [22,23] YA · A2 DIMODIFIKASI user → split momentum rezim (4a1t/4a1s;
+core {1,2,3,4a1t,4a1s}; trending = komplemen sideways, label jujur;
+null regime-matched; gate Cek 4 direvisi: STOP hanya jika Sel 1 <30) ·
+A3 framing jujur (Sel 3<30 = "TIDAK TAHU"; Sel 1 LOLOS = "edge lemah" +
+hipotesis cadangan "reversal pasca-spike umum"; AMD-full UNTESTED).
+A4 (TV-01→V, FS-01→P) + lampu hijau LANGKAH 2 MENUNGGU user.
+A4 DIPUTUS (modifikasi user, benar): TV-01 walk-forward di V, FS-01 terkunci
+di V, P SEGEL pristine — disentuh tepat sekali (test final ANN-01).
+Hierarki: R discovery-terkunci · V workhorse validasi · P ujian final.
+LAMPU HIJAU LANGKAH 2 DIBERIKAN 2026-10-15.
+
+## Vonis EDA-06 — CLOSED 2026-10-15: TIDAK LANJUT (tak terbukti, bukan gagal-terbukti)
+
+Eksekusi penuh selesai (notebook 14 sel, nbconvert exit=0; parquet 51×57).
+Sel 1: n=51, mean +4.33, CI95 [−5.50,+15.51] lebar 21 > 5 → UNDERPOWERED
+(menurut power rule; CI lewati 0 → bukan LOLOS, tanpa klaim maju).
+Sel 2 n=12, Sel 3 n=0, momentum 3/7/2/20 → TIDAK TAHU (drop+label).
+Nol core LOLOS → TIDAK ADVANCE TV-01. AMD-full DAN versi longgar sama-sama
+belum teruji/terbukti di R. Output sah §8A: modal tidak dipertaruhkan.
+Profil jujur: win 0.27, win rata +45.0 vs loss −13.8, satu ekor −99.75
+penggerak varians; Sel 3 nol karena spike hari-sideways menumpuk bar 4–11
+(jendela mikro 12-bar tak pernah ada) — insight struktural, tercatat.
+Verifikasi independen arsitek: mean 4.33 ✓, winrate ✓, vonis tercetak
+verbatim di notebook ✓. Caveat: parquet hanya event Sel-1 (subset Sel 2/3
+di notebook; regenerasi via generator). P/2026 tak tersentuh. Commit 3
+artefak aditif MENUNGGU user (coder tidak commit; tree muat perubahan lain).
+
+## Registry Amunisi ANN (program user 2026-10-15: pancing multi-rod)
+
+EDA menjawab hipotesis (ada/tidak + karakter), BUKAN mesin pencetak uang.
+Setiap hipotesis teruji = satu amunisi (fitur/setup) untuk ANN; ANN
+menggabungkan banyak amunisi. Dua jalur kelulusan: (a) standalone edge
+(LOLOS ketat → advance strategi); (b) amunisi fitur (eksistensi
+terkonfirmasi + karakter terdokumentasi → registry, tanpa klaim edge).
+
+| # | Amunisi | Status | Bukti |
+|---|---|---|---|
+| 1 | Spike-reversal (spike + exhaustion → kembali ke open) | TERKONFIRMASI-eksistensi, edge BELUM terukur → jalur (b) | Sel 1 n=51, 12 win rata +45.0, win 0.27, CI lewati 0; parquet 51×57 |
+| 2 | (terbuka — EDA berikut) | — | — |
+| 3 | (terbuka — EDA berikut) | — | — |
+| 4 | (terbuka — EDA berikut) | — | — |
+
+Catatan: AMD-full (Sel 3) = NOL kemunculan → TIDAK masuk registry
+(yang tak pernah terjadi bukan amunisi). Ronde EDA baru atas inisiatif AI
+tetap DILARANG (§8A.3) — slot 2-4 diisi atas perintah user.
+Blueprint v9.4 diterbitkan (`thoughts/shared/designs/2026-10-15-eda06-blueprint-v94.md`):
+konsolidasi IDENTIK v9.3 + Amandemen-1, dokumen kanonik tunggal untuk coder
+(verifikasi: nol sisa angka lama di aturan aktif; satu-satunya "[21,22]" =
+baris riwayat perubahan). v9.3 + Amandemen-1 = arsip riwayat.
 
 ## Yang Sedang Dikerjakan
 
@@ -339,8 +408,10 @@ baris di atas. Penyebabnya belum saya periksa — mungkin metode hitung berbeda
 - [ ] Backtest + audit — belum dimulai; `reports/backtest/` masih kosong (nol run)
 - [ ] 500+ trade data (kriteria Fase 1) — belum tercapai
 - [ ] Isi `.env.example` (masih 0 byte)
-- [ ] Damakan spread di `configs/data.yaml` (mean 0,65 vs default 1,5 — 2,3x)
-- [ ] Tutup Spread authority + komisi (per-side vs round-turn belum jelas)
+- [x] Damakan spread di `configs/data.yaml` — SELESAI 2026-10-15, sudah
+      memakai terukur per-sesi + stres p95/p99
+- [x] Tutup komisi — SELESAI 2026-10-15, user konfirmasi $1,00/lot per sisi
+      ($2,00 round-turn); kontrak 100.000 + leverage/min/maks/pip spec Finex
 
 ## Blocker
 
@@ -386,11 +457,11 @@ baris di atas. Penyebabnya belum saya periksa — mungkin metode hitung berbeda
    kapan-jangan-masuk, uji stabilitas, lalu vonis biner. Ronde pertama maksimal
    3 keluarga event, 1 kandidat per keluarga. Ledger discovery ditulis
    SEBELUM run.
-3. **Damaikan spread di `configs/data.yaml`** (usul: pakai terukur per-sesi +
-   stres p95/p99, buang `default:1.5` / `by_year[2023]:3.0`) — perlu persetujuan
-   user karena mengubah config global.
-4. **Tutup komisi** di rumus biaya 3 lapis (butuh konfirmasi per-side vs
-   round-turn dari user).
+3. ~~**Damaikan spread di `configs/data.yaml`**~~ — **SELESAI 2026-10-15**
+   (sudah memakai terukur per-sesi + stres p95/p99).
+4. ~~**Tutup komisi** di rumus biaya 3 lapis~~ — **SELESAI 2026-10-15**
+   (user konfirmasi $1,00/lot per sisi = $2,00 round-turn; kontrak +
+   leverage/min/maks/pip spec Finex).
 5. **Baru setelah itu**: `Spesifikasi Metode Target v1` (definisi sukses trading
    yang bisa diuji), lalu eksekusi Discovery-R1, re-audit, vonis GO/NO-GO.
 6. **STOP setelah serah-terima.** Satu putaran = satu vonis (S8A). Tidak
@@ -508,3 +579,38 @@ dengan digit buka ~00:07 dan **1.431 bar/hari** - bukan 1.380 seperti
 break 60 menit seperti tahun-tahun lain. Regime data 2023-H1 **berbeda** dari
 seluruh periode lain dan belum pernah dijelaskan. Ini bukan anomali offset,
 tetapi harus dicatat sebelum dipakai sebagai input fitur apa pun.
+
+---
+
+## Kontrak Broker FINEX - M1-M5 TERTUTUP (2026-10-15)
+
+Semua temuan M1-M5 diperbaiki dan diverifikasi ulang dari
+`data/processed/M1/*.parquet` secara **independen** (tanpa mengimpor
+`add_labels`/`session_flags`/`wall_clock_series` dari notebook).
+
+**Angka otoritatif (stratum A, n = 1.136.401):**
+
+| Sesi | n | mean | p50 | p95 | p99 | max |
+|---|---|---|---|---|---|---|
+| London | 395.884 | 0,608 | 0,60 | 0,80 | 1,20 | 4,60 |
+| NewYork | 293.134 | 0,692 | 0,60 | 1,20 | 2,00 | **55,60** |
+| Tokyo | 364.696 | 0,615 | 0,60 | 0,90 | 1,30 | 8,70 |
+| Sydney | 82.687 | 0,796 | 0,60 | 1,50 | 2,70 | 24,10 |
+
+Spike `55,60` pip = **NewYork 2024-12-24**, bukan Sydney.
+Stratum: A n=1.136.401 mean 0,6456 · B n=185.248 mean 1,392 · C n=26.198 mean 0,656.
+
+**Biaya per lot:** `1 pip = $6,6935` (`0,01 x 100.000 / 149,3987`).
+Mid = $10,70 -> spread **5,35x** lebih besar dari komponen komisi (understatement 81,3%).
+
+**KONTRAK DITUTUP 2026-10-15:** komisi `$1/lot per sisi` (= $2,00
+round-turn) dikonfirmasi user; spec Finex USD/JPY dari user (kontrak
+100.000, base USD, pip 0,01, min 0,01, maks 50 lot/order, leverage 1:500)
++ cocok silang anchor EDA-06. Tidak ada blocker biaya tersisa.
+
+**MASALAH ARSITEKTUR:** `configs/broker.yaml` TIDAK dibaca kode mana pun
+(`git grep broker.yaml -- '*.py'` = nihil). `check_spread`
+(`src/data/validate_data.py:256`) masih `load_config()` -> `configs/data.yaml`.
+Header broker.yaml sudah dikoreksi agar tidak mengklaim otoritas tunggal.
+
+Laporan: `reports/governance/2026-10-15/Audit/fix-M1-M5-broker-contract.md`

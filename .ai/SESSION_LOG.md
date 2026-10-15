@@ -2163,3 +2163,133 @@ bukan filter di atas barrier yang sama.
   cetakan CI; kolom `date` vs `day`). Angka akhir sudah diverifikasi ulang.
 - Substansi spec R6 bagian 0, 3, 4, 6, 7, 8 seluruhnya bermasalah; sisa spec
   (warisan R4) tidak diaudit ulang karena di luar delta.
+
+---
+
+## 2026-10-15 — Spec kontrak Finex USD/JPY masuk (user) + EDA-6 siap
+
+- User memberi spec resmi USD/JPY: kontrak 100.000 (1,0 = 100.000 USD;
+  0,1 = 10.000; 0,01 = 1.000), base USD, leverage s/d 1:500, min 0,01,
+  maks 50 lot/order, pip size 0,01.
+- Masuk ke `configs/broker.yaml` (blok `kontrak:` baru + field akun) sebagai
+  `[SPESIFIKASI]`; `docs/broker-contract-finex.md` ditulis ulang (sumber =
+  spec + cocok silang anchor `_build_eda06.py:411`); §6-§7 laporan
+  `fix-M1-M5-broker-contract.md` diperbarui (item 4 ganda dinomori ulang).
+- State basi dibersihkan: STATE (blok kontrak + Langkah 3-4), TASKS
+  (duplikat pra-fix -> SUPERSEDED), PROGRESS (komisi + kontrak SELESAI),
+  CONTEXT §6.
+- Gate: YAML valid · `git diff --check` bersih · aritmetika cocok
+  (pip $6,6935; cheap $10,17/1,52; mid $10,70/1,60; krisis $72,95/10,90;
+  margin 0,01 lot = $2,00) · gate dokumen-vs-data 80/80 · regresi 254/254.
+- Sisa terbuka: otoritas `broker.yaml` vs `data.yaml` (duplikasi rapuh,
+  angka identik); swap/regulasi/eksekusi tetap `[VERIFIKASI]`; kurs saat
+   anchor diamati belum tercatat; komisi tetap `[INPUT]` user.
+
+---
+
+## 2026-10-15 — Blueprint EDA-06 v9.3 FINAL + brief coder (menunggu Pre-Flight)
+
+- 10 iterasi blueprint v8.1->v9.3, tiap putaran audit adversarial + counter-audit.
+  Verifikasi klaim terakhir (hitungan, bukan kesan): pseudo-dir coin flip BENAR
+  bermasalah utk reversal-track (null bias negatif; contoh counter slip 100->10 pip,
+  logika tetap benar) + temuan tambahan: pipeline REAL juga thank cek sisi
+  (tambah filter pra-registrasi 'wrong_side'); klaim clip 0,5 pip SALAH
+  (max() sudah meng-clip, SL selalu >= entry+1 ATR); trigger shared SETUJU.
+- Keputusan terkunci di `thoughts/shared/designs/2026-10-15-eda06-blueprint-v93.md`:
+  biaya 0,95 flat (spread x2 DICABUT sbg hitung ganda) · 2,85 · R:R momentum-only ·
+  OR = 4 bar M15 setelah daily open · trigger >= bar ke-5 · K=16 setelah entry ·
+  partisi R minus 19 hari anomali · placebo 1000x2 track (reversal dir =
+  sign(close_trigger-O), momentum coin flip; SL identik pseudo N=3) ·
+  FDR core {1,2,3,4a1} q=0,10 · power CI mean > 5 pip · advance butuh core LOLOS.
+- Brief coder diterbitkan (Pre-Flight Cek 1-6 gate; reuse broker_time/resample;
+  venv kanonik; arsip 06-07 frozen; laporan §5; ronde berakhir vonis §8A).
+- PENDING (jujur): Pre-Flight coder belum masuk; penyelarasan biaya repo ke 0,95
+  (broker.yaml mid 1,60 + docs + CONTEXT §15) belum dieksekusi.
+- Catatan proses: 4x "kirim ke coder setelah ini" gagal karena tiap revisi
+  melahirkan implikasi baru — wajar utk dokumen kompleks; v9.3 dinyatakan
+  putaran terakhir (masalah berikut = masalah kode).
+
+---
+
+## 2026-10-15 (lanjut) — Pre-Flight MASUK, putusan arsitek, anggaran data
+
+- Pre-Flight coder: 3 temuan blocking, ketiganya BENAR (F1 jam open, F2 ambang
+  mikro, F3 Sel 1/2/3 undefined). Coder STOP disiplin, nol byte repo diubah.
+  Cek 3 (384 hari, 23.446 bar) + Cek 5 (9 grup angka) TERVERIFIKASI.
+- F1 diputuskan ganda: ukuran coder (255@22/129@23/0@21) + audit DST 2026-10-05
+  (`data.yaml:271-281`, STATE) — open normal 01:00 server = [22,23] UTC,
+  21 = tanda anomali. Blueprint [21,22] salah dari pihaknya sendiri.
+- Amandemen-1 (A1 [22,23] · A2 nesting Sel 1/2/3 · A3 persentil P25 makro/P50
+  mikro; Sel 1 tetap jalan, Sel 3 diprediksi UNDERPOWERED) — MENUNGGU
+  ratifikasi user 3 butir. Rekomendasi: Opsi 1; Opsi 2 (harfiah) ditolak.
+- Anggaran data (jawab pertanyaan user): R = 384 hari pertama; sisa 441 bersih
+  (V 259 + P 182); walk-forward di V (TV-01), OOS kunci di P (FS-01/ANN-01 test).
+  H1-2023 stratum B = stress saja. Refine diusulkan: TV-01/FS-01 pindah V/P
+  (blueprint tulis 'di R' = reuse in-sample).
+- Ratifikasi user MASUK: A1 YA [22,23] · A2 DIMODIFIKASI → momentum split rezim
+  (4a1-trending vs 4a1-sideways; paling informatif; 2x sel diterima) · A3 YA
+  (Sel 3 = "tidak tahu", Sel 1 = "edge lemah", hipotesis cadangan
+  "reversal pasca-spike umum", AMD-full UNTESTED).
+- Amandemen-1 TERBIT. Keputusan arsitek atas modifikasi A2: split seragam semua
+  sel momentum, satu predikat (nol angka baru); core {1,2,3,4a1t,4a1s};
+  trending = komplemen (label jujur); null regime-matched; Cek 4 direvisi
+  (STOP hanya jika Sel 1 <30); ekspektasi jujur (basis momentum pasca-fix
+  belum diketahui; split moot jika basis <30).
+- MENUNGGU: nod A4 (venue V/P) + lampu hijau LANGKAH 2.
+- A4 DIPUTUS user (modifikasi, arsitek: benar): A1–A3 setuju; TV-01 di V YA;
+  FS-01 di **V (BUKAN P)** — P ujian final satu-kali, FS-01 di P menghancurkan
+  pristine-nya; V dipakai dua kali tidak masalah (V bukan final).
+  Hierarki sentuh: R discovery-terkunci · V workhorse · P SEGEL (satu sentuh:
+  test ANN-01). Amandemen-1 final.
+- LAMPU HIJAU LANGKAH 2 DIBERIKAN 2026-10-15. Coder jalan: notebook Sel 1–7
+  (v9.3 + Amandemen-1) + event parquet + vonis §8A per sel.
+- Konsolidasi v9.4: v9.3 + Amandemen-1 dilebur identik jadi dokumen kanonik
+  tunggal (`thoughts/shared/designs/2026-10-15-eda06-blueprint-v94.md`);
+  verifikasi grep: nol sisa angka lama di aturan aktif. Coder pegang v9.4.
+
+## 2026-10-15 (malam) — EDA-06 CLOSED: TIDAK LANJUT
+
+- Eksekusi penuh selesai, 3 artefak aditif (generator + notebook 14 sel
+  exit=0 + parquet 51×57, Sel 7 set-equality). Ambang dry-run: T_day=1.7319
+  (n=100) | T_box=3.3566 | T_dist=2.4184 (n=28). Cek 1/2/3/5/6 hijau;
+  funnel Sel-1 856→270→100→100→53→52→51, di-assert ==51 anti-drift.
+- Verifikasi independen arsitek (read-only): parquet 51×57 ✓ · mean +4.33
+  reproduksi persis ✓ · winrate 0.2727 ✓ · vonis tercetak verbatim di
+  notebook (Sel 1 UNDERPOWERED; 2/3/4a_t/4a_s/4b_t/4b_s TIDAK TAHU) ✓.
+  Profil: L1=12 (+45.02) / L0=32 (−13.77) / L2=7 (+17.29, MTM); ekor −99.75.
+- Vonis arsitek: Sel 1 UNDERPOWERED (CI lebar 21 > 5, lewati 0 — bukan LOLOS,
+  tanpa klaim maju, FDR-BH trivial atas {1}); rest TIDAK TAHU; NOL core LOLOS
+  → TIDAK ADVANCE TV-01. Ronde = TAK TERBUKTI (bukan gagal-terbukti):
+  AMD-full UNTESTED (Sel 3 nol + mekanisme tercatat), versi longgar UNPROVEN.
+  Output sah §8A — modal tidak dipertaruhkan. Ronde investigasi tambahan
+  DILARANG atas inisiatif AI (§8A.3); keputusan berikut di tangan user.
+- Caveat tercatat: parquet hanya event Sel-1 (subset di notebook, regenerasi
+  via generator). P/2026 tak tersentuh; src/configs tak ditulis coder.
+- MENUNGGU user: commit selektif 3 artefak aditif (coder tidak commit;
+  tree muat perubahan lain: arsip 06-07, .ai/*, configs/data.yaml).
+- Q&A entri-overlap (jawab pertanyaan user, read-only): program TIDAK menunggu
+  close — scan spike cooldown 16 bar dari s (`_build_eda06_candle.py:288`),
+  tiap trigger dievaluasi first-passage independen (confirm+1..confirm+16),
+  tanpa batasan satu-posisi/modal. Tumpang tindih mungkin secara mekanik
+  (cooldown 16 < jangkau window maks ~s+23). HASIL aktual: NOL window tumpang
+  tindih (50 hari ber-event; satu-satunya 2-event day 2024-08-05 berurutan:
+  window [11,26] lalu entry bar 27 — ekor −99.75 justru dari entri kedua
+  non-overlap). Jadi mean +4.33 = rata-rata per-event = rata-rata trade
+  berurutan in-sample; BUKAN backtest (tanpa sizing/compounding/margin).
+- Bug diagnostik tercatat (tak pengaruhi vonis): kolom `overlap_with`
+  membandingkan confirm_idx ordinal ACROSS hari (`:626-629`) → ~40 "overlap"
+  palsu di semua 51 baris; hanya valid dalam hari yang sama. Perbaiki jika
+  kolom ini dipakai lagi (TV-01/arsip); ronde ini tidak butuh fix.
+- Q&A konteks candle per-entri (read-only parquet): SEBELUM = YA (20 kolom
+  pre_1..10 size/dir + spike high/low + RSI bar1/at_s; body/wick/pct500/dist
+  hanya di notebook, tak materialisasi). SESUDAH = TIDAK ada path bar-per-bar
+  (hanya label + net + entry/TP/SL). Rekonstruksi deterministik selalu bisa
+  via anchor + M15 R. Ditawarkan ke user: dump jendela pasca-entri
+  materialized (side-parquet, aditif, tanpa inferensi) — menunggu putusan.
+- Program user (multi-rod, 2026-10-15): EDA = penjawab hipotesis, tiap
+  hipotesis teruji = satu amunisi ANN; bukan satu-hipotesis-satu-mesin-uang.
+  Dua jalur kelulusan diresmikan (standalone-edge vs fitur-registry, lihat
+  STATE Registry Amunisi): spike-reversal = amunisi #1 (eksistensi ✓, edge
+  belum terukur); AMD-full tak masuk registry (nol kemunculan). Slot 2-4
+  terbuka atas perintah user (§8A.3 tegak).
+- PENDING lama tetap: penyelarasan biaya 0,95 repo belum dieksekusi.

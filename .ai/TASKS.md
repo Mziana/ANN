@@ -1,8 +1,20 @@
 # TASKS.md — Task Board
 
-**Update terakhir:** 2026-10-13 (rekonsiliasi dokumentasi)
+**Update terakhir:** 2026-10-15 (EDA-06 CLOSED: TIDAK LANJUT; commit artefak menunggu user)
 
 ## In Progress
+
+- [x] Blueprint EDA-06 v9.3 FINAL (2026-10-15): 10 iterasi + audit adversarial tiap putaran
+- [x] Brief coder diterbitkan (Pre-Flight Cek 1-6 gate; reuse broker_time/resample; venv kanonik)
+- [x] Pre-Flight coder MASUK: F1 [21,22] gugurkan winter 129/384 hr (0 hr @21) · F2 mikro 0 pelolos (min 1,37/0,59 vs ambang 0,5/0,25) · F3 Sel 1/2/3 tak terdefinisi — ketiganya BENAR, coder STOP disiplin
+- [x] Amandemen-1 TERBIT: A1 [22,23] YA · A2 split momentum rezim (4a1t/4a1s, core {1,2,3,4a1t,4a1s}) YA · A3 framing jujur + hipotesis cadangan YA
+- [x] A4 DIPUTUS (modifikasi user): TV-01→V, FS-01→V, P SEGEL pristine (satu sentuh: test ANN-01)
+- [x] LAMPU HIJAU LANGKAH 2 diberikan 2026-10-15
+- [x] Blueprint v9.4 kanonik tunggal (konsolidasi identik v9.3 + Amandemen-1; terverifikasi grep)
+- [x] LANGKAH 2 coder SELESAI + terverifikasi independen (51×57, mean 4.33, vonis verbatim)
+- [x] Vonis ronde: Sel 1 UNDERPOWERED; Sel 2/3/4x TIDAK TAHU; TIDAK LANJUT TV-01 (tak terbukti)
+- [ ] Commit 3 artefak aditif EDA-06 (generator + notebook + parquet) — MENUNGGU user (selektif; tree muat perubahan lain bukan milik coder)
+- [ ] Penyelarasan biaya repo ke 0,95 (broker.yaml mid 1,60 + docs + CONTEXT §15 masih rumus lama) — PENDING
 
 - [x] Phase A-1: Update state files (selesai 2026-10-05)
 - [x] Phase A-2: Fix `broker_timezone` -> `Etc/GMT-3` di `configs/data.yaml` (selesai 2026-10-05)
@@ -540,14 +552,35 @@ eports/eda/2026-10-12/laporan-coder-eda07-l30.md.
 - [x] Info broker dicatat 2026-10-13: Finex, komisi 1 USD/lot, lot min 0,01
       -> `CONTEXT.md` §6. Per-side vs round-turn BELUM dikonfirmasi (asumsi
       per-side sementara).
-- [ ] Damakan spread: `configs/data.yaml` — spread mean terukur ~0,65 pip vs
-      `spread.default:1.5` (beda 2,3x). Usulan: pakai terukur per-sesi + stres
-      p95/p99, buang `default:1.5`/`by_year[2023]:3.0`. Butuh persetujuan user
-      karena mengubah config global.
+- [x] SUPERSEDED 2026-10-15 (duplikat pra-fix, lihat seksi Kontrak broker
+      FINEX di bawah): Damakan spread `configs/data.yaml` — SUDAH memakai
+      terukur per-sesi + stres p95/p99; `default` & `by_year[2023]` lama
+      sudah tidak dipakai
 - [ ] Tulis `Spesifikasi Metode Target v1` (definisi sukses trading) —
       menunggu spec Discovery-R1 lebih dulu (urutan benar)
-- [ ] Damakan spread: configs/data.yaml — opsi (a) pakai terukur per-sesi +
-      stres p95/p99, buang `default:1.5`/`by_year[2023]:3.0`; butuh persetujuan
-      user karena mengubah config global
-- [ ] Tutup `komisi` di config (rumus biaya 3 lapis) — butuh konfirmasi
-      per-side vs round-turn dari user
+- [x] SUPERSEDED 2026-10-15 (duplikat dari dua baris di atas): opsi spread
+      terukur per-sesi + stres p95/p99 — SUDAH diterapkan
+- [x] SUPERSEDED 2026-10-15: Tutup `komisi` — SELESAI, user konfirmasi
+      $1,00/lot per sisi ($2,00 round-turn); rumus biaya 3 lapis TERKUNCI
+
+### Kontrak broker FINEX - 2026-10-15
+
+- [x] Damakan spread: configs/data.yaml sudah memakai terukur per-sesi
+      (London 0,61 / NewYork 0,69 / Tokyo 0,62 / Sydney 0,80, dibulatkan 2 desimal)
+      + stress p95/p99; `default` & `by_year[2023]` yang lama sudah tidak dipakai
+- [x] `broker.yaml` dibuat sebagai snapshot kontrak + provenance lengkap
+      (M1-M5 ditutup, lihat `reports/governance/2026-10-15/Audit/`)
+- [x] Tutup `komisi` - SELESAI 2026-10-15, user mengonfirmasi
+      **$1,00/lot per sisi** (dibebankan saat buka DAN saat tutup, jadi
+      $2,00 round-turn). Ini `[INPUT]` user, bukan spec sheet Finex.
+      Semua angka biaya absolut dihitung ulang dengan nilai ini.
+- [ ] Putuskan sumber otoritas spread: tidak ada kode yang membaca
+      `broker.yaml`; `check_spread` masih pakai `configs/data.yaml`
+- [x] Konfirmasi contract size 100.000 - SELESAI 2026-10-15. Spec Finex
+      USD/JPY dari user (1,0 lot = 100.000 USD; 0,1 = 10.000; 0,01 = 1.000;
+      base USD; pip 0,01; maks 50 lot/order; leverage 1:500) + cocok silang
+      anchor `scripts/archive/eda-06-07/_build_eda06.py:411`
+      (`USD_PER_POINT_001 = 1.6/251` -> implisit 156,88, dalam rentang data
+      127,26-163,97). Koreksi atas klaim "tanpa sumber" yang sebelumnya
+      saya tulis. Sisa: kurs saat pengamatan belum tercatat; komisi tetap
+      `[INPUT]` user, bukan spec sheet Finex.

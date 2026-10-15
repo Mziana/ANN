@@ -173,9 +173,18 @@ Belum diputuskan:
 
 ## 6. Risk Framework
 
-- Broker: Finex (MT5). Komisi 1 USD per 1,0 lot (info user 2026-10-13;
-  per-side vs round-turn BELUM dikonfirmasi — asumsikan per-side sampai
-  ada klarifikasi). Lot minimum 0,01.
+- Broker: Finex (MT5). Komisi **$1,00 per lot per sisi** (user konfirmasi
+  2026-10-15; dibebankan saat buka DAN saat tutup = **$2,00 round-turn**).
+  Lot minimum 0,01 = 1.000 unit; maksimum 50 lot/order; leverage s/d 1:500.
+- Ukuran kontrak: **100.000 unit/lot** — spec Finex USD/JPY dari user
+  2026-10-15 (1,0 lot = 100.000 USD; 0,1 = 10.000; 0,01 = 1.000; base USD;
+  pip size 0,01). Cocok silang anchor user di
+  `scripts/archive/eda-06-07/_build_eda06.py:411` (`USD_PER_POINT_001 =
+  1.6/251` -> kurs implisit 156,88, dalam rentang data 127,26-163,97).
+  Kurs saat pengamatan anchor belum tercatat. Lihat
+  `docs/broker-contract-finex.md` untuk tabel sensitivitasnya.
+- 1 pip = **$6,6935** per lot (0,01 x 100.000 / 149,3987, rate = mean
+  close USDJPY 2023-2026).
 - Risk per trade: TIDAK ADA (lot min).
 - SL: 1,5-3 x ATR(14).
 - TP: 1:1,5 (Asia) / 1:2 (London/NY).
@@ -218,6 +227,14 @@ Detail: RULES.md Â§18.
 | 2026-10-13 | Draf `spesifikasi-fingerprint.md` DIPENSIUNKAN -> diganti Discovery-R1 |
 | 2026-10-13 | Metode dipusatkan pada dokumen desain event-first (E1/E2/E3, gerbang G1-G7, jalur P0-P2) |
 | 2026-10-13 | Broker Finex: komisi 1 USD/lot, lot min 0,01 (per-side vs round-turn belum jelas) |
+| 2026-10-15 | Biaya TERKUNCI 0,95 pip flat (spread x1 + komisi x2; rumus lama spread x2 = hitung ganda, dicabut) |
+| 2026-10-15 | Blueprint EDA-06 v9.3 FINAL (10 iterasi, audit adversarial); Discovery-R1 BATAL, satu rantai EDA-06; brief coder terbit, menunggu Pre-Flight |
+| 2026-10-15 | Pre-Flight: F1–F3 BENAR; Amandemen-1 (jam [22,23], nesting Sel, persentil P25/P50) menunggu ratifikasi; anggaran sisa 441 hari (V 259 walk-forward + P 182 OOS) |
+| 2026-10-15 | Amandemen-1 TERBIT (A1–A3 diratifikasi; A2 = split momentum 4a1t/4a1s, core 5 sel); hipotesis cadangan "reversal pasca-spike umum", AMD-full UNTESTED; menunggu nod A4 + lampu hijau |
+| 2026-10-15 | LAMPU HIJAU LANGKAH 2: A4 modif (TV-01→V, FS-01→V, P SEGEL pristine satu-sentuh); coder jalan v9.3+Amandemen-1 |
+| 2026-10-15 | Blueprint v9.4 kanonik tunggal (lebur identik, terverifikasi grep); coder pegang v9.4 |
+| 2026-10-15 | Program amunisi: EDA = penjawab hipotesis (dua jalur: standalone-edge vs fitur-registry); spike-reversal = amunisi #1 terkonfirmasi-eksistensi; AMD-full tak masuk registry |
+| 2026-10-15 | EDA-06 CLOSED: Sel 1 UNDERPOWERED (+4.33, CI lebar 21), rest TIDAK TAHU; TIDAK LANJUT TV-01 (tak terbukti); P segel; commit artefak menunggu user |
 
 ---
 
@@ -371,6 +388,23 @@ Status `trade_allowed=False` (akun belum login trading) tetap sama sejak
 - .ai/RULES.md - kode + trading
 - .ai/PROMPTS.md - 33 prompt
 - docs/PROJECT_MAP.md - peta proyek
+
+---
+
+
+## 15. Kontrak Broker (per 2026-10-15)
+
+- `configs/broker.yaml` - snapshot kontrak FINEX + provenance tiap field
+  (`[TERUKUR]` / `[INPUT]` / `[SPESIFIKASI]` / `[VERIFIKASI]`).
+  **Belum dibaca kode mana pun** - lihat `reports/governance/2026-10-15/Audit/`.
+- `docs/broker-contract-finex.md` - dokumen kontrak; semua angka spread
+  dihitung dari `data/processed/M1/*.parquet`, bukan diasumsikan.
+- Biaya: `1 pip = $6,6935/lot`; Mid `$10,70`; spread 5,35x komponen komisi.
+  **TERKUNCI 2026-10-15: biaya 0,95 pip flat** (spread x1 + komisi x2; rumus lama
+  spread x2 = hitung ganda, dicabut) — file repo (broker.yaml/docs) BELUM
+  diselaraskan, pending eksekusi.
+- `swap` akun Standard: [VERIFIKASI] - input menyebut free swap sebagai
+  properti akun Islami.
 
 ---
 
