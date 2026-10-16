@@ -1,0 +1,104 @@
+{
+  "ronde": "EDA-10 volume_lock_V",
+  "tanggal_utc": "2026-10-16",
+  "oracle_vs_aktual": {
+    "nunik_V": {
+      "ekspektasi": 1110,
+      "aktual": 1110
+    },
+    "band_unik_V": {
+      "ekspektasi": {
+        "0": 367,
+        "1": 286,
+        "2": 168,
+        "3": 289
+      },
+      "aktual": {
+        "0": 367,
+        "1": 286,
+        "2": 168,
+        "3": 289
+      }
+    },
+    "fullroom_V": {
+      "ekspektasi": 1018,
+      "aktual": 1018
+    },
+    "band_fullroom_V": {
+      "ekspektasi": {
+        "0": 325,
+        "1": 269,
+        "2": 156,
+        "3": 268
+      },
+      "aktual": {
+        "0": 325,
+        "1": 269,
+        "2": 156,
+        "3": 268
+      }
+    },
+    "whitelist_drop": {
+      "ekspektasi": 0,
+      "aktual": 0
+    },
+    "hari_V": {
+      "ekspektasi": 259,
+      "aktual": 259
+    },
+    "bar_M15_V": {
+      "ekspektasi": 23812,
+      "aktual": 23812
+    },
+    "fill_vol_s": {
+      "ekspektasi": 1.0,
+      "aktual": 1.0
+    },
+    "baseline_penuh": {
+      "ekspektasi": "1018/1018 drop 0",
+      "aktual": "1018/1018 drop 0"
+    },
+    "med": {
+      "ekspektasi": "1.179",
+      "aktual": "1.179",
+      "repr": "1.1789715778923253"
+    },
+    "iqr": {
+      "ekspektasi": "[0.914,1.607]",
+      "aktual": "[0.914,1.607]",
+      "repr": [
+        "0.9136904523257772",
+        "1.6073234743087796"
+      ]
+    },
+    "p1_p99": {
+      "ekspektasi": "0.503/4.396",
+      "aktual": "0.503/4.396",
+      "repr": [
+        "0.5026964885002625",
+        "4.395887801290231"
+      ]
+    },
+    "f3b_missing_vol": {
+      "ekspektasi": 0,
+      "aktual": 0
+    },
+    "f3c_mid_nofull": {
+      "ekspektasi": 0,
+      "aktual": 0
+    }
+  },
+  "bukti_diff": {
+    "a1_diff_fungsi": "kosong (3 fungsi verbatim-unik + 3 jangkar, sel 5)",
+    "hash_parquet_R_pra": "b800e50ee42d72349f52426b2fcb635efb5101597e40afbdd89bf2054b1bdfc2",
+    "hash_parquet_R_pasca": "b800e50ee42d72349f52426b2fcb635efb5101597e40afbdd89bf2054b1bdfc2",
+    "hash_identik": true
+  },
+  "spesifikasi_rolling_live": "SPESIFIKASI ROLLING-LIVE volume-(c) (TERKUNCI EDA-10): baseline tiap hari-T memakai 20 hari-bersih sebelum-T (slot-HH:MM-sama, tanpa hari-berjalan); agregasi = median (np.nanmedian; slot NaN diabaikan); '20 hari penuh' = 20 hari di MANIFEST; hari tanpa 20-hari histori = event hari itu DROP + count (aturan umum; V-hari-1 = kasus khusus 20-hari-R-terakhir, konsisten bukan pengecualian); prosedur satu-jalur tanpa cabang khusus hari; diuji-prosedural pada 20 hari-V pertama (kesamaan prosedur, bukan angka).",
+  "toolchain": {
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "pyarrow": "17.0.0"
+  },
+  "vonis": "LOCKED"
+}
