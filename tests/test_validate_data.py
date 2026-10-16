@@ -339,7 +339,9 @@ class TestCheckSpread:
 
     def test_wide_tail_warns(self):
         """p99 between warn and error multiplier must warn, not pass silently."""
-        result = check_spread(frame_with_tail(9.0), DATA_CONFIG, "2023")
+        # 2023 baseline 0,51 pip -> warn 1,53 / error 4,08 (recalibrated
+        # 2026-10-14 from warn 3,0 / error 8,0). Tail 3,0 lands in the band.
+        result = check_spread(frame_with_tail(3.0), DATA_CONFIG, "2023")
         assert result.severity == "WARN"
         assert not result.passed
 
@@ -350,7 +352,8 @@ class TestCheckSpread:
 
     def test_detail_shows_the_thresholds_used(self):
         result = check_spread(make_frame(), DATA_CONFIG, "2023")
-        assert "config 3.00 pip" in result.detail
+        # Baseline 2023 = 0,51 pip (mean terukur stratum A), bukan 3,0 lama.
+        assert "config 0.51 pip" in result.detail
 
 
 class TestCheckBreakHour:

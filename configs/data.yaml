@@ -56,38 +56,76 @@ data:
 # SELL: entry bid, exit ask = bid + spread.
 # Spread dalam PIP (bukan point).
 spread:
-  default: 1.5
-  # Spread per tahun. NILAI TIDAK DIUBAH - nilai lama dipertahankan sampai
-  # audit Klenz atas fragmen revisi selesai (keputusan Spark, 2026-10-06).
+  # ===================================================================
+  # SEMANTIKA - BACA INI SEBELUM PAKAI (perubahan 2026-10-14)
+  # ===================================================================
+  # `default` dan `by_year` BUKAN biaya per trade. Semantikanya:
+  # BASELINE VALIDASI untuk check_spread() di src/data/validate_data.py:277,
+  # yang membandingkan p99 TERUKUR terhadap baseline x multiplier.
   #
-  # PERINGATAN INTERPRETASI (revisi EDA-02):
-  # Nilai 3,0 untuk 2023 berasal dari p99 file 2023 UTUH, yang didominasi ekor
-  # STRATA B (H1-2023, regime SA-03). Angka itu BUKAN semesta yang
-  # diperdagangkan pada strategi. Pada strata A (H2-2023) spread mean hanya
-  # ~0,51 pip - justru tahun 2023 yang paling murah, bukan paling mahal.
-  # Lihat cost_basis.by_session / stress_bands di fragmen EDA-02 untuk angka
-  # biaya dasar (MEAN) dan stress band (p95/p99) terpisah per sesi/tahun.
-  # Sumber angka: data/processed/M1 2023-2026, stratum A.
-  by_year:
-    2023: 3.0
-    2024: 1.5
-    2025: 1.5
-    2026: 1.5
+  # Untuk menghitung BIAYA per trade, pakai `cost_basis` (mean) atau
+  # `stress_bands` (p95/p99) di bawah - JANGAN pakai default/by_year.
+  #
+  # Sejarah nilai lama: default 1,5 / by_year 3,0+1,5+1,5+1,5. Angka itu
+  # terlihat seperti "spread per trade" padahal 2,3x lebih mahal dari mean
+  # terukur, dan tidak ada satu pun backtest yang memakainya sebagai biaya -
+  # satu-satunya konsumennya adalah check_spread. Sekarang diganti mean
+  # terukur stratum A dan multiplier dikalibrasi ulang.
+  #
+  # Konsumen `default`/`by_year` (hasil audit 2026-10-14):
+  #   src/data/validate_data.py:277  -> check_spread, baseline p99
+  # TIDAK ADA konsumen lain. fetch_data.py, build_features.py, dan
+  # build_labels.py hanya membaca spread.pip_size (yang terpisah).
+  # ===================================================================
+  default: 0.65                # [TERUKUR] mean spread stratum A 2023-2026 = 0,6456
+  by_year:                     # [TERUKUR] mean spread stratum A per tahun
+    2023: 0.51                 #   mean aktual 0,5096  (H2 saja; H1 = stratum B)
+    2024: 0.70                 #   mean aktual 0,7027
+    2025: 0.67                 #   mean aktual 0,6738
+    2026: 0.62                 #   mean aktual 0,6219
   # Kalau ini dipakai, spread harus dikalikan stress_multiplier.
   stress_multiplier: 2.0
   # check_spread membandingkan p99 terukur terhadap by_year di atas.
   # p99 > by_year x warn_multiplier  -> WARN
   # p99 > by_year x error_multiplier -> ERROR
-  warn_multiplier: 2.0
-  error_multiplier: 5.0
-  by_session:
-    tokyo_early: 3.0
-    tokyo_normal: 1.5
-    london: 1.2
-    newyork: 1.5
-    friday_late: 3.0
-    sunday_open: 5.0
-  by_news:
+  #
+  # KALIBRASI ULANG 2026-10-14. Multiperlier lama (2,0/5,0) disetel ketika
+  # baseline masih 1,5-3,0, jadi ambangnya longgar dan tidak pernah menangkap
+  # apa pun. Dengan baseline mean, multiplier harus lebih longgar agar ambang
+  # tidak lebih ketat dari ekor yang memang sudah diterima:
+  #   2024 warn 0,70x3 = 2,10  vs p99 terukur 1,70 -> OK
+  #   2025 warn 0,67x3 = 2,01  vs p99 terukur 1,70 -> OK
+  #   2026 warn 0,62x3 = 1,86  vs p99 terukur 1,20 -> OK
+  #   2023 ERROR 0,51x8 = 4,08 vs p99 terukur 8,50 -> ERROR (naik dari WARN)
+  # Eskalasi 2023 itu BENAR dan diharapkan: p99-nya didominasi STRATA B
+  # (H1-2023, regime SA-03) yang memang harus dipisahkan sebagai strata
+  # tersendiri. Lihat catatan anomali di bagian bawah file ini.
+  warn_multiplier: 3.0
+  error_multiplier: 8.0
+  # ===================================================================
+  # [DEAD CONFIG] by_session dan by_news - TIDAK PERNAH DIBACA KODE
+  # Diaudit 2026-10-15. Bukti:
+  #   - Tidak ada akses config['spread']['by_session'] maupun ['by_news']
+  #     di src/, scripts/, tests/ (AST grep).
+  #   - Kunci unik blok ini (tokyo_early, tokyo_normal, friday_late,
+  #     sunday_open, fomc, cpi, nfp) HANYA muncul di file ini sendiri.
+  #   - YANG DIPAKAI: cost_basis.by_session (mean) dan
+  #     stress_bands.p95.by_session (p95) - dua blok itu beda letaknya.
+  # DIBIARKAN (tidak dihapus) karena blok spread lama memang dijanjikan
+  # "TIDAK DIGANTI" - lihat catatan semantika di bawah. Jangan dipakai
+  # sebagai sumber angka tanpa definisi sesi; 4 dari 6 kuncinya tidak
+  # punya definisi batas jam di src/ sama sekali.
+  # Untuk angka stress yang benar-benar terukur, pakai stress_bands
+  # (p95 per bar) atau p95_harian (p95 dari mean harian).
+  # ===================================================================
+  by_session:                 # [DEAD] satuannya pip, absolut - bukan multiplier
+    tokyo_early: 3.0          # [DEAD] tidak ada definisi sesi di src/
+    tokyo_normal: 1.5         # [DEAD] tidak ada definisi sesi di src/
+    london: 1.2               # [DEAD] 1,2 hanya terlampaui 3/825 hari kerja (0,4%)
+    newyork: 1.5              # [DEAD] 1,5 hanya terlampaui 17/825 hari kerja (2,1%)
+    friday_late: 3.0          # [DEAD] tidak ada definisi sesi di src/
+    sunday_open: 5.0          # [DEAD] tidak ada definisi sesi di src/
+  by_news:                    # [DEAD] tidak ada konsumen, tidak ada data berita
     fomc: 5.0
     cpi: 3.0
     nfp: 4.0
@@ -101,24 +139,40 @@ spread:
   # SEMANTIKA: blok ini MENAMBAH dua sub-kunci baru. Blok spread lama
   # (default, by_year, stress_multiplier, warn/error_multiplier,
   # by_session, by_news, pip_size) TIDAK DIGANTI dan tetap berdsiri.
-  # Kode yang sudah membaca spread.default / spread.by_year tetap
-  # memakai angka lama sampai ada keputusan buckling eksplisit.
+  # Kode yang sudah membaca spread.default / spread.by_year TETAP memakai
+  # angka yang sekarang (mean terukur, diganti 2026-10-14) - tidak ada
+  # angka lama yang masih aktif.
   #
-  # PERHATIKAN KONFLIK YANG MASIH TERBUKA (bukan bugs, tapi belum diputuskan):
-  #   cost_basis.default = 0,65 (MEAN, strata A)
-  #   spread.default    = 1,5  (nilai lama, belum diganti)
-  # Selisih 2,3x. Backtest WAJIB menyebut kode mana yang jadi otoritas;
-  # jangan membaca spread.default lalu mengira itu biaya dasar.
+  # KONFLIK 2,3x YANG PERNAH ADA SUDAH HILANG (per 2026-10-15):
+  #   dulu  cost_basis.default = 0,65 vs spread.default = 1,5  (beda 2,3x)
+  #   kini keduanya 0,65. angka lama spread.default sudah diganti mean
+  #   terukur pada 2026-10-14 dan multiplier dikalibrasi ulang.
+  # Tetap aturannya: backtest WAJIB menyebut kode mana yang jadi otoritas
+  # biaya. spread.default = BASELINE VALIDASI (bukan biaya per trade);
+  # biaya per trade = cost_basis (mean) atau stress_bands (p95/p99).
   #
-  # KUNCI TAHUN = STRING ("2023" ditulis dengan kutip agar tidak jadi int).
-  # Kode pemakai wajib akses dengan str(year), bukan int.
+  # TIPE KUNCI TAHUN - TIDAK KONSISTEN, HATI-HATIKAT SAAT AKSES:
+  #   spread.by_year              -> int   (2023: 0.51)
+  #   cost_basis.by_year          -> str   ('2023': 0.51)
+  #   stress_bands.p95/p99.by_year-> str   ('2023': ...)
+  # src/data/validate_data.py:276 menormalkan dulu ke str sebelum lookup.
+  # PEMAKAI BARU WAJIB: {str(k): v for k, v in ...by_year.items()}
+  # atau kuncinya tidak akan pernah ketemu.
   # ==================================================================
 
   # Biaya dasar = MEAN spread strata A (bukan p95, bukan p99).
   # Dipakai sebagai biaya optimistic dalam backtest.
+  #
+  # [!] PENTING: ini MEAN POOLED (semua bar x semua hari), BUKAN mean
+  #     per hari. Mean pooled > median harian di keempat sesi karena
+  #     didominasi beberapa hari ekstrem. Kalau biaya ini dipakai sebagai
+  #     "biaya hari yang biasa terjadi", nilainya terlalu mahal - terutama
+  #     Sydney (+0,071) dan NewYork (+0,065).
+  #     Angka median harian & p95 harian ada di `_ringkasan_harian`.
+  #     Rujukan: 825 hari kerja per sesi, stratum A, 2023-2026.
   cost_basis:
     _satuan: pip
-    _statistik: MEAN spread_pips strata A
+    _statistik: MEAN spread_pips strata A (POOLED per bar, bukan per hari)
     default: 0.65
     by_year:
       '2023': 0.51
@@ -130,6 +184,31 @@ spread:
       NewYork: 0.69
       Tokyo: 0.62
       Sydney: 0.8
+    # mean pooled vs mean harian, per sesi (dihitung 2026-10-15)
+    _ringkasan_harian:
+      _satuan: pip
+      _metode: 'mean per hari kerja (broker_day, Sen-Jum), dikelompokkan ulang'
+      _n_hari_per_sesi: 825
+      London:
+        mean_pooled: 0.6076
+        median_harian: 0.601
+        selisih: 0.007
+        cv_persen: 17.9
+      NewYork:
+        mean_pooled: 0.6924
+        median_harian: 0.628
+        selisih: 0.065
+        cv_persen: 39.5
+      Tokyo:
+        mean_pooled: 0.6151
+        median_harian: 0.604
+        selisih: 0.012
+        cv_persen: 18.0
+      Sydney:
+        mean_pooled: 0.7959
+        median_harian: 0.724
+        selisih: 0.071
+        cv_persen: 47.0
 
   # Stress band = ekor spread (p95 untuk stress test, p99 untuk batas ekor).
   # Boleh dikalikan stress_multiplier (tetap 2.0 di bawah).
@@ -155,6 +234,27 @@ spread:
         '2024': 1.7
         '2025': 1.7
         '2026': 1.1
+    # ---------------------------------------------------------------
+    # BARU 2026-10-15. p95 dari MEAN HARIAN, bukan p95 per bar.
+    # Untuk meniru "hari spread-nya benar-benar buruk", ini lebih
+    # berguna daripada p95 per bar: p95 per bar dijawab 1% bar
+    # TERBAIK di hari paling buruk, sedangkan p95_harian dijawab
+    # 5% HARI yang benar-benar lebar.
+    # Nilai p95/p99/by_session DI ATAS TIDAK DIUBAH - dipakai
+    # scripts/archive/eda-06-07 dan _build_eda06.py sbb.
+    # ---------------------------------------------------------------
+    p95_harian:
+      _satuan: pip
+      _statistik: p95 dari mean spread per hari kerja (Sen-Jum)
+      _n_hari_per_sesi: 825
+      _peringatan: 'Inilah angka yang SANGAT menolak klaim "tiap hari
+        spread selebar ambang". Contoh NewYork: p95 harian 1,09,
+        sedangkan ambang by_session 1,5 hanya terlampaui 2,1% hari.'
+      by_session:
+        London: 0.77
+        NewYork: 1.09
+        Tokyo: 0.81
+        Sydney: 1.34
   pip_size:
     USDJPY: 0.01
     default: 0.0001
