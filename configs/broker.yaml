@@ -1,0 +1,253 @@
+# =============================================================================
+# BROKER CONTRACT — FINEX
+# =============================================================================
+# Dibuat: 2026-10-14
+# Sumber: input user, diverifikasi silang terhadap data parquet M1 2023-2026.
+#
+# ATURAN PENTING:
+#   File ini adalah SNAPSHOT KONTRAK + TEMPAT SATUNYA angka biaya yang
+#   diverifikasi. Angka spread TIDAK BOLEH ditulis ulang manual di sini —
+#   semuanya diukur dari data, bukan diasumsikan.
+#
+#   [!] BELUM SATU-SATUNYA SUMBER OTORITAS YANG KONSUMEN KODE.
+#       Pada 2026-10-14 diverifikasi: tidak ada kode/skrip/tes yang membaca
+#       broker.yaml. `check_spread` (src/data/validate_data.py:256) masih
+#       memakai load_config() -> configs/data.yaml. Angka spread HARI INI
+#       bersumber dari data.yaml; broker.yaml menyimpannya dengan presisi
+#       penuh + provenance. audited 80/80 cocok antara keduanya.
+#       Tindakan lanjutan: samakan konsumennya atau turunkan klaim ini.
+#       Jangan menambah angka biaya di tempat lain (backtest, notebook, skrip).
+#
+# KATEGORI PROVENANSI (lihat tiap field):
+#   [TERUKUR]  = dihitung dari data/processed/M1/*.parquet (bisa diaudit ulang)
+#   [INPUT]    = diberikan user, belum diverifikasi ke dokumen broker
+#   [SPESIFIKASI] = berasal dari spec/broker, tapi BELUM ada sumber dokumen di repo
+#   [VERIFIKASI]  = WAJIB dikonfirmasi sebelum dipakai untuk keputusan dagang
+# =============================================================================
+
+broker:
+  nama: FINEX
+  timezone_server: "GMT+2 (EET), berpindah GMT+3 saat DST"   # [SPESIFIKASI]
+  sumber_timezone: "finex.co.id/trading/instruments + jawaban Finex Support 2026-10-05"
+
+akun:
+  tipe: Standard
+  tipe_lengkap: "Standard / Reguler (akun tunggal terpadu serba guna)"
+  minimum_lot: 0.01            # [SPESIFIKASI] — spesifikasi Finex dari user 2026-10-15
+  maksimum_lot_per_order: 50   # [SPESIFIKASI] — spesifikasi Finex dari user 2026-10-15
+  leverage_maks: 500           # [SPESIFIKASI] — spesifikasi Finex dari user 2026-10-15
+  leverage_catatan: "1:500 untuk Forex dan Logam pada akun Standard —
+    spesifikasi Finex dari user 2026-10-15. Micro 0,01 = 1.000 unit."
+
+kontrak:
+  pasangan: USDJPY
+  mata_uang_dasar: USD         # [SPESIFIKASI] — unit kontrak selalu mata uang pertama
+  ukuran_unit_per_lot: 100000  # [SPESIFIKASI] — spesifikasi Finex dari user 2026-10-15
+  eksposur_usd:
+    lot_1_0: 100000
+    lot_0_1: 10000
+    lot_0_01: 1000
+  pip_size: 0.01               # [SPESIFIKASI] — spesifikasi Finex dari user 2026-10-15
+  _sumber: "Spesifikasi Finex USD/JPY dari user 2026-10-15. Cocok silang
+    dengan anchor pengguna di scripts/archive/eda-06-07/_build_eda06.py:411
+    (kontrak 100.000 -> kurs implisit 156,88; alternatif lain mustahil)."
+  _contoh_margin: "Lot 0,01 = $1.000 eksposur; margin pada 1:500 = $2,00.
+    Lot 50 = $5.000.000 eksposur; margin pada 1:500 = $10.000."
+
+# -----------------------------------------------------------------------------
+# BIAYA LANGSUNG
+# -----------------------------------------------------------------------------
+komisi:
+  per_lot_usd: 1.00            # [TERVERIFIKASI] — konfirmasi user 2026-10-15
+  sisi: per_side               # [TERVERIFIKASI] — user: dibebankan saat BUKA
+                               #   dan lagi saat TUTUP, jadi 2x per round-turn
+  catatan: "Dikenakan per lot per sisi entry DAN exit. Round-turn = $2,00/lot."
+  _sumber: "Pernyataan langsung user (2026-10-15), bukan spec sheet Finex.
+    Tidak dicek ke dokumen broker resmi - jika ada syarat minimum biaya
+    atau bebas komisi, angka ini berubah."
+
+# -----------------------------------------------------------------------------
+# SPREAD — SELURUHNYA [TERUKUR]
+# -----------------------------------------------------------------------------
+# Diukur dari kolom `spread_pips` di data/processed/M1/*.parquet (1.347.847 bar).
+# Definisi: spread_points dari MT5 yang dikonversi ke pip oleh
+# src/data/fetch_data.py:227 (spread_points_to_pips).
+#
+# PENTING: spread_pips adalah biaya MENYUSURI BID-ASK SATU KALI.
+# OHLC pada repo ini berbasis BID (lihat src/data/resample.py:21), jadi:
+#   entry  -> ask = bid + spread
+#   exit   -> bid
+#   round-turn = spread x 2 + komisi x 2
+spread:
+  _satuan: pip
+  _definisi: "JARAK BID-ASK per bar. Termasuk spread-widening yang terjadi karena
+    news / pembukaan sesi. BUKAN slippage tambahan — lihat catatan slippage."
+
+  # --- Angka utama (stratum A = semesta analisis utama, 1.136.401 bar) ---
+  mean: 0.65                   # [TERUKUR] mean 0,6456
+  p50:  0.60
+  p95:  1.00
+  p99:  1.60
+  max:  55.60
+  pct_bar_di_atas_3pip: 0.198  # [TERUKUR] 2.255 dari 1.136.401 bar
+
+  # --- Per tahun (stratum A) ---
+  by_year:
+    '2023': 0.51               # [TERUKUR] mean 0,5095 — H2 saja (H1 = stratum B)
+    '2024': 0.70               # [TERUKUR] mean 0,7029
+    '2025': 0.67               # [TERUKUR] mean 0,6735
+    '2026': 0.62               # [TERUKUR] mean 0,6218
+
+  # --- Per sesi (stratum A, label eksklusif primer) ---
+  # PENTING: kolom 'time' adalah UTC. Label sesi dihitung dari jam lokal DST-aware.
+  # Jangan pernah menambah offset broker secara manual di sini — itu menggeser
+  # setiap sesi 2 jam dan membuat angka mean/p99 jadi salah total.
+  by_session:
+    London:   {n: 395884, mean: 0.608, p50: 0.60, p95: 0.80, p99: 1.20, max:  4.60}
+    NewYork:  {n: 293134, mean: 0.692, p50: 0.60, p95: 1.20, p99: 2.00, max: 55.60}
+    Tokyo:    {n: 364696, mean: 0.615, p50: 0.60, p95: 0.90, p99: 1.30, max:  8.70}
+    Sydney:   {n: 82687,  mean: 0.796, p50: 0.60, p95: 1.50, p99: 2.70, max: 24.10}
+
+  # --- Stratum non-utama (diagnostik, bukan biaya default) ---
+  by_stratum:
+    A: {mean: 0.6456, p95: 1.00, p99: 1.60, max: 55.60, n: 1136401}  # semesta utama
+    B: {mean: 1.392,  p95: 5.30, p99: 8.50, max: 34.30, n: 185248}   # H1-2023, regime SA-03
+    C: {mean: 0.656,  p95: 0.90, p99: 1.50, max:  8.40, n: 26198}    # jendela anomali
+
+# -----------------------------------------------------------------------------
+# SLIPPAGE
+# -----------------------------------------------------------------------------
+# TIDAK ada kolom slippage di data. Angka ini BUKAN hasil pengukuran.
+slippage:
+  _status: "TIDAK DIUKUR — asumsi"
+  deskripsi: "STP tanpa requote dengan mayoritas order dieksekusi < 1 detik.
+    Slippage terobservasi pada kejadian spread-widening, yang SUDAH tercakup di
+    distribusi spread_pips di atas."
+
+  # Rekomendasi model (bukan angkapasti):
+  basis: 0.0
+  _catatan_basis: "Jangan tambah konstanta slippage di atas spread — itu hitung
+    dua kali. During spread-widening, spread_pips yang terukur sudah mencakup
+    harga yang harus dibayar. Tambah slippage hanya kalau backtest mengisi di
+    harga yang LEBIH BURUK dari spread bar itu (lihat sampling_catatan)."
+
+  sampling_catatan: "spread_pips adalah snapshot satu bar. Order yang dieksekusi
+    DI DALAM bar bisa mengalami spread lebih lebar dari snapshot. Bukti bahwa
+    ini bisa diabaikan: temuan D10 EDA-02 — maksimum M1 identik dengan
+    spread_pips_max M5 di setiap bucket, artinya M1 sudah menangkap titik ekstrem."
+
+# -----------------------------------------------------------------------------
+# SWAP / ROLLOVER
+# -----------------------------------------------------------------------------
+swap:
+  _status: "[SPESIFIKASI] [VERIFIKASI] — belum ada sumber dokumen di repo"
+  tipe: "Free Swap (Akun Islami)"
+  long_usd_per_lot_per_hari: 0.00
+  short_usd_per_lot_per_hari: 0.00
+
+  _wajib_verifikasi:
+    - "Apakah Free Swap benar-benar berlaku untuk Standard (bukan hanya Islamic/Pro)?"
+    - "Berlaku untuk USDJPY secara spesifik, bukan hanya emas/metal?"
+    - "Bagaimana aturan triple Wednesday? Spread 3x di hari Wednesday (atau 1x, 3x, 5x)?"
+    - "Kalau scalp tidak pernah menahan posisi melewati batas hari, apakah swap
+       benar-benar nol? Defaultnya iya, tapi H1/H2 bisa menyeberang hari."
+
+  _catatan_strategi: "Untuk scalping intraday, swap = 0 secara struktural. Jadi
+    swap TIDAK mengubah expectancy apa pun selama semua posisi ditutup sebelum
+    rollover. Yang penting: JANGAN SAMPAI menaruh default 'free swap' di mana
+    backtest berikutnya yang menahan posisi overnight bisa mengandalkannya."
+
+# -----------------------------------------------------------------------------
+# EXECUSI
+# -----------------------------------------------------------------------------
+eksekusi:
+  model: "Market Execution / STP (Straight-Through Processing)"
+  requote: false               # [SPESIFIKASI] [VERIFIKASI]
+  _catatan_requote: "Tanpa requote berarti TIDAK ADA jaminan fill di harga yang
+    diminta. Order bisa partial atau kosong saat likuiditas tipis. Ini risikonya,
+    bukan keunggulannya. Jangan mengartikan 'no requote' sebagai 'fill pasti'."
+  klaim_kecepatan: "99,57% order dieksekusi < 1 detik"
+  _status_klaim: "Angka marketing broker. Belum diuji ulang dari sisi kita —
+    dan tidak bisa, karena kita tidak menyimpan log fill broker."
+
+# -----------------------------------------------------------------------------
+# REGULASI
+# -----------------------------------------------------------------------------
+regulasi:
+  _status: "[SPESIFIKASI] [VERIFIKASI] — WAJIB dikonfirmasi ke daftar resmi"
+  primer: "BAPPEBTI (Badan Pengawas Perdagangan Berjangka Komoditi)"
+  anggota:
+    - "JFX (Jakarta Futures Exchange)"
+    - "KBI (Kliring Berjangka Indonesia)"
+
+  _wajib_verifikasi:
+    - "BAPPEBTI/Details regulator: apakah entitas yang sebenarnya bertransaksi
+       dengan kita sama dengan yang disebut di sini?"
+    - "Status perlindungan deposito Kliring bernegara. Kalau KBI Kliring
+       Berjangka Indonesia, apakah dana dijamin KBI atau tidak?"
+    - "Cek nama entitas resmi di daftar BAPPEBTI. Nama dagang broker tidak
+       selalu sama dengan nama entitas yang teregulasi."
+
+  _penting: "Ini bukan detail administratif — seluruh sejarah pemilihan broker
+    bergantung pada ini. Jangan dipakai sebelum terverifikasi."
+
+# -----------------------------------------------------------------------------
+# SKENARIO BIAYA — HASIL TURUNAN (bukan input)
+# -----------------------------------------------------------------------------
+# contract_size = 100.000 unit/lot
+#   [SPESIFIKASI] — spesifikasi Finex USD/JPY dari user 2026-10-15:
+#     1,0 lot = 100.000 USD; 0,1 lot = 10.000 USD; 0,01 lot = 1.000 USD;
+#     mata uang dasar USD; pip size 0,01; maksimum 50 lot/order; leverage 1:500.
+#   Cocok silang independen dengan anchor pengguna di
+#   scripts/archive/eda-06-07/_build_eda06.py:411
+#     USD_PER_POINT_001 = 1.6/251   # "251 point = $1,6 pada lot 0,01"
+#   Dibalik-balikkan (1 point = 0,001; kurs = 0,001 x units / $/point):
+#     kontrak    100.000 -> kurs implisit 156,88   <- konsisten dengan rentang
+#                                                        data 127,26-163,97
+#     kontrak     10.000 -> kurs implisit  15,69   <- mustahil
+#     kontrak  1.000.000 -> kurs implisit 1568,75   <- mustahil
+#   Jadi 100.000 satu-satunya pembacaan yang masuk akal, dan sekarang juga
+#   didukung spesifikasi langsung.
+#   KOREKSI: audit awal saya menyimpulkan "tanpa sumber" karena hanya
+#   mengexec `git grep contract_size|ukuran kontrak` - tidak pernah membaca
+#   konstanta konversi dolar di EDA-06. Kesimpulan itu salah.
+#   SISA KETERBATASAN: kurs 156,88 pada saat anchor diamati belum tercatat;
+#   komisi tetap [INPUT] user, bukan spec sheet Finex.
+#
+# _rate_pembagi = 149,3987 -> TERUKUR (mean close USDJPY 2023-2026).
+#
+# Dihitung dari spread + komisi. Rate pembagi = rata-rata close USDJPY
+# 2023-2026 = 149,3987 -> 1 pip = $6,6935 per lot
+# (0,01 x 100.000 unit / 149,3987 = 6,6935 USD).
+skenario_biaya:
+  _satuan_usd_per_lot_round_turn: true
+  _contract_size_unit: 100000     # [SPESIFIKASI] Finex USD/JPY dari user 2026-10-15; cocok silang anchor EDA-06
+  _rate_pembagi: 149.3987
+  _pip_per_lot_usd: 6.6935
+  _komisi_per_sisi_usd: 1.00
+  _formula: "spread x 2 sisi x $6,6935 + komisi $1,00 x 2 sisi"
+  _formula_setara_pip: "total_usd / 6,6935"
+
+  # Semua kolom di bawah dihitung dari nilai spread DISPLAYED, supaya tabelnya
+  # bisa diperiksa ulang tanpa menghitung balik.
+  cheap:      {spread_pip: 0.61, total_usd: 10.17, setara_pip: 1.52,
+               kondisi: "mean London+NewYork 2026 (0,6146 pip, n=152.461) - tahun termurah di stratum A"}
+  mid:        {spread_pip: 0.65, total_usd: 10.70, setara_pip: 1.60,
+               kondisi: "pooled semua sesi, stratum A — DEFAULT BACKTEST"}
+  expensive:  {spread_pip: 1.50, total_usd: 22.08, setara_pip: 3.30,
+               kondisi: "Sydney p95 — sesi spread-mendominasi"}
+  krisis:     {spread_pip: 5.30, total_usd: 72.95, setara_pip: 10.90,
+               kondisi: "stratum B H1-2023 p95 — regime yang benar-benar terjadi"}
+
+# -----------------------------------------------------------------------------
+# TEMUAN KONSTRUKTIF
+# -----------------------------------------------------------------------------
+temuan:
+  komisi_porsi_biaya: "Komisi cuma ~19% dari biaya round-turn di skenario Mid
+    ($2,00 dari $10,70). Spread = 81%. Kalau spread diabaikan, model hanya
+    menghitung $2,00 padahal biaya sebenarnya $10,70 — unterstatement 81% atau
+    5,35x lebih murah dari kenyataan."
+  spread_bukan_konstan: "Spread 0,608 pip (London) sampai 0,796 (Sydney), dan
+    sampai 5,30 di p95 saat regime B. Angka spread harus per-sesi, bukan global."
+  spread_menyebar_pada_t: "M1 sudah menangkap seluruh titik ekstrem (D10 EDA-02),
+    jadi model biaya cukup pakai spread_pips M1 tanpa tambahan slippage konstan."
