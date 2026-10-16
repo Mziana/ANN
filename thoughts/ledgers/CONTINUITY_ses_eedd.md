@@ -1,102 +1,96 @@
 ---
 session: ses_eedd
-updated: 2026-10-13T17:48:01.381Z
+updated: 2026-10-15T13:45:19.400Z
 ---
 
 # Session Summary
 
 ## Goal
-Menjalankan pemanasan diagnostik R3 (flip side + SL=1.0xATR/TP=1.5xATR) di bed 2026-holdout yang sama hingga 2 run deterministik byte-identik + laporan §5 non-vonis.
+Build and execute `eda_07_spike_anatomy_outcome.ipynb` via generator so all assertions pass, parquet is written pre-verdict, and L1/L2 verdicts print.
 
 ## Constraints & Preferences
-- Status PEMANASAN DIAGNOSTIK — BUKAN RONDE VONIS; tafsir asimetris: KALAH=gugur kuat hemat bed 2025, MENANG=tanpa makna sirkuler
-- Satu-satunya resep teknis = spec R2 + brief R2; bila konflik spec R2 menang, lapor jangan improvisasi
-- Hanya DUA perubahan vs R2: (1) side→-side satu operasi sesudah scan, (2) SL=1.0xATR TP=1.5xATR RR 1.5:1; tanpa varian lain, tanpa indikator, tanpa ladder
-- Ledger pra-run + manifest SHA-256 di folder BARU SEBELUM run pertama, tanpa itu run gagal
-- Larangan: baca/sentuh `discovery-R2/evidence/` + segel R1/R2, tanpa 2023/2024/2025 untuk evaluasi, tanpa re-run TP-75/unlimited-horizon di bed 2026, tanpa p-value seleksi
-- Kontrak eksekusi R2 D2-5 verbatim: entry OPEN t0+1, race t0+2..t0+11, TIME exit close t0+11, bar-kembar=AMBIGUOUS_SEQUENCE buang, urutan buang GAP→ANOMALY_CROSS→ATR_NA→OFF_SESSION
-- Biaya 3 lapis literal config sesi entry, komisi 0.3 pip, slippage asumsi cons 0.2 / stress 0.3; spread.default/by_year/multiplier DILARANG
-- Q0=300, evaluasi HANYA H+10, tanpa RV/TAU/M15/D-8/segel; bootstrap median 10000 resample cluster hari-broker seed 1337; paruh-1 2026-01-01..05-18 / paruh-2 2026-05-19..10-02
-- Disiplin kode: fungsi <50 baris, file <400 baris, tanpa `print()` produksi, tanpa `except: pass`, ruff check+format hijau
+- Warisan verbatim EDA-06: `scan_spikes`, `first_exhaustion`, first-passage K=16 tie-SL-dulu, kelas hari resep T_DAY, biaya 0.95 flat, seed 20261006/20261007.
+- Preflight terkunci: 2116=856+1260, overlap 484, Nunik 1632, bands 515/415/240/462, 384 hari bersih, T_DAY 1.7319.
+- STOP discipline: assertion crash = sinyal bug; stratum n<30 drop+label; parquet SEBELUM vonis; stres 2× tanpa daya bunuh.
+- Deterministik: N_BOOT/N_NULL 10000, FDR q=0.10, EPS 1e-6; notebook = artefak generator via `nbconvert --execute`.
 
 ## Progress
 ### Done
-- [x] Q&A R2 ke user: distribusi SL median 7.04 pip / TP median 14.08 pip; MFE>=7.5 pip hanya 13.7% vs butuh ~55% win-rate RR~1; koreksi erratum display 766/1532 point → benar 70/141 point (kode pip benar)
-- [x] Verifikasi tabel sentuh dari `events.jsonl` R2: T=47pt atas 25.9%/bawah 34.9%/keduanya 5.4%/tak-sentuh 44.6%; T=70pt 15.3%/19.9%/1.7%/66.5%; T=105pt 7.4%/9.0%/0.5%/84.1%; koreksi bug mae negatif
-- [x] Baca otoritas R3: spec-R2, brief-R2, data.yaml, spec-R1, resample.py, broker_time.py, build_features.py, _build_eda06.py:500-533
-- [x] Recon READ-ONLY TEMP: total 269846 bar = spec, anomali 19119 = spec, usable 250727, gap 255, ATR-ok 238300 (88.3%), ATR mean 5.1059 median 4.2429 q25 2.7571 q75 6.4000 min 0.3929 max 77.4000, R3 SL-mean 5.1059 pip (51pt) TP-mean 7.6588 pip (77pt), sesi usable London 87348 Tokyo 79248 NewYork 65113 Sydney 19018 Off 0, resample M1→M15 18026 bucket m1_sum 269846
-- [x] Tulis ledger pra-run `discovery-R3-pemanasan/evidence/00_ledger_prarun.md` + `00_manifest.json` (ledger_sha256 `d8a4ba56de93c2f47c90bc5c16ee86f729dcad92c0c98155b17d943281e0f89f`, created 2026-10-13T17:35:18Z, frozen k_sl 1.0 rr 1.5 H10 seed 1337 Q0 300 negate True)
-- [x] Bangun harness R3: `d1_events.py` (scan E1 6sel + E2 1sel + E3 1sel + negate_side + exclusions), `d2_outcomes.py` (race_buy/sell + layer_costs), `d3_stats.py` (Q0/bootstrap/paruh), `run_discovery.py` (orkestrasi + broker_day-4h + cost_maps + cancel_records)
+- [x] Generator Bagian 1 (Sel 1-3): setup/partisi R, Wilder ATR/RSI + T_DAY + kelas + sesi, scan dua ambang + dedup + band + anatomi dengan F0a/F0b assertion mesin.
+- [x] Generator Bagian 2 (Sel 4-8): outcome machine + Q1/Q3, trade implisit L2, primer+F3+null F6+FDR, eksploratori+robustness+kurva, parquet pra-vonis + vonis; `build()` tulis + `ruff format` + `nbconvert --execute`.
+- [x] Fix `micro_dist`/`micro_box`: hapus cabang `info.get("or_top")/False`, hitung `or_top/or_bottom` dari 4-bar pertama sebelum pakai.
+- [x] Fix `HOUR_BINS` (5,10)->(4,10) + label `b04_10` + print `s_lt5` karena scan mulai bar-4 sehingga s=4 mungkin; dokumentasi deviasi dari bin 5-10 blueprint.
+- [x] Redefinisi Q3 spike-level §2.6: `net=sdir*(close(s)-open(i))`, A1 `|ratio|<=1+eps`, `wick=range-|net|`, clamp noise + counter, kolom parquet `q3_net_pip/q3_range_pip/q3_wick_pip/q3_wick_atr/q3_ratio`.
+- [x] F2 exemplars tersanksi jadi assertion mesin (2023-07-03 i31/s31 rev bar_ke1; 2023-07-03 i57/s59 cont bar_ke4; 2023-07-04 i66/s68 timeout) via `_root_of` + DET lookup, bukan first-found.
+- [x] Fix bootstrap cluster: `np.concatenate(per[pick])` -> `np.concatenate([per[j] for j in pick])`.
+- [x] Definisi reversal §3 verbatim: sentuhan wick `L<=level` (naik) / `H>=level` (turun), continuation `close>=extreme+1*atr_s`, tie se-bar continuation menang.
+- [x] Prefilter stres dihitung-ulang: simpan `edge=|entry-TP|-COST`, `TR_STRESS=[edge+COST-COST_STRESS>=2.85]`, `_l2_stats` terpisah untuk COST vs COST_STRESS.
+- [x] Robustness B/C §3 (deskriptif+CI tanpa p): `_revB` retrace close(i-1), `_revC` 1×ATR pullback; agregat+per band.
+- [x] Split tahun: agregat+2023H2+2024 dengan rate+CI+jarak pip + ×ATR; first-of-day 3-rate vs primer; Q4 stratifikasi 10 fitur + SMD rev-vs-cont.
+- [x] Kompilasi `ast.parse` 8 sel code OK (16 sel total 8 md+8 code); fix typo `]`/`)` Sel 4 dan `SMD` paren.
+- [x] Klausul scoping GUGUR hanya matikan fade-standalone, bukan registry ANN; fallback band-4 print; live lagged-causal + caveat-379.
 
 ### In Progress
-- [ ] Perbaiki SyntaxError `d1_events.py:61` (`spec["end']` → `spec["end"]`) lalu ruff check+format hijau, run 2x deterministik + verifikasi hash, laporan §5 + kalimat tafsir
+- [ ] Rerun `venv\Scripts\python.exe scripts\_build_eda07_spike_anatomy.py` setelah fix `strat_a==k` broadcasting.
 
 ### Blocked
-- SyntaxError memblokir ruff/run: `d1_events.py:61:57 missing closing quote`, efek domino lines 63-65 + 68
+- `nbconvert CellExecutionError` berulang dengan output truncated (hanya header `export_single_notebook` tanpa cell traceback); error penuh belum terekstrak — butuh dump output sel eksekusi.
 
 ## Key Decisions
-- **R3 di bed 2026 yang sama**: Otorisasi brief pemanasan diagnostik, bukan double-dip vonis; hasil menang diabaikan, kalah hemat bed 2025
-- **ATR resep EDA-06 verbatim + anomali excluded dari M5**: Menjamin kausal-beku tanpa look-ahead, span_ok ≤100min + toleransi merge 15min
-- **E2 ATR-M1 judgment TR 3-komponen + guard 60s**: Dicatat di ledger run karena spec hanya kunci ATR-M5, filter expansion butuh definisi eksplisit
-- **Recon di TEMP luar repo**: Membaca saja, tidak menulis artefak, agar hash input ledger murni pra-run
-- **Tidak hitung ulang unlimited-horizon TP70**: `events.jsonl` berakhir kbar≤10 + `t_mfe/t_mae` waktu ekstrem bukan first-touch; ambil harga >menit-11 = buka mentah 2026 = tuning terlarang
+- **HOUR_BINS (4,10)**: Scan mulai bar-4 memungkinkan s=4; bin-1 didokumentasikan sebagai deviasi terdokumentasi + counter `s_lt5`.
+- **Q3 spike-level**: `net=sdir*(close(s)-open(i))` atas 1632 unik agar `|net|<=range` selalu; ekskursi-based sebelumnya dibuang karena ratio boleh >1.
+- **Reversal = wick-touch**: Mengikuti §3 verbatim, bukan close-crossing.
+- **F2 exemplars pre-flight**: Dijadikan assertion mesin untuk F6-check, bukan pencarian dinamis.
+- **Stres prefilter recompute**: Himpunan traded boleh menyusut di @1.90; tanpa daya bunuh.
+- **Fix `m = np.array([s == k for s in strat_a])`**: `strat_a` object array berisi tuple/None gagal broadcast dengan `==k`; loop null terakhir crash di Sel 6.
 
 ## Next Steps
-1. Edit `d1_events.py:61` quote + pastikan tidak ada typo lain, jalankan `ruff check` dan `ruff format --check`
-2. Jalankan `run_discovery.py` 2x, verifikasi `events.jsonl` + `summary.json` byte-identik via SHA-256, simpan `run_stdout.log`
-3. Hitung diagnostik Q0/Q1/Q2/Q4/Q5 per sel (median net-obs/cons/stress, CI cluster-hari, paruh, failure map, cancel sequential) tanpa vonis
-4. Tulis laporan §5 + tempel 2 kalimat tafsir asimetris verbatim + serah-terima ke arsitek
+1. Rerun `venv\Scripts\python.exe scripts\_build_eda07_spike_anatomy.py` di `D:\eda-07-spike-anatomy` dan tangkap traceback penuh (cek `notebooks/scalping/eda_07_spike_anatomy_outcome.ipynb` outputs bila nbconvert gagal).
+2. Bila hijau: verifikasi `data/processed/events/eda07_spike_events.parquet` 1632 baris + kolom wajib, `reports/eda/2026-10-15-eda07/fig-mag-rate.png`, vonis L1/L2 tercetak.
+3. Jalankan `scripts/verify_claims.py`, `scripts/check_state.py`, `scripts/run_tests.py` lalu commit di branch `feature/eda-07-spike-anatomy`.
 
 ## Critical Context
-- Bed 2026: `usdjpy_m1_2026.parquet` 269846 bar, time `2026-01-01T23:00:00+0000`→`2026-10-02T20:57:00+0000`, anomali UTC 2026-03-10..03-27 (19119 bar)
-- Hash input: data.yaml `11275145...`, resample.py `54fc7369...`, spec-R2 `c05d5e4f...`, brief-R3 `e3fee14b...`, eda06 `5bf6cb6a...`, build_features `6549a657...`, m1_2026 `7f267bb9...`
-- R2 baseline: 84890 evaluable, Q0 8/8 lolos, vonis sementara 8/8 TOLAK median -1.32..-1.72 TIME 71-84%, SL-first 17.0% TP-first 2.1%
-- Konvensi 1 pip=10 point; R3 mean SL ~51pt TP ~77pt vs R2 median 70/141pt
-- Fingerprint sesi: `Tokyo:Asia/Tokyo:9-18|London:Europe/London:8-16|New York:America/New_York:8-17|Sydney:Australia/Sydney:8-16|priority=London>NewYork>Tokyo>Sydney`
-- Biaya literal: obs London 0.61 NewYork 0.69 Tokyo 0.62 Sydney 0.80 +0.3 komisi; p95 London 0.8 NewYork 1.2 Tokyo 0.9 Sydney 1.5 +0.3 slip +0.3 komisi; fallback default 0.65
+- Locked: R 2023-07-01..2025-01-01, 384 hari bersih, DAILY_OPEN [22,23], COST 0.95/STRESS 1.90, PREFILTER 2.85, K/WIN 16, SEED_BOOT 20261006/SEED_NULL 20261007, BAND_EDGES [1.5,2.0,2.5,3.0], FDR_Q 0.10, POWER_MIN_N 30.
+- Blueprint: `D:\ANN\thoughts\shared\plans\2026-10-15-eda07-spike-anatomy.md` §§1-13 FINAL; null F6: permutasi jalur-16-bar donor s+1..s+16, entry null close pertama donor, TP/SL/prefilter dari asal.
+- F2 exemplars: (2023-07-03,i31,s31,rev,1), (2023-07-03,i57,s59,cont,4), (2023-07-04,i66,s68,timeout,-1).
+- Error terakhir diperbaiki tapi belum di-rerun: `strat_a == k` elementwise atas object array -> ganti list-comprehension.
+- Q1: `bar_ke=idx_reversal-s`, median+IQR+CI95 cluster-per-day atas reversal saja + `n_rev/n_band`; Q4 SMD tanpa uji/classifier.
 
 ## File Operations
 ### Read
-- `D:\ANN\.ai\AGENTS.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\rerun_preflight.py`
+- `D:\ANN\.ai\SESSION_LOG.md`
+- `D:\ANN\configs\broker.yaml`
 - `D:\ANN\configs\data.yaml`
 - `D:\ANN\data`
+- `D:\ANN\data\processed`
+- `D:\ANN\data\processed\D1`
 - `D:\ANN\data\processed\M1`
-- `D:\ANN\notebooks\scalping\_eda_common.py`
-- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
-- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R2.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d1_events.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d3_stats.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d4_appendix.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\run_discovery.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\run_discovery.py`
-- `D:\ANN\scripts\_build_eda06.py`
-- `D:\ANN\src\data\broker_time.py`
-- `D:\ANN\src\data\resample.py`
-- `D:\ANN\src\features\build_features.py`
+- `D:\ANN\data\processed\M15`
+- `D:\ANN\notebooks\scalping`
+- `D:\ANN\scripts`
+- `D:\ANN\scripts\_build_eda05.py`
+- `D:\ANN\scripts\_build_eda06_candle.py`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-amandemen-1.md`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-blueprint-v93.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda07-spike-anatomy.md`
+- `D:\eda-07-spike-anatomy\.ai\AGENTS.md`
+- `D:\eda-07-spike-anatomy\BRIEF_CODER_EDA07.md`
+- `D:\eda-07-spike-anatomy\scripts\_build_eda07_spike_anatomy.py`
 
 ### Modified
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r2_recon.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r3_recon.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d1_events.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d3_stats.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\d4_appendix.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R1\evidence\run_discovery.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d1_events.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d3_stats.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d4_appendix.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\run_discovery.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d1_events.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\d3_stats.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R3-pemanasan\evidence\run_discovery.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\diag2.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\diag3.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\diag_micro.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\eda06_extract.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\f0a_eda07.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\f1_eda07.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\f0b_eda07.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\neg_trace.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\preflight_eda06.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\rerun_preflight.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\schema_dump.py`
+- `D:\ANN\scripts\_build_eda06_candle.py`
+- `D:\eda-07-spike-anatomy\scripts\_build_eda07_spike_anatomy.py`
+- `D:\eda-07-spike-anatomy\scripts\diag_l2.py`
+- `D:\eda-07-spike-anatomy\scripts\dump_outputs.py`

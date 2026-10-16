@@ -1,195 +1,157 @@
 ---
 session: ses_ef0b
-updated: 2026-10-14T09:56:19.358Z
+updated: 2026-10-16T11:12:09.369Z
 ---
+
+Commit selektif 3 file EDA-10 — cek gate STATE dulu.
+
+Saya verifikasi gate state sebelum commit selektif.
 
 # Session Summary
 
 ## Goal
-Menutup R4-M15-native secara transparan sebagai **TOLAK 9/9**, mengoreksi dokumentasi metrik/exit, dan menghasilkan postmortem lintas-ronde untuk menentukan **stop atau pivot**, bukan sekadar commit lalu mengulang siklus gagal.
+Menuntaskan ronde EDA-10 volume_lock_V hingga CLOSED dengan vonis LOCKED terverifikasi independen dan komit selektif tanpa push.
 
 ## Constraints & Preferences
-- Jangan menerima hasil secara buta atau mengulang grid yang sama tanpa membedah kegagalan.
-- Bed 2024 sudah terkunci/burned; tidak boleh menjalankan ulang grid R4 dengan aturan exit berbeda tanpa persetujuan eksplisit dan bed baru.
-- Spec beku tidak boleh diedit; perubahan metrik harus labeled post-hoc di audit addendum.
-- Pisahkan `P(profit)`, `P(loss)`, `P(time)`, `TIME%`, dan `winrate_decisive`.
-- Mid-price hanya boleh untuk tes arah tanpa barrier, bukan untuk PnL realistis; `AGENTS.md` §19 melarang mid-price untuk entry/exit.
-- Pertahankan pemisahan coder, auditor, dan author; run tercemar tidak boleh dipromosikan.
-- Jangan `git add -A`; gunakan path eksplisit.
-- Jangan commit/push tanpa persetujuan owner.
-- File baru harus ASCII/LF dan bebas karakter nyasar.
+- NOL perubahan desain: hanya koreksi-spesifikasi + presisi-teks; R1/R2/R3, 0-uji, oracle, vonis-imun tak tersentuh
+- 0 uji statistik; menambah uji = STOP + amandemen; DILARANG RNG total, determinisme via rerun-diff bukan seed
+- Vonis mekanis tepat satu kata LOCKED/GAGAL; GAGAL = selesai sukses; wick CONFIRM EDA-09 IMMUTABLE
+- Oracle bit-eksak, mendekati = GAGAL; reuse verbatim `scan_spikes`, `_wilder_ema`, `_vol_c`, MANIFEST dengan jangkar nama-fungsi bukan nomor-baris
+- T_DAY/cls DILARANG dihitung (metadata-only, NOL peran putusan); P-segel + assert runtime; DILARANG drop-diam; parquet-R hash pra=pasca tanpa-syarat
+- Gate: ruff check + format rc=0, foreign-chars OK, notebook exit 0 via nbconvert, FASE 0 gerbang blokir, FASE PASCA gerbang kelulusan
+- Workdir `D:/ANN` main; DILARANG branch/worktree/commit/push/merge tanpa perintah eksplisit; venv kanonik `venv/Scripts/python.exe`
 
 ## Progress
 ### Done
-- [x] R4-M15-native diselesaikan mengikuti spec: resample M15 2024, 9 sel, race, shadow pair, QC, evidence, dan audit independen.
-- [x] Vonis sah: **TOLAK 9/9 sel**; median net A negatif dan ujung atas CI seluruh sel negatif.
-- [x] Run R4 versi pip yang tercemar dikarantina di `evidence_TERCEMAR_tidak-sah/`.
-- [x] Run native ditulis oleh coder; `verify_r4.py` yang sebelumnya salah dibuang dan diganti rebuild auditor.
-- [x]_typo `SESSION_LOG.md` diperbaiki: `mengDCsankan`, `seed 1333`, dan `Command yang cavet`.
-- [x] `STATE.md`, `TASKS.md`, `PROGRESS.md`, dan `SESSION_LOG.md` diperbarui.
-- [x] Shadow pair diverifikasi: A dan B memakai entry/barrier sama dengan `sB = -sA`; MFE/MAE konsisten sebagai pasangan cermin.
-- [x]pooled WR lama terbukti salah label: `winrate_decisive = TP/(TP+SL)` dengan `TIME` dibuang.
-- [x] Definisi WR post-hoc ditetapkan: timeout dengan `gross > 0` = win, `gross < 0` = loss; tie dilaporkan terpisah.
-- [x] Audit addendum dibuat di `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`.
-- [x] `STATE.md` dikoreksi: impas nominal 33,33% dinyatakan salah; impas nyata 37,5–47,8%.
-- [x] Ditemukan cacat exit timeout BID/ASK di `r4_m15.py` baris 326.
-- [x] Ditemukan `TP/TP = 0` di 9/9 sel dan median MFE A jauh di bawah TP.
-- [x] Git status diperiksa; belum ada commit/push R4.
-- [x] Pemeriksaan lintas-ronde dimulai; script berhasil membaca R4 dan menemukan 9/9 median net negatif.
+- [x] Terapkan 12 patch gabungan H1+M2+L1-L3+U1-U7 + §14 Amandemen-Audit ke `2026-10-16-eda10-volume-c-V-draf.md` (180→221 baris); grep sisa 0 hidup, foreign-chars HIJAU
+- [x] Terapkan 2 klarifikasi audit-final: §3 T_DAY dikeluarkan dari warisan + metadata-only NOL peran; §6 F0' jadi `assert 0 whitelist-drop (vs 1110). Bila > 0 → STOP + arsitek`
+- [x] Susun prompt coder `.ai/assistant/prompts/2026-10-16_eksekusi-eda10-coder.md` (FASE 0→PASCA, oracle, jangkar fungsi, larangan bentuk-spesifik, pasangan perintah mentah)
+- [x] Executor spawn GAGAL 3× (`Model not found: openai/gpt-5.2-codex`) → pola manual EDA-07/08/09; otorisasi JALAN setelah verifikasi disk 5/5 (blueprint, builder EDA-09, check_foreign_chars, manifest EDA-09, main @641a25f)
+- [x] STOP coder di A2' diterima sah; verifikasi independen 10/10: hash builder `d75c0e6`, notebook `1943c10a`, manifest `d68dc344`, parquet-R `b800e50e…bdfc2` identik, nb 7sel/6code/0error/LOCKED×1, oracle verbatim 1110/1018/1.179/23812, 6/6 code-sel bawa `metadata.execution`
+- [x] Putusan arsitek OPSI-1: `metadata.execution` IMMATERIAL → A2' LULUS (adjudikasi dalam-spesifikasi, bukan amandemen); normalisasi DITOLAK; klaim diff-kosong EDA-09 DITURUNKAN ke level-output; CONFIRM tak tersentuh
+- [x] FASE PASCA LULUS read-only + REPORT.md 227 baris + COMMITTED 2 tanpa push: `d99bf4b chore(state)` (1 file STATE) + `ca8dfbd feat(eda-10)` (tepat 4 file, 1893 insertions); blob=worktree-identik isi; koreksi relay hash otoritatif rev-parse `d75c0e6`/`1943c10a`/`35a46bae`/`f2fce4e6`; EDA-10 CLOSED LOCKED
+- [x] Gate commit selektif sisa ronde: `git status --porcelain` 3 file + `check_foreign_chars.py` 3 file OK
 
 ### In Progress
-- [ ] Menyelesaikan postmortem lintas-ronde; `cross_round.py` baru mem-parsing schema R4, sedangkan R1/R2/R3/P2 memakai schema berbeda.
-- [ ] Mengubah hasil postmortem menjadi keputusan stop/pivot yang eksplisit.
-- [ ] Memutuskan apakah tp-response/first-passage diagnostic perlu dijalankan; jangan dijalankan sebagai selection.
-- [ ] Menunggu otorisasi commit/push.
-- [ ] Opsional: membuat erratum terpisah untuk salah ketik “delapan sel” tanpa mengubah spec beku.
+- [ ] Commit selektif 3 file sisa EDA-10: blueprint FINAL + prompt coder + TASKS CLOSED (gate HIJAU, commit belum dieksekusi)
 
 ### Blocked
-- Tidak ada bed bersih untuk konfirmasi aturan exit baru.
-- Schema summary R1/R2/R3/P2 belum berhasil dibandingkan otomatis.
-- Belum ada izin owner untuk commit atau push.
-- First-passage curve belum dijalankan dan belum boleh dianggap valid untuk memilih TP.
+- (none)
 
 ## Key Decisions
-- **R4 tetap TOLAK 9/9**: median net dan CI gate tetap negatif; perubahan WR tidak menyentuh gate `i_median_net_obs_A_gt0` atau `ii_ci_lower_gt0`.
-- **WR lama tidak boleh disebut win rate biasa**: nilainya `TP/(TP+SL)` dengan `TIME` dibuang.
-- **Impas nominal 33,33% tidak valid**: RR terealisasi hanya 1,09–1,67 karena banyak timeout; impas observatif 37,5–47,8%, dan 9/9 sel gagal.
-- **A dan B mirror pada entry/lintasan, bukan pada PnL**: kaki dapat resolve pada bar berbeda; timeout SELL memakai BID dan BUY memakai ASK.
-- **E1 berarah terbalik tetap didukung**: `Edge_A = MFE/(MFE+MAE)` sekitar 0,372–0,462 pada 6/6 sel, sedangkan `Edge_B` 0,509–0,602.
-- **E2 simetris; E3 bukan sepenuhnya netral**: `Edge_A` sekitar 0,503 dan `Edge_B` sekitar 0,454.
-- **TP terlalu tinggi adalah gejala, bukan penyebab**: menurunkan TP tidak menghilangkan edge arah yang hilang dan dapat menguntungkan kaki cermin pada E1.
-- **Tidak ada branch atau rerun R4 sekarang**: aturan eksperimen baru harus memiliki persetujuan, preregistrasi, dan bed baru.
-- **Commit berarti menyimpan bukti cierre, bukan menerima kegagalan tanpa diagnosa**.
-- **Git commit harus path eksplisit**: sekitar 613 MB `events.jsonl` dan `events.parquet` tidak boleh masuk history.
+- **Tarik premis JANGAN-hitung (§3 H1)**: ATR14/RSI14-Wilder verbatim sel-3 EDA-09 PRASYARAT `scan_spikes` (`g["atr"]` L346-356, `g["rsi"]` L377+); fungsi volume yang tak pakai indikator, bukan deteksi
+- **Presisi M2 (§4)**: agregasi pooled SEMUA event-V; `MANIFEST_ALL`=`MANIFEST_R`+`MANIFEST_V` terurut (builder L670); 20 hari = 20 hari di MANIFEST opsi-A, NaN via `np.nanmedian` (L684-688)
+- **Tutup lubang M2(a)/U7 (F3'b)**: klaim DITETAPKAN ditarik; bar-s tanpa tick_volume ekspektasi 0 (fill-V 1.0000), bila >0 → STOP+arsitek, anti-drop-diam
+- **Koreksi-U1 (F3'a)**: V-hari-1=20R-terakhir, V-hari-2..20 campuran 19R+1V…1R+19V; audit prosedur satu-jalur
+- **Vonis tunggal U2 + U3**: GUGUR→GAGAL; LOCKED EDA-10 MELAMPAUI lock-in-terpenuhi EDA-09
+- **Hash U5 + diff L2**: parquet-R SHA256 B800E50E…BDFC2 pra=pasca WAJIB identik; rerun diff kosong ipynb+data, metadata-volatil → STOP bukan GAGAL
+- **Peringatan-U6 (§9)**: volume-(c) LOCKED tapi 0-uji arah; FS-01 WAJIB MI/FDR sebelum ANN
+- **A2' OPSI-1**: stempel `metadata.execution` immaterial, determinisme lolos level output+manifest; normalisasi = teater ditolak; EDA-09 diff-kosong turun ke level-output
+- **Komit 2 tanpa push**: `d99bf4b` STATE-only gate-driven + `ca8dfbd` 4 file; temuan temp-index vs STATE.md = solusi struktural, tanpa `--no-verify`
 
 ## Next Steps
-1. Manual-inspect schema dan output R1, R2, R3, serta P2; jangan menyimpulkan pola lintas-ronde hanya dari satu parser.
-2. Susun postmortem dalam tiga lapis: kualitas data, evaluation harness, dan kelas hipotesis/regime.
-3. Tetapkan stop/pivot gate sebelum ronde berikutnya; tanpa bed bersih dan hipotesis baru yang benar-benar berbeda, hentikan Discovery.
-4. Jika owner meminta first-passage curve, jalankan hanya sebagai diagnostik post-hoc dan jangan pilih TP dari hasilnya.
-5. Tambahkan atau perbarui addendum bila ditemukan error baru; jangan mengubah `r4_m15.py` atau spec beku tanpa ronde baru.
-6. Setelah owner menyetujui, commit hanya dokumen, spec, kode, log, manifest, QC, dan summary yang relevan; exclude event-level besar dan data karantina.
-7. Tidak push sebelum instruksi eksplisit.
+1. Eksekusi commit selektif 3 file EDA-10 (blueprint + prompt + TASKS) dengan pesan terpisah dari staging sesi lain
+2. Verifikasi komit: `git show --stat`, `git rev-parse` blob vs worktree, `origin/main..HEAD`, laporkan vonis CLOSED tetap LOCKED
+3. Tahan push tanpa otorisasi (pola EDA-08/09); ronde sah berikutnya: FS-01 MI/FDR atau commit/push selektif atas perintah
 
 ## Critical Context
-- Grid R4: E1 6 sel, E2 2 sel, E3 1 sel; bed 2024, 23.758 bar M15.
-- Median `netA_obs` R4: `−15.45..−6.61` pip; seluruh CI upper negatif.
-- Corrected `P_profit_A` dengan timeout: `27.96–42.98%`; corrected `P_profit_B`: `34.56–50.54%`; `TIME%`: `17.6–43.3%`.
-- Corrected WR harus selalu menampilkan definisi dan `TIME%`; angka net setelah biaya juga perlu dilaporkan karena timeout kecil dapat berubah dari win menjadi loss.
-- `race_leg` di `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\r4_m15.py` memakai:
-  - `entry = o[kt0 + 1]`
-  - `sl_px = SL_MULT * atr0`
-  - `tp_px = TP_MULT * atr0`
-  - `sB = -sA`
-  - `time_exit = C[:, RACE - 1] + np.where(up[:, 0], 0.0, SPR[:, RACE - 1])`
-- `wrA`/`wrB` di sekitar baris 607–608 hanya menghitung `TP/(TP+SL)`.
-- Pada E1_N3_k1.0, validasi menunjukkan `P(gross>0)_A + P(gross>0)_B = 80.20%`, kedua kaki rugi bersama sekitar 19.0%, dan kedua kaki menang bersama 0.0%; penyebabnya spread dan exit tidak selalu bersamaan.
-- `MFE_A ≈ MAE_B` dan `MFE_B ≈ MAE_A` di 9/9 sel; selisih sekitar −4.8% sampai −8.3%IFO yang terkait spread.
-- `Edge` lebih cocok untuk diagnosis arah daripada WR, tetapi klaim “kebal spread” masih perlu diuji karena MFE/MAE dipengaruhi quote adjustment.
-- `TP/TP = 0` di semua sel; median MFE hanya sekitar 0,64–0,82 SL.
-- Temuan audit lain: toleransi doji E1, spec menulis “delapan sel” padahal ada sembilan, ledger disegel sebelum edit kode terakhir, bootstrap balanced-cluster, `failure_map` null, determinisme hanya 1/9 sel, dan data gap UTC 21:00–21:45.
-- Error yang sudah ditangani:
-  - Filter awal memakai NaN padahal `cancel_reason == 'NONE'`.
-  - `IndexError: single positional indexer is out-of-bounds` pada `mirror_test.py`.
-  - `UnicodeEncodeError` cp1252 untuk `−` dan karakter CJK nyasar.
-  - Konversi ATR ke point sempat salah; harga harus dibagi `0.001`, bukan dikalikan 10.
-  - Assert `grossB == -grossA` untuk semua event salah karena barrier_exit berbeda waktu.
-- Run tercemar sebelumnya ditulis sendiri oleh assistant; run native R4 ditulis coder dan diaudit auditor terpisah.
-- `git status`: branch `main`, HEAD `893727b`; file inti masih uncommitted.
-- `events.jsonl` tidak diabaikan oleh `.gitignore`:
-  - R1 258,64 MB
-  - R2 112,10 MB
-  - R3 124,16 MB
-  - P2 116,69 MB
-  - R4 `events.parquet` sekitar 1,06 MB
-- Postmortem lintas-ronde belum boleh mengklaim semua ronde memiliki pola sama sampai schema R1/R2/R3/P2 diverifikasi.
+- Oracle BEKU-EDA-09: Nunik-V 1110, band unik 367/286/168/289, full-room 325/269/156/268, baseline 1018/1018 drop 0, med/IQR/P1/P99 1.179/[0.914,1.607]/0.503/4.396, hari-V 259, bar-M15-V 23812, fill 1.0000
+- Toolchain beku: numpy 1.26.4 / pandas 2.2.3 / pyarrow 17.0.0; bit-eksak rapuh lintas-versi, DILARANG upgrade
+- Komit: main @641a25f → d99bf4b → ca8dfbd (4 file: builder 675 + notebook 887 + REPORT 227 + manifest 104); skema manifest 5-elemen: oracle-vs-aktual + bukti-diff + teks-rolling-live + toolchain + vonis
+- Spesifikasi rolling-live terkunci: baseline hari-T = 20 hari-bersih sebelum-T slot-HH:MM-sama tanpa hari-berjalan; tanpa 20-hari histori = DROP+count; V-hari-1 = 20-hari-R-terakhir (konsisten bukan pengecualian)
+- Caveat permanen: byte-diff `metadata.execution` tiap rerun; penumpukan-V ketiga-kali (hakim final P-segel); FS-01 wajib sebelum ANN
+- Status commit terakhir: `git status --porcelain -- thoughts/shared/plans/2026-10-16-eda10-volume-c-V-draf.md .ai/assistant/prompts/2026-10-16_eksekusi-eda10-coder.md .ai/TASKS.md` = `M .ai/TASKS.md`, `??` prompt, `??` blueprint; foreign-chars 3 file OK
 
 ## File Operations
 ### Read
-- `D:\ANN`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\eda08_outputs.txt`
 - `D:\ANN\.ai\AGENTS.md`
-- `D:\ANN\.ai\ASSISTANT_RULES.md`
 - `D:\ANN\.ai\CONTEXT.md`
 - `D:\ANN\.ai\PROGRESS.md`
 - `D:\ANN\.ai\SESSION_LOG.md`
 - `D:\ANN\.ai\STATE.md`
 - `D:\ANN\.ai\TASKS.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
+- `D:\ANN\.ai\assistant\PROMPT_DISIPLIN.md`
 - `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-P2-flipmurni.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_replikasi-discovery-R1-auditor.md`
-- `D:\ANN\backup\2026-10-09_DESAIN_FRESH_SCALPING_EVENT_FIRST.md`
-- `D:\ANN\README.md`
-- `D:\ANN\data`
-- `D:\ANN\notebooks\scalping\_eda_common.py`
-- `D:\ANN\reports\governance\2026-10-12\arsitek\spesifikasi-fingerprint.md`
-- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
-- `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\00_manifest.json`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d1_events.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\d2_outcomes.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\run_stdout.log`
-- `D:\ANN\reports\research\2026-10-13\discovery-R2\evidence\summary.json`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\r4_m15.py`
-- `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef37.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-15_eksekusi-eda08-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-16_eksekusi-eda09-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-16_eksekusi-eda10-coder.md`
+- `D:\ANN\.ai\assistant\prompts\PERAN-coder.md`
+- `D:\ANN\.git\hooks\pre-commit`
+- `D:\ANN\.pre-commit-config.yaml`
+- `D:\ANN\configs\broker.yaml`
+- `D:\ANN\configs\data.yaml`
+- `D:\ANN\docs\broker-contract-finex.md`
+- `D:\ANN\journal\daily\2026-10-15.md`
+- `D:\ANN\notebooks\scalping\EDA\README.md`
+- `D:\ANN\notebooks\scalping\archive\eda-06-07\README.md`
+- `D:\ANN\reports\eda\2026-10-10\laporan-coder-eda06.md`
+- `D:\ANN\reports\eda\2026-10-16-eda09\REPORT.md`
+- `D:\ANN\reports\eda\2026-10-16-eda09\manifest.json`
+- `D:\ANN\reports\eda\2026-10-16-eda10\REPORT.md`
+- `D:\ANN\reports\eda\2026-10-16-eda10\manifest.json`
+- `D:\ANN\reports\governance\2026-10-15\Audit\fix-M1-M5-broker-contract.md`
+- `D:\ANN\scripts\_build_eda06_candle.py`
+- `D:\ANN\scripts\_build_eda07_spike_anatomy.py`
+- `D:\ANN\scripts\archive\eda-06-07\_build_eda06.py`
+- `D:\ANN\scripts\check_state.py`
+- `D:\ANN\scripts\run_hook.bat`
 - `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef0b.md`
-- `D:\ANN\reports\governance\2026-10-14\arsitek\spesifikasi-discovery-R4-M15.md`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_manifest.json`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\events.parquet`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\qc.json`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\run_stdout.log`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\summary.json`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\README_KARANTINA.md`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-blueprint-v93.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda07-spike-anatomy.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda08-ammo-R-draf.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda09-audit-diri.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda09-wick-confirm-draf.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda10-volume-c-V-draf.md`
+- `D:\eda-07-spike-anatomy\scripts\_build_eda06_candle.py`
+- `D:\eda-07-spike-anatomy\scripts\_build_eda07_spike_anatomy.py`
 
 ### Modified
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\analisis_t0plus1.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\audit_scan.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\breakeven.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\cross_round.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\decompose.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\edge_ratio.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\mirror_test.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r4_resample.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\r4_run.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\show_point.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\show_shadow.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\tf_cost_test.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\tp_check.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\verify_r4.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\wr_revision.py`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\wr_revisi.json`
-- `C:\Users\Fajar\AppData\Local\Temp\opencode\breakeven.json`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\append_journal.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\check_ai.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\check_eda07_out.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\cmp_configs.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\consumers.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\contract_impact.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\contract_proof.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\daily_spread.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\dead_keys.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\dead_proof.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\dump_spread.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\eda09_verify.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\eda09_verify2.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\gen_blocks.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\keytype.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\nb_diff_check.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\stale_check.py`
+- `C:\Users\Fajar\AppData\Local\Temp\opencode\verify_items.py`
+- `D:/eda-08-ammo-R/BRIEF_CODER_EDA08.md`
+- `D:\ANN\.ai\AGENTS.md`
 - `D:\ANN\.ai\CONTEXT.md`
 - `D:\ANN\.ai\PROGRESS.md`
 - `D:\ANN\.ai\SESSION_LOG.md`
 - `D:\ANN\.ai\STATE.md`
 - `D:\ANN\.ai\TASKS.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_audit-spec-R1-auditor.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_audit-spec-R2-auditor.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R1-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_eksekusi-discovery-R2-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-P2-flipmurni.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_pemanasan-R3-coder.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_reaudit-spec-R1-auditor.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_reaudit-spec-R2-auditor.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_replikasi-discovery-R1-auditor.md`
-- `D:\ANN\.ai\assistant\prompts\2026-10-13_replikasi-discovery-R2-auditor.md`
-- `D:\ANN\README.md`
-- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R1.md`
-- `D:\ANN\reports\governance\2026-10-13\arsitek\spesifikasi-discovery-R2.md`
-- `D:\ANN\reports\governance\2026-10-14\Audit\addendum-R4-M15.md`
-- `D:\ANN\reports\governance\2026-10-14\arsitek\spesifikasi-discovery-R4-M15.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\replay_notimer.py`
-- `D:\ANN\reports\research\2026-10-13\discovery-P2-flipmurni\evidence\run_flipmurni.py`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_prarun.md`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence\00_ledger_R4.md`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\00_ledger_R4.md`
-- `D:\ANN\reports\research\2026-10-14\discovery-R4-M15\evidence_TERCEMAR_tidak-sah\README_KARANTINA.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-15_eksekusi-eda08-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-16_eksekusi-eda09-coder.md`
+- `D:\ANN\.ai\assistant\prompts\2026-10-16_eksekusi-eda10-coder.md`
+- `D:\ANN\configs\broker.yaml`
+- `D:\ANN\configs\data.yaml`
+- `D:\ANN\docs\broker-contract-finex.md`
+- `D:\ANN\journal\daily\2026-10-15.md`
+- `D:\ANN\notebooks\scalping\archive\eda-06-07\README.md`
+- `D:\ANN\reports\governance\2026-10-15\Audit\fix-M1-M5-broker-contract.md`
+- `D:\ANN\thoughts\ledgers\CONTINUITY_ses_eda10.md`
 - `D:\ANN\thoughts\ledgers\CONTINUITY_ses_ef0b.md`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-amandemen-1.md`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-blueprint-v93.md`
+- `D:\ANN\thoughts\shared\designs\2026-10-15-eda06-blueprint-v94.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda07-coder-brief.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda07-spike-anatomy.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-15-eda08-ammo-R-draf.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda09-audit-diri.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda09-wick-confirm-draf.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda10-audit-diri.md`
+- `D:\ANN\thoughts\shared\plans\2026-10-16-eda10-volume-c-V-draf.md`
+- `D:\eda-07-spike-anatomy\BRIEF_CODER_EDA07.md`
+- `D:\eda-08-ammo-R\BRIEF_CODER_EDA08.md`

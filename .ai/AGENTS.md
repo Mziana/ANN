@@ -3,8 +3,8 @@
 > File ini dibaca AI agent sebelum menulis kode apa pun.
 > Aturan WAJIB. Kalau tidak jelas, tanya dulu, jangan asumsi.
 >
-> Versi: 3.1
-> Update: 2026-10-12
+> Versi: 3.2
+> Update: 2026-10-16
 > Proyek: USDJPY Trading Bot
 
 ---
@@ -33,6 +33,10 @@ Kalau cuma ingat 15 hal:
 ### Larangan
 14. DILARANG mulai dari 0 kalau proyek sudah jalan.
 15. DILARANG klaim tanpa bukti, DILARANG opini tanpa data.
+
+### Kalau cuma 5 menit (Tier 0 darurat — jalan pintas yang diakui, BUKAN pengganti)
+- Baca: STATE.md + TASKS.md + §20 + §26. Tucunya: posisi, tugas, bukti, peran.
+- Tier 0 tidak menggugurkan Tier 1; Tier 1 tetap wajib sebelum tugas pertama.
 
 ### Kalau Ragu
 - Patuh > cepat. Tanya > asumsi. Stop > lanjut. Uji > opini.
@@ -77,18 +81,22 @@ Kalau cuma ingat 15 hal:
 
 ### Â§0.1 Session Start
 
-Baca berurutan:
+Tier 1 — wajib sebelum tugas pertama:
 1. `.ai/STATE.md`
 2. `.ai/TASKS.md`
-3. `.ai/PROGRESS.md`
-4. `.ai/AGENTS.md` (file ini)
-5. `.ai/RULES.md`
-6. `.ai/CONTEXT.md`
-7. Entry terakhir `.ai/SESSION_LOG.md`
-8. Jika berperan sebagai ASISTEN (penerjemah + penjaga alur), lanjutkan:
-   `.ai/ASSISTANT_RULES.md`, `.ai/assistant/README.md`,
-   `.ai/assistant/REPORT_EXPLAINER.md` (wajib sebelum menjelaskan laporan
-   apa pun).
+3. `.ai/AGENTS.md` (file ini)
+
+Tier 2 — dipicu peran/tugas, BUKAN opsional (baca saat tugas menyentuh ranahnya):
+| Pemicu | File wajib |
+|---|---|
+| Tugas menyentuh histori/detail progres | `.ai/PROGRESS.md` + entri terakhir `.ai/SESSION_LOG.md` |
+| Tugas menulis/mengubah kode atau aturan | `.ai/RULES.md` |
+| Tugas mengubah arah/strategi/stack | `.ai/CONTEXT.md` |
+| Berperan ASISTEN | `.ai/ASSISTANT_RULES.md`, `.ai/assistant/README.md` |
+| Menjelaskan laporan apa pun | `.ai/assistant/REPORT_EXPLAINER.md` (wajib sebelumnya) |
+| Menyusun prompt peran apa pun | `.ai/assistant/PROMPT_DISIPLIN.md` (wajib sebelumnya) |
+| Resume pasca-compact / sesi baru | ledger terbaru `thoughts/ledgers/CONTINUITY_*.md` + TASKS.md + blueprint ronde aktif (lihat S0.4) |
+| Butuh konteks jurnal | `journal/INDEX.md` dulu, baru harian 3 hari terakhir (§25) |
 
 Tulis konfirmasi:
 Session Start â€” Pre-Flight
@@ -102,15 +110,18 @@ Blocker: <ringkas atau ->
 
 Langkah berikutnya: <ringkas>
 
-Konfirmasi:
+Konfirmasi Tier 1 (wajib):
 
 â˜‘ STATE.md dibaca
 â˜‘ TASKS.md dibaca
-â˜‘ PROGRESS.md dibaca
 â˜‘ AGENTS.md dibaca
-â˜‘ RULES.md dibaca
-â˜‘ CONTEXT.md dibaca
-â˜‘ SESSION_LOG.md dibaca
+
+Konfirmasi Tier 2 (centang yang terpicu, tulis — bila tak terpicu):
+
+â˜‘ PROGRESS.md + SESSION_LOG.md (histori/progres)
+â˜‘ RULES.md (tugas kode/aturan)
+â˜‘ CONTEXT.md (ubah arah/strategi)
+â˜‘ file ASISTEN + jurnal (bila berperan/membutuhkan)
 Konvensi kode yang akan dipatuhi:
 
 1. <konvensi 1>
@@ -137,18 +148,26 @@ Update TASKS.md, STATE.md, mini-log di SESSION_LOG.md.
 
 ### Â§0.4 Anti-Compaction
 
-Kalau deteksi konteks penuh / mulai lupa:
-1. STOP coding.
-2. Checkpoint ke SESSION_LOG.md.
-3. Update semua state files.
-4. Ringkasan konteks di CONTEXT.md.
-5. Katakan user: mulai sesi baru.
+Kalau deteksi konteks penuh / mulai lupa (CATATAN 2026-10-16: ambang token DINYATAKAN tak-dapat-dipakai — compact otomatis bisa datang jauh sebelum label kapasitas; pengganti: checkpoint BERBASIS KEJADIAN):
+1. Setiap todo selesai -> update ledger + TASKS.md seketika. Tanpa menunda, tanpa batch.
+2. Ledger = `thoughts/ledgers/CONTINUITY_ses_<nama>.md`, jembatan antar-compact. Isi wajib: posisi, fakta beku (hash/oracle/komit), utang prosedural, daftar lanjut yang sah.
+3. Resume pasca-compact: instance baru WAJIB baca ledger terbaru + TASKS.md (+ blueprint ronde aktif) SEBELUM menyentuh apa pun. DILARANG mengandalkan ringkasan compact atau memori.
+4. Kalau deteksi konteks memburuk: STOP coding -> tulis ledger -> katakan user: mulai sesi baru.
 
 ### Â§0.5 Larangan
 
 - DILARANG akhiri sesi tanpa update state.
 - DILARANG compaction tanpa checkpoint.
 - DILARANG andalkan memori. Selalu baca file.
+
+### §0.5B Gerbang 5 Aturan Pra-Tugas (tiap tugas, bukan sekali per sesi)
+
+Sebelum TIAP tugas, kutip ulang kelimanya (tertulis, bukan diingat):
+1. §20 anti-halusinasi — tiap klaim berpasangan bukti + label status (TERVERIFIKASI/BELUM/ASUMSI/GAGAL).
+2. §7 ketidakpastian — ambigu → STOP + tanya, jangan asumsi.
+3. §26 peran — kerja di batas peranmu; vonis/metode di luar peran = eskalasi.
+4. §16 reuse-first — patch jangan rewrite; DILARANG mulai dari 0.
+5. §5 format laporan — tabel Klaim & Bukti; DILARANG “sepertinya OK”.
 
 ### Â§0.6 Aturan Emas
 
@@ -537,6 +556,11 @@ User kirim link GitHub:
 
 DILARANG abaikan link. DILARANG mengarang isi repo.
 DILARANG push tanpa izin.
+DILARANG buat worktree/branch baru (di dalam maupun di luar repo, mis. `D:/`)
+tanpa perintah eksplisit user — preseden: kerja di `main` + commit selektif
+(pelanggaran tercatat 2×: EDA-07, EDA-08, 2026-10-15). Isolasi worktree hanya
+atas perintah user, dan worktree + branch WAJIB dihapus setelah merge
+(maksimal satu cabang fitur dalam satu waktu).
 
 Format Laporan Baca Repo:
 URL: <url>
@@ -719,4 +743,4 @@ Kalau ragu:
 
 ---
 
-**Akhir AGENTS.md v3.0**
+**Akhir AGENTS.md v3.2**

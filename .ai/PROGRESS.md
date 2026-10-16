@@ -51,6 +51,7 @@ vs render — batas keras dari user. Batas ">600 baris" belum tersentuh, tapi
       level (0,469-0,490) TIDAK melampaui placebo (0,499-0,505)
 - [x] Regime + laporan EDA (nb05, audit LULUS DENGAN SISA 1 LOW)
 - [x] Biaya & breakeven (nb06) + label-fitur + I-1 + I-2 (EDA-07)
+- [x] EDA-07 spike_anatomy_outcome CLOSED+MERGED 2026-10-15 (c354d3b): Nunik=1632, L1 LOLOS (rev 0.8223, bawah-CI 0.8029), L2 GUGUR decisif (mean -4.23 CI [-5.10,-3.33]); jalur fade-spike DITUTUP; amunisi #2 (mag_cont) + #3 (has_exhaustion-terbalik) masuk registry sebagai KANDIDAT
 - [x] Pengukuran spread aktual per sesi -> `spread.cost_basis` / `spread.stress_bands`
 
 ## Milestone 3: Metode — IN PROGRESS (blokir persetujuan user)
