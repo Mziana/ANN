@@ -1,0 +1,262 @@
+{
+ "bed": "2024-M15",
+ "cells": {
+  "E1/N4-D2.5": {
+   "n_raw": 603,
+   "n_eval": 461,
+   "A": {
+    "TP": 13,
+    "SL": 91,
+    "TIME": 356,
+    "AMBIGUOUS": 1
+   },
+   "B": {
+    "TP": 13,
+    "SL": 65,
+    "TIME": 383,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -3.22,
+   "B_med_net": -1.21,
+   "A_WRdec": 12.5,
+   "B_WRdec": 16.67,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 13,
+   "joint_SLTP": 13,
+   "joint_SLSL": 6,
+   "pair_diff_med": -2.3,
+   "pair_diff_share_pos": 47.1,
+   "mfeA_med_R": 0.19,
+   "mfeB_med_R": 0.21,
+   "mfeA_ge1R": 3.3,
+   "firstbar_med_net": -1.99,
+   "firstbar_share_pos": 39.3,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E1/N4-D3.5": {
+   "n_raw": 600,
+   "n_eval": 459,
+   "A": {
+    "TP": 13,
+    "SL": 90,
+    "TIME": 355,
+    "AMBIGUOUS": 1
+   },
+   "B": {
+    "TP": 12,
+    "SL": 65,
+    "TIME": 382,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -3.22,
+   "B_med_net": -1.21,
+   "A_WRdec": 12.62,
+   "B_WRdec": 15.58,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 13,
+   "joint_SLTP": 12,
+   "joint_SLSL": 6,
+   "pair_diff_med": -2.3,
+   "pair_diff_share_pos": 47.1,
+   "mfeA_med_R": 0.19,
+   "mfeB_med_R": 0.21,
+   "mfeA_ge1R": 3.3,
+   "firstbar_med_net": -2.01,
+   "firstbar_share_pos": 39.2,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E1/N5-D2.5": {
+   "n_raw": 276,
+   "n_eval": 211,
+   "A": {
+    "TP": 8,
+    "SL": 46,
+    "TIME": 157,
+    "AMBIGUOUS": 0
+   },
+   "B": {
+    "TP": 6,
+    "SL": 33,
+    "TIME": 172,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -3.22,
+   "B_med_net": -1.72,
+   "A_WRdec": 14.81,
+   "B_WRdec": 15.38,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 8,
+   "joint_SLTP": 6,
+   "joint_SLSL": 1,
+   "pair_diff_med": -3.2,
+   "pair_diff_share_pos": 48.3,
+   "mfeA_med_R": 0.19,
+   "mfeB_med_R": 0.2,
+   "mfeA_ge1R": 3.8,
+   "firstbar_med_net": -2.1,
+   "firstbar_share_pos": 42.7,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E1/N5-D3.5": {
+   "n_raw": 275,
+   "n_eval": 210,
+   "A": {
+    "TP": 8,
+    "SL": 46,
+    "TIME": 156,
+    "AMBIGUOUS": 0
+   },
+   "B": {
+    "TP": 6,
+    "SL": 32,
+    "TIME": 172,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -3.26,
+   "B_med_net": -1.65,
+   "A_WRdec": 14.81,
+   "B_WRdec": 15.79,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 8,
+   "joint_SLTP": 6,
+   "joint_SLSL": 1,
+   "pair_diff_med": -3.25,
+   "pair_diff_share_pos": 48.1,
+   "mfeA_med_R": 0.19,
+   "mfeB_med_R": 0.2,
+   "mfeA_ge1R": 3.8,
+   "firstbar_med_net": -2.16,
+   "firstbar_share_pos": 42.4,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E1/N6-D2.5": {
+   "n_raw": 135,
+   "n_eval": 105,
+   "A": {
+    "TP": 6,
+    "SL": 25,
+    "TIME": 74,
+    "AMBIGUOUS": 0
+   },
+   "B": {
+    "TP": 3,
+    "SL": 14,
+    "TIME": 88,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -2.09,
+   "B_med_net": -2.49,
+   "A_WRdec": 19.35,
+   "B_WRdec": 17.65,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 6,
+   "joint_SLTP": 3,
+   "joint_SLSL": 1,
+   "pair_diff_med": 0.5,
+   "pair_diff_share_pos": 50.5,
+   "mfeA_med_R": 0.18,
+   "mfeB_med_R": 0.23,
+   "mfeA_ge1R": 5.7,
+   "firstbar_med_net": -2.91,
+   "firstbar_share_pos": 38.1,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E1/N6-D3.5": {
+   "n_raw": 135,
+   "n_eval": 105,
+   "A": {
+    "TP": 6,
+    "SL": 25,
+    "TIME": 74,
+    "AMBIGUOUS": 0
+   },
+   "B": {
+    "TP": 3,
+    "SL": 14,
+    "TIME": 88,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -2.09,
+   "B_med_net": -2.49,
+   "A_WRdec": 19.35,
+   "B_WRdec": 17.65,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 6,
+   "joint_SLTP": 3,
+   "joint_SLSL": 1,
+   "pair_diff_med": 0.5,
+   "pair_diff_share_pos": 50.5,
+   "mfeA_med_R": 0.18,
+   "mfeB_med_R": 0.23,
+   "mfeA_ge1R": 5.7,
+   "firstbar_med_net": -2.91,
+   "firstbar_share_pos": 38.1,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E2/single": {
+   "n_raw": 7318,
+   "n_eval": 5478,
+   "A": {
+    "TP": 185,
+    "SL": 964,
+    "TIME": 4316,
+    "AMBIGUOUS": 13
+   },
+   "B": {
+    "TP": 154,
+    "SL": 974,
+    "TIME": 4340,
+    "AMBIGUOUS": 10
+   },
+   "A_med_net": -2.19,
+   "B_med_net": -1.82,
+   "A_WRdec": 16.1,
+   "B_WRdec": 13.65,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 185,
+   "joint_SLTP": 154,
+   "joint_SLSL": 79,
+   "pair_diff_med": -0.5,
+   "pair_diff_share_pos": 49.4,
+   "mfeA_med_R": 0.2,
+   "mfeB_med_R": 0.22,
+   "mfeA_ge1R": 3.8,
+   "firstbar_med_net": -1.92,
+   "firstbar_share_pos": 37.0,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  },
+  "E3/single": {
+   "n_raw": 141,
+   "n_eval": 108,
+   "A": {
+    "TP": 8,
+    "SL": 26,
+    "TIME": 74,
+    "AMBIGUOUS": 0
+   },
+   "B": {
+    "TP": 3,
+    "SL": 26,
+    "TIME": 79,
+    "AMBIGUOUS": 0
+   },
+   "A_med_net": -0.91,
+   "B_med_net": -5.04,
+   "A_WRdec": 23.53,
+   "B_WRdec": 10.34,
+   "joint_TPTP": 0,
+   "joint_TPTP_S": 8,
+   "joint_SLTP": 3,
+   "joint_SLSL": 3,
+   "pair_diff_med": 3.15,
+   "pair_diff_share_pos": 54.6,
+   "mfeA_med_R": 0.3,
+   "mfeB_med_R": 0.25,
+   "mfeA_ge1R": 8.3,
+   "firstbar_med_net": -2.41,
+   "firstbar_share_pos": 32.4,
+   "vonis": "TOLAK (syarat-i gagal: median net_obs<0)"
+  }
+ },
+ "vonis_final": "TOLAK 8/8 sel (H-R4 ditolak di bed 2024; 2025/2026 tetap terkunci)"
+}
