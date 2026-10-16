@@ -57,3 +57,10 @@ checkpoints/
 
 # uv (project pakai pip, bukan uv)
 uv.lock
+
+# Evidence mentah raksasa (artefak turunan; rekod audit sudah tercommit:
+# manifest/summary/ledger/seal/skrip — blob-nya sengaja tak ikut repo)
+reports/research/**/events.jsonl
+reports/research/**/appendix_D8.sealed.json
+reports/research/**/events.parquet
+reports/research/**/events_eval.parquet
