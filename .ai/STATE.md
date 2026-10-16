@@ -1,6 +1,6 @@
 # STATE.md — Status Saat Ini
 
-**Update terakhir:** 2026-10-15 (EDA-06 CLOSED: Sel 1 UNDERPOWERED, Sel 2/3/4x TIDAK TAHU; TIDAK LANJUT TV-01; commit 3 artefak menunggu user. R6 tetap DITARIK)
+**Update terakhir:** 2026-10-16 (EDA-09 CLOSED: wick_confirm_V CONFIRM — p satu-arah 0.0001 < 0,05, tanda (+) = tanda R; Registry #4 = wick-ratio TERKONFIRMASI-V, amunisi-V pertama; commit selektif 5 artefak EDA-09; EDA-08 MERGED bc4dac7 sebelumnya. Program: LANJUT, butuh 4–5)
 **Fase:** Milestone 1 (Data) + 2 (EDA) SELESAI. Milestone 3 (Metode) BERJALAN
 dan TERBLOKIR di persetujuan user.
 **Status ronde terakhir:** EDA-07 L3-1 selesai + re-audit LULUS PROSEDURAL +
@@ -165,9 +165,10 @@ terkonfirmasi + karakter terdokumentasi → registry, tanpa klaim edge).
 | # | Amunisi | Status | Bukti |
 |---|---|---|---|
 | 1 | Spike-reversal (spike + exhaustion → kembali ke open) | TERKONFIRMASI-eksistensi, edge BELUM terukur → jalur (b) | Sel 1 n=51, 12 win rata +45.0, win 0.27, CI lewati 0; parquet 51×57 |
-| 2 | (terbuka — EDA berikut) | — | — |
-| 3 | (terbuka — EDA berikut) | — | — |
-| 4 | (terbuka — EDA berikut) | — | — |
+| 2 | mag_cont (magnitudo spike kontinu; reversal-rate menurun monotonik 93→87→76→70 per band) | KANDIDAT jalur (b) — EDA-07, SMD -0.372 (terkuat); primer+robust, BUKAN vonis kill | EDA-07 n=1514, notebook 16 sel exit 0, merge c354d3b |
+| 3 | has_exhaustion-TERBALIK (exh=57% vs tanpa-exh=91% reversal) | KANDIDAT jalur (b) — EDA-07 eksploratori (CI jauh terpisah); tanda DIBALIK dari hipotesis AMD; dilarang sebagai filter fade | EDA-07 cross-tab exh n=395 vs 1119, merge c354d3b |
+| 4 | wick-ratio (wick atas − bawah, within-band, pooled bobot-n Δ≈0.168, tanda-tahun sama) | KANDIDAT V-confirm (GENERASI-R; heterogenitas band3 0.3264 vs band1 0.0687 tercatat; per-band deskriptif-saja) | EDA-08 FDR-pass p=0.0001 + gate + ≥5pp; notebook 18 sel exit 0 |
+| 5 | (terbuka — EDA berikut) | — | — |
 
 Catatan: AMD-full (Sel 3) = NOL kemunculan → TIDAK masuk registry
 (yang tak pernah terjadi bukan amunisi). Ronde EDA baru atas inisiatif AI
@@ -176,6 +177,23 @@ Blueprint v9.4 diterbitkan (`thoughts/shared/designs/2026-10-15-eda06-blueprint-
 konsolidasi IDENTIK v9.3 + Amandemen-1, dokumen kanonik tunggal untuk coder
 (verifikasi: nol sisa angka lama di aturan aktif; satu-satunya "[21,22]" =
 baris riwayat perubahan). v9.3 + Amandemen-1 = arsip riwayat.
+
+## Vonis EDA-08 — CLOSED 2026-10-16: shortlist-final = [wick]
+
+Run lengkap FASE 0–3, prosedural HIJAU, terverifikasi independen
+(hash builder/notebook identik; F0 cocok beku; wick Δ hitung-ulang 0.1688;
+permutasi independen B=2000: 0 exceedance; file M EDA-07 = encoding-only,
+sudah direvert).
+Shortlist: wick MASUK EDA-09 (FDR + gate-tanda + 16.82pp).
+first/gap32/dow GUGUR-komputasi (gap32 kill-tak-berdaya 45/1130;
+dow kill-bersih; first kill-bersih). Joint = estimasi, bukan kandidat.
+Volume LOCK FINAL = (c) vol_bar-s / median-rolling-20d-slot-HH:MM-sama
+TANPA-hari-berjalan (R1 HH:MM; R2 pooled bobot-n); warmup drop 20 hari
+pertama + count (87 event, n-vol = 1427). Catatan mengikat EDA-09:
+per-band deskriptif-saja; gap32 dilarang tanpa power-plan; lock-dari-R
+sebelum sentuh V; whitelist-V assert. Stopping-rule §11: terkonfirmasi-V
+= {}; ronde-kosong-berturut = 0. MERGED 2026-10-16: bb11dd4 (3 file) -> bc4dac7; worktree+branch dihapus; brief diarsipkan (uncommitted); TIDAK PUSH. MENUNGGU: order draft EDA-09.
++ merge + hapus worktree/branch (§23); order draft blueprint EDA-09.
 
 ## Yang Sedang Dikerjakan
 
